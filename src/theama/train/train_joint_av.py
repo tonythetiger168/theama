@@ -17,6 +17,8 @@ import math
 import torch
 import torch.nn.functional as F
 
+from theama.model.wan_adapter import flatten_video_latents, unflatten_video_tokens
+
 
 def logit_normal_sample(
     batch: int,
@@ -124,6 +126,8 @@ class JointAVTrainer:
             param.requires_grad_(False)
         params = self.audio.bridges.parameters() if phase == "bridge" else self.audio.parameters()
         self._trainable_params = list(params)
+        if not self._trainable_params:
+            raise ValueError(f"{phase} phase has no trainable parameters; check bridge schedule")
         for param in self._trainable_params:
             param.requires_grad_(True)
         self.optimizer = torch.optim.AdamW(
@@ -140,7 +144,9 @@ class JointAVTrainer:
         """Run one real forward/backward/optimizer step and return finite metrics.
 
         Required batch keys are ``audio_latent`` (B,Ta,Da), ``video_tokens``
-        (B,Tv,Dv), and ``cond`` (B,Da). Optional ``audio_noise`` and
+        (B,Tv,Dv) or Wan latents (B,C,F,H,W), and pooled audio ``cond`` (B,Da).
+        Wan batches additionally supply ``video_cond`` (B,L,4096), which is
+        passed directly to the video adapter. Optional ``audio_noise`` and
         ``video_noise`` make the step deterministic for tests/replays.
         """
         if self.optimizer is None:
@@ -154,8 +160,15 @@ class JointAVTrainer:
         cond = batch["cond"]
         if audio.shape[0] != video.shape[0] or audio.shape[0] != cond.shape[0]:
             raise ValueError("audio, video and cond batch sizes must match")
-        if audio.ndim != 3 or video.ndim != 3 or cond.ndim != 2:
-            raise ValueError("expected audio/video tokens to be 3-D and cond to be 2-D")
+        if audio.ndim != 3 or video.ndim not in {3, 5} or cond.ndim != 2:
+            raise ValueError(
+                "expected audio tokens to be 3-D, video to be 3-D/5-D and cond to be 2-D"
+            )
+        video_cond = batch.get("video_cond")
+        if video_cond is not None and (
+            video_cond.ndim != 3 or video_cond.shape[0] != audio.shape[0]
+        ):
+            raise ValueError("expected video_cond to have shape (B,L,D)")
 
         device = audio.device
         batch_size = audio.shape[0]
@@ -176,12 +189,21 @@ class JointAVTrainer:
         audio_t, audio_target = flow_match_pair(audio, noise_a, t_a)
         video_t, video_target = flow_match_pair(video, noise_v, t_v)
 
-        audio_pred, joint_video = self.audio(audio_t, video_t, self._condition(cond, t_a))
+        video_is_5d = video_t.ndim == 5
+        bridge_tokens = flatten_video_latents(video_t) if video_is_5d else video_t
+        audio_pred, joint_tokens = self.audio(
+            audio_t, bridge_tokens, self._condition(cond, t_a)
+        )
+        joint_video = (
+            unflatten_video_tokens(joint_tokens, tuple(video_t.shape))
+            if video_is_5d
+            else joint_tokens
+        )
         if not hasattr(self.video, "predict_velocity"):
             raise TypeError("video backbone must implement predict_velocity(tokens, t, cond)")
-        video_pred = self.video.predict_velocity(
-            joint_video, t_v, self._condition(cond, t_v)
-        )
+        if video_cond is None:
+            video_cond = self._condition(cond, t_v)
+        video_pred = self.video.predict_velocity(joint_video, t_v, video_cond)
         audio_loss = F.mse_loss(audio_pred, audio_target)
         video_loss = F.mse_loss(video_pred, video_target)
         loss = (

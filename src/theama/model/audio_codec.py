@@ -18,9 +18,8 @@ agree on shapes and rates:
   ``2 * DAC_44K.latent_dim`` (2048) or use a learned compressor (M2 wiring
   decision; ``configs/m2_joint_av.yaml`` records the codec name).
 
-Only the interface and a deterministic CPU mock live here; the real DAC
-encode/decode path lands with the GPU adapter (weights are downloaded
-user-side, like Wan 2.2).
+``theama.model.dac_codec.DACAudioCodec`` lazily wraps the official MIT DAC
+package and weights; ``MockAudioCodec`` keeps this contract CPU-testable.
 """
 
 from __future__ import annotations
@@ -38,6 +37,8 @@ __all__ = [
     "CODEC_REGISTRY",
     "get_codec_spec",
     "MockAudioCodec",
+    "encode_stereo",
+    "decode_stereo",
     "stereo_to_mid_side",
     "mid_side_to_stereo",
 ]
@@ -68,7 +69,7 @@ class AudioCodecSpec:
         return 2 * self.latent_dim
 
     def frames_for_seconds(self, seconds: float) -> int:
-        """Latent frames needed for ``seconds`` of audio, padding up to a full hop."""
+        """Latent frames needed for ``seconds" of audio, padding up to a full hop."""
         samples = seconds * self.sample_rate
         if samples != int(samples):
             raise ValueError(f"{seconds}s is not an integer number of samples")
@@ -138,6 +139,27 @@ class AudioCodec(Protocol):
     def encode(self, waveform: torch.Tensor) -> torch.Tensor: ...
 
     def decode(self, latents: torch.Tensor) -> torch.Tensor: ...
+
+
+def encode_stereo(codec: AudioCodec, waveform: torch.Tensor) -> torch.Tensor:
+    """Encode stereo ``(B,2,T)`` into DiT-ready mid+side ``(B,T_lat,2D)``."""
+    mid, side = stereo_to_mid_side(waveform)
+    mid_latent = codec.encode(mid)
+    side_latent = codec.encode(side)
+    if mid_latent.shape != side_latent.shape:
+        raise ValueError("mid/side codec latent shapes differ")
+    return torch.cat((mid_latent, side_latent), dim=-1)
+
+
+def decode_stereo(codec: AudioCodec, latents: torch.Tensor) -> torch.Tensor:
+    """Decode mid+side DiT tokens back to stereo ``(B,2,T)``."""
+    if latents.ndim != 3 or latents.shape[-1] != codec.spec.dit_token_dim:
+        raise ValueError(
+            f"expected stereo latents (B,T_lat,{codec.spec.dit_token_dim}), "
+            f"got {tuple(latents.shape)}"
+        )
+    mid_latent, side_latent = latents.split(codec.spec.latent_dim, dim=-1)
+    return mid_side_to_stereo(codec.decode(mid_latent), codec.decode(side_latent))
 
 
 class MockAudioCodec:

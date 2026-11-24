@@ -14,11 +14,15 @@ sys.path.insert(0, str(ROOT / "src"))
 from theama.model.audio_codec import (
     CODEC_REGISTRY,
     DAC_44K,
+    AudioCodecSpec,
     MockAudioCodec,
+    decode_stereo,
+    encode_stereo,
     get_codec_spec,
     mid_side_to_stereo,
     stereo_to_mid_side,
 )
+from theama.model.dac_codec import DACAudioCodec
 
 
 # ---- spec values (verified against upstream conf/base.yml, MIT) ---------------
@@ -120,6 +124,74 @@ def test_mock_latents_feed_audio_dit_contract():
                    bridge_every=1, latent_dim=DAC_44K.dit_token_dim)
     eps, _ = dit(tokens, torch.randn(1, 3, 32), torch.randn(1, 64))
     assert eps.shape == tokens.shape
+
+
+# ---- real DAC wrapper contract (fake upstream model, no weights) -------------------
+
+class _FakeDAC(torch.nn.Module):
+    def __init__(self, spec):
+        super().__init__()
+        self.spec = spec
+        self.weight = torch.nn.Parameter(torch.tensor(1.0))
+        self.seen_sample_rate = None
+
+    def preprocess(self, waveform, sample_rate):
+        self.seen_sample_rate = sample_rate
+        return waveform
+
+    def encode(self, waveform):
+        batch, _, samples = waveform.shape
+        frames = samples // self.spec.hop_length
+        pooled = waveform.reshape(batch, frames, self.spec.hop_length).mean(dim=-1)
+        continuous = pooled[:, None, :].repeat(1, self.spec.latent_dim, 1) * self.weight
+        return continuous, None, None, None, None
+
+    def decode(self, continuous):
+        pooled = continuous.mean(dim=1)
+        return pooled[:, None, :, None].expand(
+            -1, -1, -1, self.spec.hop_length
+        ).reshape(continuous.shape[0], 1, -1)
+
+
+def _tiny_codec_spec():
+    return AudioCodecSpec(
+        name="tiny-dac",
+        repo_id="example/tiny-dac",
+        license="MIT",
+        sample_rate=8,
+        hop_length=2,
+        latent_dim=4,
+        n_codebooks=1,
+        codebook_size=8,
+        stereo_layout="mid_side",
+    )
+
+
+def test_dac_wrapper_transposes_upstream_latents_and_freezes_model():
+    spec = _tiny_codec_spec()
+    upstream = _FakeDAC(spec)
+    codec = DACAudioCodec(upstream, spec)
+    waveform = torch.arange(6.0).reshape(1, 1, 6).requires_grad_(True)
+    latents = codec.encode(waveform)
+    assert latents.shape == (1, 3, 4)
+    assert not latents.requires_grad
+    expected = waveform.detach().reshape(1, 3, 2).mean(dim=-1)
+    assert torch.equal(latents[:, :, 0], expected)
+    assert upstream.seen_sample_rate == 8
+    assert not upstream.weight.requires_grad
+    restored = codec.decode(latents)
+    assert restored.shape == waveform.shape
+
+
+def test_stereo_codec_helpers_roundtrip_layout():
+    codec = MockAudioCodec()
+    waveform = torch.randn(2, 2, DAC_44K.hop_length * 4)
+    tokens = encode_stereo(codec, waveform)
+    assert tokens.shape == (2, 4, DAC_44K.dit_token_dim)
+    restored = decode_stereo(codec, tokens)
+    assert restored.shape == waveform.shape
+    with pytest.raises(ValueError, match="stereo latents"):
+        decode_stereo(codec, tokens[..., :16])
 
 
 # ---- config wiring -----------------------------------------------------------------

@@ -1,17 +1,24 @@
 # SPDX-License-Identifier: Apache-2.0
-# M2 CPU-validated optimization defaults; Wan/DAC GPU adapter wiring is pending.
+# M2 CPU-validated adapter/training defaults; real-weight GPU smoke is pending.
 model:
   audio:
-    codec: dac_44k  # see theama.model.audio_codec.DAC_44K (MIT, hop 512, 1024-dim latents, mid/side stereo)
+    codec: dac_44k  # MIT, hop 512, 1024-dim continuous latents, mid/side stereo
     dim: 1024
     layers: 12
     heads: 16
-    video_dim: 5120
+    video_dim: 16  # active A14B VAE latent channels; use 48 for the TI2V-5B dev path
     bridge_every: 3
-    latent_dim: 128
+    latent_dim: 2048  # direct mid+side DAC tokens (2 * 1024), no learned compressor
   video:
-    repo_id: Wan-AI/Wan2.2-T2V-A14B
-    dev_repo: Wan-AI/Wan2.2-TI2V-5B
+    adapter: t2v-a14b
+    dev_adapter: ti2v-5b
+    repo_id: Wan-AI/Wan2.2-T2V-A14B-Diffusers
+    dev_repo: Wan-AI/Wan2.2-TI2V-5B-Diffusers
+    latent_channels: 16
+    dev_latent_channels: 48
+    text_dim: 4096
+    timestep_scale: 1000
+    bridge_location: latent_pre_backbone  # smoke path; internal Wan blocks are a later milestone
     frozen: true
 training:
   phase: bridge  # bridge warmup first; set_phase("full") for full-audio FT
