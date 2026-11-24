@@ -1,0 +1,42 @@
+# SPDX-License-Identifier: Apache-2.0
+# Theama base configuration — M1: Wan 2.2 A14B backbone (Apache-2.0)
+
+model:
+  video_backbone: "Wan-AI/Wan2.2-T2V-A14B"   # MoE 27B total / 14B active, Apache-2.0
+  video_backbone_dev: "Wan-AI/Wan2.2-TI2V-5B" # 24GB-friendly dev/CI path
+  text_encoder: "umt5-xxl"                    # shipped with Wan 2.2
+  video_vae: "wan2.2-3d-causal-vae"
+  audio:
+    codec: "dac-44.1khz"                      # Descript Audio Codec latent
+    sample_rate: 44100
+    channels: 2
+    dit:
+      layers: 12
+      dim: 1024
+      heads: 16
+      bridge_every: 3                         # bidirectional A/V cross-attention every N layers
+
+generation:
+  fps: 24
+  native_seconds: 5
+  target_seconds: 30                          # via THEAMA-Extend (5s x 6 segments)
+  extend:
+    anchor_frames: 8                          # tail frames reused as continuation anchor
+    audio_crossfade_ms: 250
+  stages:
+    - { name: "base",    width: 1280, height: 720 }
+    - { name: "regen2k", width: 2560, height: 1440, denoise_strength: 0.35 }
+    - { name: "regen4k", width: 3840, height: 2160, denoise_strength: 0.25, tiled: true }
+
+export:
+  container: "mp4"
+  video_codec: "h264"                         # h265 optional
+  audio_codec: "aac"
+  audio_bitrate: "192k"
+
+training:
+  objective: "flow_matching"
+  schedule: "logit_normal"
+  method: "lora_first"                        # LoRA on A/V bridge layers, then full FT
+  precision: "bf16"
+  forbid_third_party_outputs: true            # never train on H3/LTX outputs (license)

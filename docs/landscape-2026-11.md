@@ -1,0 +1,32 @@
+# 全球影片生成技術盤點（2026-11）
+
+目標規格：**4K、30 秒、原生音訊、MP4 電影級短片**（Wan 3.0 / MiniMax H3 級品質）。
+資料日期：2026-11-24。來源：各模型官方 model card / GitHub repo / 授權文本。
+
+## 盤點表
+
+| 專案 | 定位 | 關鍵規格（hard numbers） | 授權 | 對 theama 的核心啟發（要偷什麼） |
+|---|---|---|---|---|
+| **Wan 2.2** A14B / TI2V-5B（Alibaba，2025-07，repo 18.9k★） | 開源影片 DiT 主力 | A14B = 27B MoE（14B active/step）；TI2V-5B；5s@24fps；480p–720p；無音訊 | **Apache-2.0** | **骨幹**。高低噪聲雙專家 MoE、3D causal VAE、umt5 編碼器；生態與工具鏈最成熟 |
+| **MiniMax H3**（2026-07-31 API / 08-03 開權重，12.2k★） | 開放權重 omni-modal 標竿 | 33B dense 單流 Omni Transformer（~13B 在 AdaLN 分支、inference 可 cache 不載）；Qwen3-VL-32B；3D multimodal RoPE；4–15s@24fps；本地 768p（2K 的 H3-Regenerate-2K **未開放**）；32kHz 立體聲同生；11 語言；最多 12 個 omni-reference（9 圖/3 影/3 音）；FL2VA + Ref2VA 兩 checkpoint | H3 Community License：**排除美/歐/英/韓**本地部署、$20M/yr cap、商用須標示 "MiniMax H3"、**禁止用輸出改進其他模型** | 架構參考：單流 AV 聯合生成、omni-reference 任務切分、三模組管線（Context-IR → Base → Regenerate）。**權重、程式碼、輸出全不碰** |
+| **LTX-2.5**（Lightricks，2026-08-11，repo 11.5k★） | 開放權重 AV 原生 4K | 22B 非對稱雙流 DiT，雙向 cross-attention 聯合 AV + modality-aware CFG；Gemma 4 12B 文本編碼器；6–20s；720p→原生 4K HDR；原生多鏡頭；DFR（Diffusion Fidelity Rendering） | LTX-2.x Community License（<$10M ARR 免費，以上付費） | 架構參考：雙流 DiT + 雙向跨模態注意力（theama 音訊分支的主要範式）、two-stage 上 4K 的工程路徑。**不碰權重** |
+| **Kandinsky 6.0**（Kandinsky Lab，2026-09/10） | MIT 授權 AV | 3B Lite / 29B Pro；44.1kHz 音訊 + lip-sync；5s@24fps | **MIT** | 音訊分支可對照/借用的**乾淨授權**實作 |
+| **MAGI-2-preview**（Sand AI，2026-08） | Apache-2.0 大 MoE | 114B MoE / 6B active；有音訊 | **Apache-2.0** | 乾淨授權的 AV MoE 參考實作 |
+| **LongCat-Video**（Meituan，2025-10） | MIT 長影片方向 | 13.6B | **MIT** | 長影片延續策略參考 |
+| HunyuanVideo 1.5（Tencent，2025-11，4.6k★） | 輕量 1080p | 8.3B | Tencent Community License（排除歐/英/韓） | 僅參考，授權不乾淨 |
+| Seedance 2.5 / Kling 4.0 / Wan 3.0 API / Veo 3.1 | 閉源前沿 | Seedance 2.5：30s、4K、50 個多模態參考、音訊同生；Kling 4.0：30s | API only | 品質對標線（M5 eval set 的對手），不偷實作 |
+
+## 差距分析（theama 目標 vs 全球現況）
+
+| 前沿指標 | 最佳開源現況 | 差距 | 對策 |
+|---|---|---|---|
+| 30s 單次生成 | 開源最長 15–20s（H3 15s、LTX-2.5 20s）；30s 僅閉源（Seedance 2.5、Kling 4.0） | 🔴 | THEAMA-Extend：SVI 式接續，5s × 6 段 → 30s |
+| 原生 4K | LTX-2.5 有但授權不乾淨；H3 的 2K stage 未開放（任何路線都得自建 HR stage） | 🔴 | THEAMA-4K：自建 two-stage regenerate（720p→2K→4K） |
+| 原生音訊同生 | H3 / LTX-2.5 / Kandinsky 6.0 / MAGI-2 已驗證可行 | 🟡 | Wan 2.2 上加並聯 Audio DiT（雙流 cross-attention） |
+| 全棧乾淨授權 + 4K + 30s + AV | **無人同時滿足** | — | **theama 的定位與賣點** |
+
+## 誠實範圍
+
+- Wan 2.2 骨幹（720p/5s）離 H3（768p/15s/音訊）有不小差距：theama 的貢獻在「整合 + 延長 + 升解析 + 加音訊」，不是重新發明 base model。
+- 4K/30s 的 VRAM 與訓練成本是硬約束：M1–M2 在單卡 24–80GB 驗證，M3 之後需要多卡。
+- H3/LTX-2.5 只讀 paper、model card 與公開架構描述做 clean-room 參考；**不逆向權重、不用其輸出**。
