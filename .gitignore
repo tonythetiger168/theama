@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Weights & data (downloaded separately, never committed)
+checkpoints/
+weights/
+data/
+datasets/
+*.safetensors
+*.ckpt
+*.pt
+*.bin
+
+# Generated media
+outputs/
+*.mp4
+*.wav
+*.mov
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

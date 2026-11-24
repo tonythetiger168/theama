@@ -1,0 +1,18 @@
+Theama
+Copyright 2026 Chien-Hsin Lin
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Third-party models and projects referenced by Theama (downloaded separately
+by the user; NOT redistributed in this repository):
+
+- Wan 2.2 (Alibaba Wan-Video team) — Apache-2.0. Used as the video backbone.
+- Kandinsky 6.0 (Kandinsky Lab) — MIT. Permissive reference for the audio DiT.
+- MAGI-2-preview (Sand AI) — Apache-2.0. Permissive reference for A/V MoE design.
+
+Architecture references ONLY (no weights, code, or generated outputs used;
+their licenses do not permit use as a training/distillation source for an
+open project — see docs/license-risks.md):
+
+- MiniMax H3 (MiniMax) — MiniMax H3 Community License Agreement.
+- LTX-2.5 (Lightricks) — LTX-2.x Community License.

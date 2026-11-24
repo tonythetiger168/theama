@@ -1,0 +1,37 @@
+# SPDX-License-Identifier: Apache-2.0
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "theama"
+version = "0.1.0"
+description = "Open audio-video generation model targeting 4K 30s MP4 clips (Wan 2.2 backbone, joint A/V DiT, SVI-style continuation, two-stage 4K regenerate)"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Chien-Hsin Lin" }]
+requires-python = ">=3.10"
+dependencies = [
+    "torch>=2.4",
+    "diffusers>=0.35",
+    "transformers>=4.49",
+    "accelerate>=1.0",
+    "einops",
+    "safetensors",
+    "soundfile",
+    "av>=12",
+    "numpy",
+    "pillow",
+    "pyyaml",
+    "tqdm",
+]
+
+[project.optional-dependencies]
+train = ["deepspeed", "wandb", "datasets", "peft"]
+dev = ["pytest", "ruff"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100

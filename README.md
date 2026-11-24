@@ -1,2 +1,69 @@
-# theama
-Open audio-video generation model targeting 4K 30s MP4 clips — MiniMax H3 backbone, joint A/V DiT, SVI-style 30s continuation, two-stage 768p→2K→4K regenerate. Apache-2.0 code; H3 weights under MiniMax Community License.
+# Theama
+
+**Theama** (Greek θέαμα — "spectacle") is an open-source audio-video generation
+project targeting **4K, 30-second MP4 movie clips with synchronized native audio**,
+at Wan 3.0 / MiniMax H3-class quality, on a fully permissive license stack.
+
+## Design goals
+
+| Goal | Target | Approach |
+| --- | --- | --- |
+| Video quality | Wan 2.2 A14B class | Wan 2.2 MoE DiT backbone (27B total / 14B active, Apache-2.0) |
+| Native audio | 44.1 kHz stereo, dialogue + SFX + ambience | Parallel audio DiT with bidirectional A/V cross-attention (clean-room, LTX-2.5 pattern; Kandinsky 6.0 MIT / MAGI-2 Apache-2.0 as permissive references) |
+| Duration | 30 s per prompt | THEAMA-Extend: SVI-style autoregressive continuation with consistency anchors |
+| Resolution | 4K (3840×2160) | THEAMA-4K: two-stage in-context regenerate 720p → 2K → 4K |
+| Output | MP4 (H.264/H.265 + AAC) | `theama.inference` export / mux pipeline |
+| License | End-to-end permissive | Apache-2.0 / MIT components only — no community-license weights anywhere in the stack |
+
+## Why not MiniMax H3 or LTX-2.5 weights?
+
+H3 (33B, native 32 kHz stereo, 15 s) and LTX-2.5 (22B, native 4K A/V) are the
+closest open-weight models to our target quality — but neither can anchor a
+truly open project:
+
+- **MiniMax H3 Community License** (effective 2026-08-02) excludes local
+  deployment in the US, EU, UK and South Korea, caps commercial revenue at
+  $20M/yr, requires "MiniMax H3" attribution, and **forbids using model outputs
+  to improve other models**. Only the H3-Base stage is open; Context-IR and
+  Regenerate-2K stay API-only.
+- **LTX-2.x Community License** caps free commercial use at $10M annual revenue.
+
+Theama therefore builds on **Wan 2.2 (Apache-2.0)** and borrows *architecture
+ideas only* from H3 / LTX-2.5. Full analysis: [`docs/license-risks.md`](docs/license-risks.md).
+
+## Repository layout
+
+```
+docs/            landscape survey, architecture, training plan, license risks
+src/theama/      model / data / train / inference packages
+configs/         model & pipeline configs
+scripts/         weight download + inference entry points
+tests/           CPU-only smoke tests
+```
+
+## Quick start (M1 scope)
+
+```bash
+pip install -e .[dev]
+bash scripts/download_weights.sh        # Wan 2.2 weights (Apache-2.0), user-side download
+pytest tests/                           # CPU smoke tests
+bash scripts/run_inference.sh "a cat walking through neon rain" out.mp4
+```
+
+## Roadmap
+
+- **M1** — Wan 2.2 inference reproduction + eval harness (VBench + AV-sync metrics)
+- **M2** — Audio DiT branch + joint A/V fine-tune (LoRA → full)
+- **M3** — THEAMA-Extend: 5 s → 30 s continuation without drift
+- **M4** — THEAMA-4K: two-stage 720p → 2K → 4K regenerate
+- **M5** — Quality closure vs H3 / Wan 3.0 API on a fixed eval set
+
+Acceptance criteria per milestone: [`docs/training-plan.md`](docs/training-plan.md).
+Global landscape and gap analysis: [`docs/landscape-2026-11.md`](docs/landscape-2026-11.md).
+
+## License
+
+Code in this repository: **Apache-2.0** (see `LICENSE`). Commercial use —
+including in products and hosted services — needs no royalty or feedback.
+Third-party model weights are downloaded by the user and remain under their own
+licenses; see `NOTICE` and `docs/license-risks.md`.
