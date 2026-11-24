@@ -52,3 +52,30 @@
 | 實時串流生成（720p、消費級 GPU） | 開源多為離線 clip 生成；實時僅 Vidu S2 / Tavus 等閉源 | 🔴 | causal DiT 改造 + rolling KV cache + replay anchor（SRF 概念自建） |
 | 串流中動態換參考圖 | 僅 Vidu S2 | 🔴 | VLM agent + identity embedding 熱替換介面（M6c） |
 | 單圖+音訊 talking avatar（離線） | Wan-Animate / LongCat-Video-Avatar 已可自架 | 🟢 | 直接以 Wan-Animate 起步（M6a） |
+
+## 加掛：文生圖線盤點（2026-11-24 補）
+
+對標：開源 T2I 最強品質 + 授權乾淨；CJK 文字渲染為差異化重點。
+榜單錨點：LMArena text-to-image（2026-11-22）與 Artificial Analysis 開放權重榜（2026-11-02）。
+
+| 專案 | 定位 | 關鍵規格 | 授權 | 對 theama-image 的啟發 |
+|---|---|---|---|---|
+| Qwen-Image 2.1 / 2.1-Turbo（Alibaba，2026-09/10） | 開放權重品質頂點之一 | LMArena 1227（開放權重最高）；7B 生成 + 8B 文本編碼器；生成/編輯/透明圖一體 | **Qwen Research License（非商用）** | 品質對標；**不能當底座** |
+| FLUX 3 Image Klein（BFL，2026-10） | 開放權重品質並列頂點 | 5.6B；AA Elo 1043；10 參考圖 + bbox 版面引導；INT8 8GB 可跑 | FLUX Kommunity（<$5M、輸出限定） | 品質對標；授權不乾淨不當底座 |
+| Fibo 2.0（Bria） | 控制導向 | AA Elo 1039 | CC BY-NC 4.0 | 僅參考 |
+| **Qwen-Image-2512 / Edit-2511**（Alibaba，2025-12） | **乾淨授權品質擔當** | 20B；多語文字渲染最強檔；生成 + 編輯 | **Apache-2.0** | **品質底座**（M7a/M7b） |
+| **Z-Image Turbo / base**（Alibaba Tongyi，2025-11 / 2026-01） | 乾淨授權速度擔當 | 6B；8 NFE；16GB；雙語文字渲染；HF LoRA 838+146 | **Apache-2.0** | **快速/dev 路徑**；LoRA 生態現成 |
+| FLUX.2 [klein] 4B（BFL，2026-01） | 生成+編輯一體小模型 | 4B；多參考編輯；~13GB | **Apache-2.0** | 編輯管線對照 |
+| HiDream-O1-Image（HiDream，2026-05） | MIT 統一架構 | 8B；生成/編輯/個人化一體；原生 2K；無獨立 VAE | **MIT** | 架構對照（pixel-space 無 VAE） |
+| GLM-Image（Z.ai，2026-01） | AR+DiT 混合 | 9B AR + 7B decoder；雙語文字最強檔 | **MIT** | 文字渲染對照 |
+| LongCat-Image / MOSS-Image / ERNIE-Image | 乾淨授權中堅 | 6B / 5B / 8B | Apache-2.0 | 備選與對照 |
+| 閉源前沿（GPT Image 2.5、Nano Banana 2、Seedream 5.0 Pro 等） | 品質天花板 | LMArena 1247–1429 | API only | M7 對標線；Seedream 5.0 Pro 繁中渲染弱點 = 我方切入點 |
+
+### 文生圖線差距分析
+
+| 前沿指標 | 開源現況 | 差距 | 對策 |
+|---|---|---|---|
+| 頂尖整體品質 | Qwen-Image 2.1 / FLUX 3 Klein 並列，但授權皆非全乾淨 | 🟡 | Qwen-Image-2512（Apache-2.0）+ LoRA/蒸餾收斂（遵守各自授權） |
+| CJK / 繁中文字渲染 | Qwen-Image 系最強；閉源 Seedream 5.0 Pro 繁中常錯 | 🟢 | 主攻點：100-prompt 繁中文字評測集 |
+| 生成+編輯+多參考一體 | Qwen-Image-Edit-2511、FLUX.2 klein 4B 已驗證 | 🟢 | M7b 直接接上 |
+| 與影片/avatar 線整合 | 無現成開源全棧 | — | **theama 定位**：keyframe → Film I2V、identity ref → Avatar |

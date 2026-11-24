@@ -93,3 +93,31 @@ Wan-Animate 底座（Apache-2.0）──► StreamingAvatarSession
 - **Streaming 化**：雙向 attention 改 causal/block-causal，rolling KV cache，
   每 N 幀 replay anchor 幀防誤差累積（概念對齊 Vidu S2 的 Self-Replay Forcing，自實作）
 - **互動層**：VLM agent 解析語音指令、串流中觸發 identity/參考圖熱替換
+
+## 文生圖線（theama-image，M7）
+
+對標：Qwen-Image 2.1 級品質（但走乾淨授權）；差異化主攻 **CJK / 繁中文字渲染**。
+
+### 定位：三線樞紐
+
+```
+Theama Image（T2I + edit）
+   ├─► keyframe / 首末幀 ──► Film 線 I2V（M7c）
+   ├─► identity 參考圖 ──► Avatar 線 IdentityEncoder（M7c）
+   └─► 海報 / 封面 / 縮圖 ──► Export 管線
+```
+
+### 模組
+
+- **品質底座**：Qwen-Image-2512（20B，Apache-2.0）——多語文字渲染最強檔，
+  對齊「繁中文字不出錯」的差異化切入點
+- **快速/dev 路徑**：Z-Image Turbo（6B，Apache-2.0，8 NFE，16GB）——
+  draft、批次、LoRA 生態（HF 838+）直接可用
+- **編輯**：Qwen-Image-Edit-2511（Apache-2.0）多參考編輯（M7b）
+- **架構對照**：HiDream-O1-Image（MIT，pixel-space 無 VAE）、GLM-Image（MIT，AR+DiT）
+
+### 關鍵技術決策
+
+- 不自訓 base model：以 2512 為底，LoRA / 風格微調收斂品質差距
+  （Qwen-Image 2.1 為非商用研究授權，**不碰其權重與輸出**）
+- CJK 評測集先行：100-prompt 繁中長文/海報場景，M7a 驗收門檻
