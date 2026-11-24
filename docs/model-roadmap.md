@@ -43,7 +43,7 @@
 
 ## Watchlist（上游釋出追蹤）
 
-最近核查：**2026-11-25**。
+最近核查：**2026-11-25**（當日第四輪）。
 
 - **Wan-Animate-2-14B**（Apache-2.0）— M6a 底座候選，已寫入
   `configs/theama_base.yaml`。repo id 已核對：`Wan-AI/Wan2.2-Animate-2-14B`
@@ -56,17 +56,29 @@
   Wan-Video GitHub 6 個 repo 均無 2.5/2.6/2.7/3.0 權重；官方
   `AlibabaCloud-Official/Wan3.0` 僅 README + license 檔）。骨幹續用 Wan 2.2。
   旁註：新開放控制模型 `Wan-Dancer-14B`（Apache-2.0，2026-07）可留意。
+  2026-11-25 第四輪補記：**阿里「下一代影片生成模型」**於 2026 雲棲大會
+  （2026-09-22）預告 11 月發布——方向為更長、更可控、更完整、更智慧
+  （長時一致性、精準掌控人物／場景／鏡頭、導演級敘事理解）；名稱未公布
+  （Wan 3.5／Wan 4 皆外界猜測），是否開權重未知。截至本輪檢索仍未見發布
+  （2026-11-09 第三方核查 Model Studio 新模型列表與 Wan-AI HF 均無新模型）。
+  若最終開權重且授權相容，列為骨幹再評估觸發點；續盯 Model Studio 新模型
+  列表、Wan-AI HF、Wan-Video GitHub。
 - **Qwen-Image 新版** — **Qwen-Image-2.1（7B，2026-09-20）統一 T2I+編輯+原生 RGBA，
   但為 Qwen Research License（非商用）→ 紅線確認，不碰**；2.1-Turbo（2026-10-09，8-step）
   同授權。Qwen-Image-3.0 為 hosted-only。Apache-2.0 線最新仍是
   Qwen-Image-2512 與 Qwen-Image-Edit-2511 —— M7a 選型不變。
+  2026-11-25 第四輪補記：**Qwen-Image-3.1** 於雲棲大會（2026-09-22）亮相，
+  面向電商／創意／設計商用場景、支援圖像精準編輯，官方稱性能逼近 GPT-Image
+  系列；迄今未公布權重、授權與定價，型態與 3.0 同為 hosted-only，未證實
+  Apache 前不碰。另 Qwen-Image-2.1 Pro／Turbo 已於 2026-10-09 上 Model Studio
+  託管 API（¥0.25／¥0.10 每張）——屬託管商用計費，不改變權重的研究授權紅線。
 - **開源 video reward 新模型** — awesome-rm-for-video-generation（2026-10 更新）新增
   AesRM（專家標註美學 RM，base + CoT 變體）、UnifiedReward-Flex、GT-SVJ（self-supervised
   judge）等；授權與權重可得性未逐一核實，VideoReward 仍為首選，暫不加第二把尺。
   2026-11-25 補查同清單，新增觀察 **joint audio-video reward** 線：**VA-Judger**
   （VAPref-10K 影音偏好對訓練的 A/V 聯合 judge，直接獎勵跨模態一致性而非手工拼接
   分維指標）與 **AVBench**（人本影音評測器，二元判決信心可轉連續分，可作 RLHF
-  reward 與資料過濾）——與 M2 原生音訊路線後續的 A/V 偏好後訓練直接相關；
+  reward 與資料過過濾）——與 M2 原生音訊路線後續的 A/V 偏好後訓練直接相關；
   授權／權重可得性同樣未核實，列為 P1a 之後的觀察候選，現階段不改動 P1a 配方。
   同輪覆核再補三筆 A/V reward 觀察（同清單 2026-10-06 版）：**AV-GRPO**（2026，
   modality-anchored 解耦擴散 RL——rollout 錨定單模態、凍結另一塔，異構 reward
