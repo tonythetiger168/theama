@@ -38,7 +38,7 @@ truly open project:
 - **LTX-2.x Community License** caps free commercial use at $10M annual revenue.
 
 Theama therefore builds on **Wan 2.2 (Apache-2.0)** and borrows *architecture
-ideas only* from H3 / LTX-2.5. Full analysis: [`docs/license-risks.md`](docs/license-risks.md).
+ideas only* from H3 / LTX-2.5. Full analysis: see Docs below.
 
 ## Repository layout
 
@@ -83,10 +83,6 @@ Image line:
 - **M7b** — Editing pipeline (Qwen-Image-Edit-2511, multi-reference)
 - **M7c** — Integration: keyframes → Film I2V, identity references → Avatar
 
-Acceptance criteria per milestone: [`docs/training-plan.md`](docs/training-plan.md).
-Quality bar & path to Wan 3.0 / H3 class: [`docs/quality-path-wan3-h3.md`](docs/quality-path-wan3-h3.md).
-Global landscape and gap analysis: [`docs/landscape-2026-11.md`](docs/landscape-2026-11.md).
-
 ## License
 
 Code in this repository: **Apache-2.0** (see `LICENSE`). Commercial use —
@@ -94,3 +90,11 @@ including in products and hosted services — needs no royalty or feedback.
 Third-party model weights are downloaded by the user and remain under their own
 licenses; see `NOTICE` and `docs/license-risks.md`. Avatars involve real
 likenesses and voices — only use imagery and audio you have rights to.
+
+## Docs
+
+- [`docs/landscape-2026-11.md`](docs/landscape-2026-11.md) — global landscape & gap analysis
+- [`docs/quality-path-wan3-h3.md`](docs/quality-path-wan3-h3.md) — quality bar & path to Wan 3.0 / H3 class
+- [`docs/architecture.md`](docs/architecture.md) — hybrid backbone & three-line architecture
+- [`docs/training-plan.md`](docs/training-plan.md) — milestones & acceptance criteria
+- [`docs/license-risks.md`](docs/license-risks.md) — license analysis (H3 / LTX / Qwen / FLUX)
