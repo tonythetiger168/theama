@@ -87,6 +87,20 @@ for bridge warmup (`theama.model.lora`, rank-8 default, merged back before the
 full phase). Real-weight GPU smoke runners are ready; internal Wan block
 bridges are still pending.
 
+For a fresh RunPod PyTorch pod (recommended: RTX 4090 24GB, 32GB CPU RAM,
+40GB network volume), the M2-only idempotent entry point is:
+
+```bash
+bash scripts/runpod_m2_smoke.sh /workspace
+```
+
+It installs dependencies, runs the CPU suite, downloads only the TI2V-5B
+transformer and DAC (not A14B or VideoReward), then runs both real-weight
+smokes. Reports and logs stay under `/workspace/smoke_out`; success is marked
+by `M2_RUNPOD_SMOKE_OK` after both JSON reports have been written.
+
+The individual commands are:
+
 ```bash
 python scripts/smoke_m2_real_weights.py dac --weights checkpoints/wan2.2/dac_44khz/weights.pth --out smoke_out/dac
 python scripts/smoke_m2_real_weights.py wan --model-path checkpoints/wan2.2/ti2v-5b --out smoke_out/wan_ti2v_5b
