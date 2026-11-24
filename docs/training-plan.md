@@ -48,6 +48,14 @@
 - Stage 1 in-context regenerate（denoise 0.35）；Stage 2 tiled upscale（denoise 0.25）。
 - **驗收**：4K 輸出對 2K 輸入的 LPIPS 不劣化 > 10%；tile 接縫不可見；單片 30s 4K 在 80GB 卡可完成。
 
+## M4b — THEAMA-8K（4K→8K tiled regenerate，2026-11-24 新增）
+
+光環型差異化（Wan 3.0 鎖 1080P、H3 鎖 2K，8K 無人提供）；**加分題不是主線**，M4 4K 穩了才動。
+
+- 方法：M4 Stage 2 直接延伸——4K base → 8K tiled in-context regenerate（~1024² tiles、overlap 128、denoise 0.15–0.25，比 4K 段更保守，只補高頻紋理）。
+- 工程前提：tiled VAE decode（8K 整張不進 VAE）；PNG 中介檔 streaming mux（8K 序列 ~21GB/30s 支，不全落盤）；HEVC/AV1 + HDR10 封裝（`mux_mp4(vcodec="hevc"|"av1", hdr="hdr10")` 已就位，hvc1 tag / SVT-AV1）。
+- **驗收**：(1) 8K 輸出對 4K 輸入 LPIPS 不劣化 > 10%；(2) tile 接縫人工檢不可見（含文字/人臉特寫偽影檢查）；(3) 單片 30s 8K 在 80GB 卡完成（估數小時/支）；(4) HEVC/AV1 + HDR10 mux + ffprobe 驗證通過。
+
 ## M5 — 品質收斂對標（bar = Wan 3.0 / H3，2026-11-24 細化）
 
 - 對手：MiniMax H3 API（2K/15s/音訊）、Wan 3.0 API（30s/1080P/音訊，AA T2V #1）固定 eval set 盲測。

@@ -19,7 +19,7 @@ project on a fully permissive license stack, with three product lines:
 | Native audio | 44.1 kHz stereo, dialogue + SFX + ambience | Parallel audio DiT with bidirectional A/V cross-attention (clean-room, LTX-2.5 pattern; Kandinsky 6.0 MIT / MAGI-2 Apache-2.0 as permissive references) |
 | Duration | 30 s per prompt | THEAMA-Extend: SVI-style autoregressive continuation with consistency anchors |
 | Resolution | 4K (3840×2160) | THEAMA-4K: two-stage in-context regenerate 720p → 2K → 4K |
-| Output | MP4 (H.264/H.265 + AAC) | `theama.inference` export / mux pipeline |
+| Output | MP4 (H.264 / HEVC / AV1 + AAC, SDR / HDR10 / HLG) | `theama.inference` export / mux pipeline |
 | Avatar | 720p real-time interactive | Wan-Animate base (Apache-2.0) + causal streaming + replay anchors (clean-room SRF-class) |
 | Image | CJK-text-accurate T2I + editing | Qwen-Image-2512 (Apache-2.0) quality base; Z-Image Turbo (Apache-2.0) 8-NFE fast path |
 | License | End-to-end permissive | Apache-2.0 / MIT components only — no community-license weights anywhere in the stack |
@@ -70,6 +70,7 @@ Film line:
 - **M2** — Audio DiT branch + joint A/V fine-tune (LoRA → full)
 - **M3** — THEAMA-Extend: 5 s → 30 s continuation without drift
 - **M4** — THEAMA-4K: two-stage 720p → 2K → 4K regenerate
+- **M4b** — THEAMA-8K: 4K → 8K tiled regenerate + HEVC/AV1 + HDR10 delivery (halo tier, after M4 is stable)
 - **M5** — Quality closure vs Wan 3.0 / H3 API on a fixed eval set (see docs/quality-path-wan3-h3.md)
 
 Avatar line:
@@ -97,5 +98,7 @@ likenesses and voices — only use imagery and audio you have rights to.
 - [`docs/landscape-2026-11.md`](docs/landscape-2026-11.md) — global landscape & gap analysis
 - [`docs/quality-path-wan3-h3.md`](docs/quality-path-wan3-h3.md) — quality bar & path to Wan 3.0 / H3 class
 - [`docs/architecture.md`](docs/architecture.md) — hybrid backbone & three-line architecture
+- [`docs/models.md`](docs/models.md) — model stack README (roles, licenses, sizes, status)
+- [`docs/model-roadmap.md`](docs/model-roadmap.md) — model release roadmap & watchlist
 - [`docs/training-plan.md`](docs/training-plan.md) — milestones & acceptance criteria
 - [`docs/license-risks.md`](docs/license-risks.md) — license analysis (H3 / LTX / Qwen / FLUX)
