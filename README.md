@@ -19,7 +19,7 @@ project on a fully permissive license stack, with three product lines:
 | Native audio | 44.1 kHz stereo, dialogue + SFX + ambience | Parallel audio DiT with bidirectional A/V cross-attention (clean-room, LTX-2.5 pattern; Kandinsky 6.0 MIT / MAGI-2 Apache-2.0 as permissive references) |
 | Duration | 30 s per prompt | THEAMA-Extend: SVI-style autoregressive continuation with consistency anchors |
 | Resolution | 4K (3840×2160) | THEAMA-4K: two-stage in-context regenerate 720p → 2K → 4K |
-| Output | MP4 (H.264/H.265 + AAC) | `theama.inference` export / mux pipeline |
+| Output | MP4 (H.264/H.265 + AAC) | `theama.infer` export / mux pipeline |
 | Avatar | 720p real-time interactive | Wan-Animate base (Apache-2.0) + causal streaming + replay anchors (clean-room SRF-class) |
 | Image | CJK-text-accurate T2I + editing | Qwen-Image-2512 (Apache-2.0) quality base; Z-Image Turbo (Apache-2.0) 8-NFE fast path |
 | License | End-to-end permissive | Apache-2.0 / MIT components only — no community-license weights anywhere in the stack |
@@ -54,16 +54,18 @@ tests/           CPU-only smoke tests
 
 ```bash
 pip install -e .[dev]
-bash scripts/download_weights.sh        # Wan 2.2 weights (Apache-2.0), user-side download
-pytest tests/                           # CPU smoke tests
-bash scripts/run_inference.sh "a cat walking through neon rain" out.mp4
+bash scripts/download_weights.sh              # Wan 2.2 weights (Apache-2.0), user-side download
+pytest tests/                                 # CPU tests: configs, eval set, MP4 mux
+bash scripts/run_inference.sh "a cat walking through neon rain" out.mp4   # GPU
+python scripts/gen_eval_set.py --model ti2v-5b --out eval_out/ti2v-5b     # GPU: 50-prompt eval set
+python scripts/run_vbench.py --videos eval_out/t2v-a14b --model t2v-a14b  # GPU: VBench gate vs reference
 ```
 
 ## Roadmap
 
 Film line:
 
-- **M1** — Wan 2.2 inference reproduction + eval harness (VBench + AV-sync metrics)
+- **M1** — Wan 2.2 inference reproduction + eval harness (VBench + AV-sync metrics) — code landed 2026-11-24, GPU acceptance run pending
 - **M2** — Audio DiT branch + joint A/V fine-tune (LoRA → full)
 - **M3** — THEAMA-Extend: 5 s → 30 s continuation without drift
 - **M4** — THEAMA-4K: two-stage 720p → 2K → 4K regenerate

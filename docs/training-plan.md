@@ -9,6 +9,13 @@
 - MP4 mux pipeline（目前無音訊，先留 AAC 靜音軌介面）。
 - **驗收**：`pytest tests/` 全綠；eval set 全數產出 MP4；VBench 分數與 Wan 官方報告同量級（±2%）。
 
+### M1 實作落點（2026-11-24）
+
+- 程式：`src/theama/infer/`（config 模型註冊表、t2v/i2v 推理、mux、pipeline CLI）。
+- Eval set：`eval/t2v_v1.jsonl`（50 prompts，含 8 條繁中場景）；參考分數 `eval/reference.json`。
+- VBench 對標基準：AMD Quark 研究 BF16 reference **0.8681**（832×480、81f@16fps、30 steps、CFG 5.0）；AWS Neuron 卡 6 維平均 67.63%；MLPerf v6.0 reference 70.48。數值隨評測配置浮動，對齊時須複製同一 eval config。
+- GPU 驗收腳本：`scripts/gen_eval_set.py`（可續跑，50 支 MP4 全數產出+probe 驗證）、`scripts/run_vbench.py`（6 維子集 ±0.02 gate）。
+
 ## M2 — Audio DiT + 聯合微調
 
 - DAC 44.1kHz stereo latent 接入；`CrossModalBridge` 每 3 層一組。
