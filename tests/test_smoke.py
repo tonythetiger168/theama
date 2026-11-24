@@ -1,0 +1,52 @@
+# SPDX-License-Identifier: Apache-2.0
+"""CPU-only smoke tests: imports, config load, license red line, RoPE shapes."""
+
+import torch
+import yaml
+
+
+def test_config_loads():
+    cfg = yaml.safe_load(open("configs/theama_base.yaml"))
+    assert cfg["generation"]["target_seconds"] == 30
+    assert cfg["model"]["audio"]["sample_rate"] == 44100
+    assert cfg["training"]["forbid_third_party_outputs"] is True
+
+
+def test_license_red_line_enforced():
+    from theama.data.dataset import AVDataset
+
+    AVDataset.check_source("pexels:12345")  # clean source passes
+    for bad in ("minimax-h3:gen-001", "ltx-2.5:out-9", "hailuo-clip"):
+        try:
+            AVDataset.check_source(bad)
+            raise AssertionError(f"forbidden source accepted: {bad}")
+        except ValueError:
+            pass
+
+
+def test_rope3d_shapes():
+    from theama.model.rope3d import apply_rope, build_3d_rope
+
+    t, h, w, dim = 4, 2, 2, 64
+    freqs = build_3d_rope(t, h, w, dim)
+    assert freqs.shape == (t * h * w, dim // 2)
+    x = torch.randn(2, 8, t * h * w, dim)
+    assert apply_rope(x, freqs).shape == x.shape
+
+
+def test_audio_dit_forward_shapes():
+    from theama.model.audio_dit import AudioDiT
+
+    m = AudioDiT(dim=128, layers=4, heads=4, video_dim=256, bridge_every=2, latent_dim=32)
+    a = torch.randn(2, 50, 32)
+    v = torch.randn(2, 120, 256)
+    cond = torch.randn(2, 128)
+    a_out, v_out = m(a, v, cond)
+    assert a_out.shape == a.shape
+    assert v_out.shape == v.shape
+
+
+def test_package_version():
+    import theama
+
+    assert theama.__version__ == "0.1.0"
