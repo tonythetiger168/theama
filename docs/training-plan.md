@@ -33,10 +33,11 @@
 - Stage 1 in-context regenerate（denoise 0.35）；Stage 2 tiled upscale（denoise 0.25）。
 - **驗收**：4K 輸出對 2K 輸入的 LPIPS 不劣化 > 10%；tile 接縫不可見；單片 30s 4K 在 80GB 卡可完成。
 
-## M5 — 品質收斂對標
+## M5 — 品質收斂對標（bar = Wan 3.0 / H3，2026-11-24 細化）
 
-- 對手：MiniMax H3 API（2K/15s/音訊）、Seedance 2.5 API（30s/4K）固定 eval set 盲測。
-- **驗收**：50-prompt 盲測 win/tie rate ≥ 50% vs H3；VBench 總分進開源前三（當時榜單）。
+- 對手：MiniMax H3 API（2K/15s/音訊）、Wan 3.0 API（30s/1080P/音訊，AA T2V #1）固定 eval set 盲測。
+- 前置：P1 資料引擎 + DPO/RLHF 偏好後訓練、P2 omni-reference — 見 [`quality-path-wan3-h3.md`](quality-path-wan3-h3.md)。
+- **驗收**：(1) 50-prompt 盲測 win/tie ≥ 50% vs H3（768p 對 768p）；(2) win/tie ≥ 40% vs Wan 3.0（720p 對 720p）；(3) VBench 總分進開源前三（當時榜單）；(4) 4K/30s 交付（Wan 3.0 無 4K — 差異化贏點）。
 
 ## 風險與對策
 

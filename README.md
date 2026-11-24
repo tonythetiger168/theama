@@ -69,7 +69,7 @@ Film line:
 - **M2** — Audio DiT branch + joint A/V fine-tune (LoRA → full)
 - **M3** — THEAMA-Extend: 5 s → 30 s continuation without drift
 - **M4** — THEAMA-4K: two-stage 720p → 2K → 4K regenerate
-- **M5** — Quality closure vs H3 / Wan 3.0 API on a fixed eval set
+- **M5** — Quality closure vs Wan 3.0 / H3 API on a fixed eval set (see docs/quality-path-wan3-h3.md)
 
 Avatar line:
 
@@ -84,6 +84,7 @@ Image line:
 - **M7c** — Integration: keyframes → Film I2V, identity references → Avatar
 
 Acceptance criteria per milestone: [`docs/training-plan.md`](docs/training-plan.md).
+Quality bar & path to Wan 3.0 / H3 class: [`docs/quality-path-wan3-h3.md`](docs/quality-path-wan3-h3.md).
 Global landscape and gap analysis: [`docs/landscape-2026-11.md`](docs/landscape-2026-11.md).
 
 ## License
