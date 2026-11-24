@@ -15,6 +15,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from theama.reward.config import ALLOWED_LICENSES, REWARD_MODELS, get_reward_spec
 from theama.reward.pairs import build_pairs, coverage_report
+from theama.reward.score import load_successful_scores, summarize_scores
 from theama.train.dpo import dpo_loss, flow_match_pair, velocity_mse
 
 
@@ -136,6 +137,74 @@ def test_velocity_mse_shape():
     target = torch.randn(3, 2, 5)
     err = velocity_mse(pred, target)
     assert err.shape == (3,)
+
+
+# ---- scores.jsonl resume / summary helpers ----------------------------------
+
+def _write_scores(path: Path, rows: list[dict]) -> None:
+    path.write_text("".join(json.dumps(r) + "\n" for r in rows))
+
+
+def test_load_successful_scores_missing_file(tmp_path):
+    assert load_successful_scores(tmp_path / "nope.jsonl") == {}
+
+
+def test_load_successful_scores_filters_errors_and_reward(tmp_path):
+    f = tmp_path / "scores.jsonl"
+    _write_scores(f, [
+        {"prompt_id": "A", "video": "/v/a.mp4", "reward": "videoreward", "overall": 0.9},
+        {"prompt_id": "B", "video": "/v/b.mp4", "reward": "videoreward",
+         "error": "RuntimeError: boom"},
+        {"prompt_id": "C", "video": "/v/c.mp4", "reward": "other-model", "overall": 0.5},
+        {"prompt_id": "D", "video": "/v/d.mp4", "overall": 0.7},  # legacy: no reward key
+    ])
+    kept = load_successful_scores(f, reward="videoreward")
+    assert sorted(kept) == ["/v/a.mp4", "/v/d.mp4"]  # errors + other-reward dropped
+    assert load_successful_scores(f, reward="other-model") == {
+        "/v/c.mp4": {"prompt_id": "C", "video": "/v/c.mp4",
+                     "reward": "other-model", "overall": 0.5}
+    }
+
+
+def test_load_successful_scores_dedup_latest_wins(tmp_path):
+    f = tmp_path / "scores.jsonl"
+    _write_scores(f, [
+        {"video": "/v/a.mp4", "overall": 0.1},
+        {"video": "/v/a.mp4", "overall": 0.9},
+    ])
+    kept = load_successful_scores(f)
+    assert kept["/v/a.mp4"]["overall"] == pytest.approx(0.9)
+
+
+def test_load_successful_scores_skips_malformed_lines(tmp_path):
+    f = tmp_path / "scores.jsonl"
+    f.write_text(
+        '{"video": "/v/a.mp4", "overall": 0.5}\n'
+        "not json at all\n"
+        "\n"
+        '{"video": "/v/b.mp4"}\n'  # no overall -> treated as failed row
+    )
+    assert sorted(load_successful_scores(f)) == ["/v/a.mp4"]
+
+
+def test_summarize_scores_mixed_rows():
+    rows = [
+        {"overall": 0.8, "dims": {"visual_quality": 0.9, "text_alignment": 0.7}},
+        {"overall": 0.4, "dims": {"visual_quality": 0.5}},
+        {"video": "/v/x.mp4", "error": "RuntimeError: boom"},
+    ]
+    s = summarize_scores(rows)
+    assert s["scored"] == 2
+    assert s["failed"] == 1
+    assert s["mean_overall"] == pytest.approx(0.6)
+    assert s["dims"]["visual_quality"] == pytest.approx(0.7)   # mean over rows having it
+    assert s["dims"]["text_alignment"] == pytest.approx(0.7)
+
+
+def test_summarize_scores_empty():
+    assert summarize_scores([]) == {
+        "scored": 0, "failed": 0, "mean_overall": None, "dims": {}
+    }
 
 
 # ---- config + scripts -------------------------------------------------------
