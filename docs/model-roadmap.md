@@ -51,7 +51,7 @@
   `Wan-AI/Wan2.2-Animate-2-14B-Distilled-Diffusers`（base + distilled 權重）。
   官方 quick start 只列 character animation；replacement 仍是第一代
   `Wan-AI/Wan2.2-Animate-14B` 的能力，M6a 不預設使用。
-- **Wan 3.x 開權重** — 仍 API-only（2026-11-24 再次確認；2026-11-05 多方核查：Wan-AI HF 27 個 repo、
+- **Wan 3.x 開權重** — 仍 API-only（2026-11-25 再次確認；2026-11-05 多方核查：Wan-AI HF 27 個 repo、
   Wan-Video GitHub 6 個 repo 均無 2.5/2.6/2.7/3.0 權重；官方
   `AlibabaCloud-Official/Wan3.0` 僅 README + license 檔）。骨幹續用 Wan 2.2。
   旁註：新開放控制模型 `Wan-Dancer-14B`（Apache-2.0，2026-07）可留意。
@@ -62,11 +62,16 @@
 - **開源 video reward 新模型** — awesome-rm-for-video-generation（2026-10 更新）新增
   AesRM（專家標註美學 RM，base + CoT 變體）、UnifiedReward-Flex、GT-SVJ（self-supervised
   judge）等；授權與權重可得性未逐一核實，VideoReward 仍為首選，暫不加第二把尺。
+  2026-11-25 補查同清單，新增觀察 **joint audio-video reward** 線：**VA-Judger**
+  （VAPref-10K 影音偏好對訓練的 A/V 聯合 judge，直接獎勵跨模態一致性而非手工拼接
+  分維指標）與 **AVBench**（人本影音評測器，二元判決信心可轉連續分，可作 RLHF
+  reward 與資料過濾）——與 M2 原生音訊路線後續的 A/V 偏好後訓練直接相關；
+  授權／權重可得性同樣未核實，列為 P1a 之後的觀察候選，現階段不改動 P1a 配方。
 
 ## 發布策略
 
 - 自研微調權重（DPO LoRA、audio DiT、extend/4K 模組）以 **Apache-2.0** 發布於
-  Hugging Face `chienhsinlin` namespace，模型卡遵循 HF model card 規範（訓練資料來源、
+  Hugging Face `chienhsinlin` namespace，模型卡遵循 HF model card 規規範（訓練資料來源、
   評測分數、限制與合規聲明）。
 - 第三方權重（Wan 2.2、Qwen-Image 等）不轉售不重新打包，使用者自行下載
   （`scripts/download_weights.sh`），權重授權各自保留。
