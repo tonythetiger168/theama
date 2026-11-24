@@ -83,8 +83,44 @@ random latent/text conditioning. It validates the real-weight tensor,
 backward/optimizer and memory contracts, not prompt-to-video quality,
 perceptual audio quality or A/V-sync acceptance.
 
-Do not stop or terminate the pod until the reports have been copied or uploaded
-for review. Report any pod-stop action separately so billing is explicit.
+## Save results and delete the pod
+
+This cleanup is mandatory after both success and failure. Do not leave a pod
+running or stopped while waiting for review: a stopped pod may still incur
+storage charges, and the requested end state is a deleted pod with its network
+volume preserved.
+
+1. Create `results/runpod/m2-smoke/` in the local checkout on the machine
+   running Claude. Copy the complete contents of `/workspace/smoke_out/` into
+   that directory with the available RunPod file-transfer or SSH route. Keep
+   the relative paths, including all JSON reports, DAC `input.wav` and
+   `reconstructed.wav`, and every file under `logs/`. Do not commit generated
+   results, credentials or weight files to the repository.
+2. Save the complete terminal output and a `run-summary.md` in the same local
+   directory. Record the command, pod ID, GPU, start/end time, exit status,
+   observed success markers and result path. On failure, include the complete
+   error/traceback and copy every partial artifact that exists; never discard
+   failure evidence or claim GPU acceptance.
+3. Verify the local copies before pod deletion. On success, all three required
+   JSON reports and both DAC WAV files must exist and be non-empty, all copied
+   JSON must parse, and the logs directory must be non-empty. On failure,
+   verify that every copied file is non-empty and every copied JSON parses;
+   list any expected artifacts that could not be produced in `run-summary.md`.
+4. Only after the local evidence is verified, use the connected RunPod MCP/API
+   to **delete** the pod, not merely stop it. Confirm deletion by pod ID with a
+   subsequent get/list operation. Preserve the network volume and all saved
+   results and weights on it; do not delete the volume.
+5. Return the absolute local result path, pod ID, deleted/not-deleted
+   confirmation, overall success/failure status and any error. Report the pod
+   deletion separately so billing status is explicit. Never claim that results
+   were saved or the pod was deleted without performing and verifying those
+   actions.
+
+If local transfer fails, make one bounded retry through another available
+route. If it still fails, preserve a `smoke_out` archive on the network volume,
+then delete the pod anyway to prevent further pod billing. In that exceptional
+case, report clearly that local verification is incomplete and give the volume
+archive path; do not describe the handoff as complete.
 
 ## License and data boundaries
 
