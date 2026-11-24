@@ -14,6 +14,7 @@ import torch
 
 from theama.model.audio_codec import decode_stereo, encode_stereo
 from theama.model.audio_dit import AudioDiT
+from theama.model.wan_adapter import select_wan_bridge_blocks
 from theama.train.train_joint_av import JointAVTrainer
 
 __all__ = [
@@ -113,6 +114,9 @@ def run_wan_smoke(
     latent_height: int = 2,
     latent_width: int = 2,
     learning_rate: float = 1e-4,
+    bridge_location: str = "latent_pre_backbone",
+    bridge_lora_rank: int = 0,
+    bridge_lora_alpha: float | None = None,
     seed: int = 42,
 ) -> dict:
     """Run one real-Wan 5-D A/V forward/backward/optimizer step.
@@ -131,16 +135,32 @@ def run_wan_smoke(
     def random_tensor(shape: tuple[int, ...]) -> torch.Tensor:
         return torch.randn(shape, generator=generator, device=dev, dtype=dtype)
 
+    bridge_video_dim = video.inner_dim if bridge_location == "wan_blocks" else spec.latent_channels
+    effective_lora_alpha = (
+        2 * bridge_lora_rank
+        if bridge_lora_rank > 0 and bridge_lora_alpha is None
+        else bridge_lora_alpha
+    )
     audio = AudioDiT(
         dim=audio_dim,
         layers=audio_layers,
         heads=4,
-        video_dim=spec.latent_channels,
+        video_dim=bridge_video_dim,
         bridge_every=1,
         latent_dim=audio_latent_dim,
     ).to(device=dev, dtype=dtype)
     video.to(dev)
-    trainer = JointAVTrainer(video, audio, {"phase": "bridge", "lr": learning_rate})
+    trainer = JointAVTrainer(
+        video,
+        audio,
+        {
+            "phase": "bridge",
+            "lr": learning_rate,
+            "bridge_location": bridge_location,
+            "bridge_lora_rank": bridge_lora_rank,
+            "bridge_lora_alpha": effective_lora_alpha,
+        },
+    )
 
     video_shape = (
         1,
@@ -180,8 +200,16 @@ def run_wan_smoke(
         "video_shape": list(video_shape),
         "audio_shape": list(batch["audio_latent"].shape),
         "text_cond_shape": list(batch["video_cond"].shape),
-        "bridge_location": "latent_pre_backbone",
-        "trainable_parameters": sum(param.numel() for param in after),
+        "bridge_location": bridge_location,
+        "bridge_video_dim": bridge_video_dim,
+        "wan_bridge_blocks": (
+            select_wan_bridge_blocks(len(video.transformer.blocks), len(audio.bridges))
+            if bridge_location == "wan_blocks"
+            else []
+        ),
+        "bridge_lora_rank": bridge_lora_rank,
+        "bridge_lora_alpha": effective_lora_alpha,
+        "trainable_parameters": sum(param.numel() for param in trainer._trainable_params),
         "bridge_grad_tensors": grad_tensors,
         "updated_bridge_tensors": updated,
         "max_bridge_delta": max(deltas, default=0.0),

@@ -1,10 +1,10 @@
 # SPDX-License-Identifier: Apache-2.0
 """Wan 2.2 video-latent adapter for the M2 joint A/V trainer.
 
-This is the *external latent-grid bridge* smoke path: audio cross-attention
+The default path is the *external latent-grid bridge*: audio cross-attention
 updates flattened VAE latent tokens, the tokens are restored to 5-D, and the
-frozen Wan transformer predicts velocity. It does not claim to implement the
-planned bridges inside Wan transformer blocks; that is a later integration.
+frozen Wan transformer predicts velocity. The joint path can instead insert the
+same trainable bridges after evenly spaced internal Wan transformer blocks.
 
 Only diffusers-layout Wan checkpoints are used. Loading is lazy so CPU tests
 never import diffusers or download weights.
@@ -25,6 +25,7 @@ __all__ = [
     "flatten_video_latents",
     "get_wan_adapter_spec",
     "scale_wan_timestep",
+    "select_wan_bridge_blocks",
     "unflatten_video_tokens",
 ]
 
@@ -93,6 +94,25 @@ def scale_wan_timestep(t: torch.Tensor, scale: int = 1000) -> torch.Tensor:
     return torch.round(t.detach().float() * scale).clamp(0, scale).to(dtype=torch.long)
 
 
+def select_wan_bridge_blocks(num_blocks: int, num_bridges: int) -> list[int]:
+    """Choose distinct, evenly spaced Wan blocks, including the final block.
+
+    Bridges run *after* the returned zero-based block indices. Requiring at
+    least as many Wan blocks as bridges prevents two audio segments from
+    attaching to the same video block and making execution order ambiguous.
+    """
+    if num_blocks < 1 or num_bridges < 1:
+        raise ValueError("Wan internal bridging requires at least one block and one bridge")
+    if num_bridges > num_blocks:
+        raise ValueError(
+            f"cannot place {num_bridges} bridges on only {num_blocks} Wan blocks"
+        )
+    indices = [((index + 1) * num_blocks) // num_bridges - 1 for index in range(num_bridges)]
+    if len(set(indices)) != num_bridges:
+        raise RuntimeError(f"internal bridge schedule is not unique: {indices}")
+    return indices
+
+
 class WanVideoAdapter(torch.nn.Module):
     """Frozen ``WanTransformer3DModel`` implementing the trainer adapter contract."""
 
@@ -133,14 +153,22 @@ class WanVideoAdapter(torch.nn.Module):
         self.transformer.eval()
         return self
 
-    def predict_velocity(
+    @property
+    def inner_dim(self) -> int:
+        """Wan patch-token width, inferred without importing Diffusers."""
+        patch_embedding = getattr(self.transformer, "patch_embedding", None)
+        inner_dim = getattr(patch_embedding, "out_channels", None)
+        if not isinstance(inner_dim, int) or inner_dim < 1:
+            raise ValueError("Wan transformer must expose patch_embedding.out_channels")
+        return inner_dim
+
+    def _validate_inputs(
         self,
         hidden_states: torch.Tensor,
         t: torch.Tensor,
         encoder_hidden_states: torch.Tensor,
-        encoder_hidden_states_image: torch.Tensor | None = None,
-    ) -> torch.Tensor:
-        """Run the real Wan forward signature and return its velocity tensor."""
+        encoder_hidden_states_image: torch.Tensor | None,
+    ) -> None:
         if hidden_states.ndim != 5:
             raise ValueError(
                 f"expected Wan latents (B,C,F,H,W), got {tuple(hidden_states.shape)}"
@@ -165,6 +193,13 @@ class WanVideoAdapter(torch.nn.Module):
         if self.spec.image_conditioned and encoder_hidden_states_image is None:
             raise ValueError(f"{self.spec.name} requires image conditioning")
 
+    def _run_transformer(
+        self,
+        hidden_states: torch.Tensor,
+        t: torch.Tensor,
+        encoder_hidden_states: torch.Tensor,
+        encoder_hidden_states_image: torch.Tensor | None,
+    ) -> torch.Tensor:
         timestep = scale_wan_timestep(t, self.spec.timestep_scale).to(hidden_states.device)
         output = self.transformer(
             hidden_states=hidden_states,
@@ -179,3 +214,86 @@ class WanVideoAdapter(torch.nn.Module):
                 f"Wan output {tuple(sample.shape)} != input {tuple(hidden_states.shape)}"
             )
         return sample
+
+    def predict_velocity(
+        self,
+        hidden_states: torch.Tensor,
+        t: torch.Tensor,
+        encoder_hidden_states: torch.Tensor,
+        encoder_hidden_states_image: torch.Tensor | None = None,
+    ) -> torch.Tensor:
+        """Run the real Wan forward signature and return its velocity tensor."""
+        self._validate_inputs(hidden_states, t, encoder_hidden_states, encoder_hidden_states_image)
+        return self._run_transformer(
+            hidden_states, t, encoder_hidden_states, encoder_hidden_states_image
+        )
+
+    def predict_joint_velocity(
+        self,
+        hidden_states: torch.Tensor,
+        t: torch.Tensor,
+        encoder_hidden_states: torch.Tensor,
+        *,
+        audio_dit: torch.nn.Module,
+        audio_latent: torch.Tensor,
+        audio_cond: torch.Tensor,
+        encoder_hidden_states_image: torch.Tensor | None = None,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        """Interleave audio segments and bidirectional bridges inside Wan blocks.
+
+        Temporary forward hooks keep the stock Diffusers forward (including
+        patchification, conditioning, RoPE and unpatchification) intact. Each
+        hook advances the audio stream to its next bridge, then
+        applies that bridge to Wan's ``(B,T,inner_dim)`` tokens. Hooks are
+        always removed, including on failure. A joint call is deliberately
+        serialized on this adapter; concurrent calls on one instance are not
+        supported.
+        """
+        self._validate_inputs(hidden_states, t, encoder_hidden_states, encoder_hidden_states_image)
+        batch = hidden_states.shape[0]
+        if audio_latent.ndim != 3 or audio_latent.shape[0] != batch:
+            raise ValueError("audio_latent must have shape (B,Ta,Da) matching Wan batch")
+        if audio_cond.ndim != 2 or audio_cond.shape[0] != batch:
+            raise ValueError("audio_cond must have shape (B,Da) matching Wan batch")
+        blocks = getattr(self.transformer, "blocks", None)
+        bridges = getattr(audio_dit, "bridges", None)
+        if blocks is None or bridges is None or not len(bridges):
+            raise ValueError("Wan internal bridging requires transformer blocks and audio bridges")
+        if torch.is_grad_enabled() and getattr(self.transformer, "gradient_checkpointing", False):
+            raise NotImplementedError(
+                "wan_blocks bridging does not yet support Wan gradient checkpointing; "
+                "disable it for this smoke path so audio segments advance exactly once"
+            )
+        indices = select_wan_bridge_blocks(len(blocks), len(bridges))
+        bridge_dim = bridges[0].v_norm.normalized_shape[0]
+        if bridge_dim != self.inner_dim:
+            raise ValueError(
+                f"audio bridge video_dim {bridge_dim} != Wan inner dim {self.inner_dim}; "
+                "build AudioDiT with video_dim=video.inner_dim for wan_blocks"
+            )
+
+        audio = audio_dit.start_stream(audio_latent)
+        handles = []
+
+        def make_hook(bridge_index: int):
+            def bridge_hook(_module, _args, video_tokens):
+                nonlocal audio
+                if not isinstance(video_tokens, torch.Tensor) or video_tokens.ndim != 3:
+                    raise RuntimeError("Wan block output must be a (B,T,inner_dim) tensor")
+                audio = audio_dit.advance_to_bridge(audio, audio_cond, bridge_index)
+                video_tokens, audio = bridges[bridge_index](video_tokens, audio)
+                return video_tokens
+
+            return bridge_hook
+
+        try:
+            for bridge_index, block_index in enumerate(indices):
+                handles.append(blocks[block_index].register_forward_hook(make_hook(bridge_index)))
+            sample = self._run_transformer(
+                hidden_states, t, encoder_hidden_states, encoder_hidden_states_image
+            )
+        finally:
+            for handle in handles:
+                handle.remove()
+        audio_pred = audio_dit.finish_stream(audio, audio_cond)
+        return sample, audio_pred

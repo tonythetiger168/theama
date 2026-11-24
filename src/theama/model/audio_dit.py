@@ -73,12 +73,39 @@ class AudioDiT(nn.Module):
         )
         self.out = nn.Linear(dim, latent_dim)
 
+    def start_stream(self, a_latent: torch.Tensor) -> torch.Tensor:
+        """Project DAC tokens into the audio DiT stream."""
+        return self.in_proj(a_latent)
+
+    def advance_to_bridge(
+        self, a: torch.Tensor, cond: torch.Tensor, bridge_index: int
+    ) -> torch.Tensor:
+        """Run the audio-block segment immediately preceding one bridge.
+
+        Wan's internal-bridge adapter calls this from successive backbone-block
+        hooks. Advancing in segments (rather than precomputing the whole audio
+        stream) keeps later audio blocks downstream of every earlier ``v2a``
+        update, so both bridge directions receive useful gradients.
+        """
+        if not 0 <= bridge_index < len(self.bridges):
+            raise IndexError(f"bridge index {bridge_index} out of range")
+        start = bridge_index * self.bridge_every
+        for block in self.blocks[start : start + self.bridge_every]:
+            a = block(a, cond)
+        return a
+
+    def finish_stream(self, a: torch.Tensor, cond: torch.Tensor) -> torch.Tensor:
+        """Run any trailing audio blocks and project back to DAC latent size."""
+        start = len(self.bridges) * self.bridge_every
+        for block in self.blocks[start:]:
+            a = block(a, cond)
+        return self.out(a)
+
     def forward(self, a_latent: torch.Tensor, v_tokens: torch.Tensor,
                 cond: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
         """One denoising step on the audio stream; returns (audio_eps, updated video tokens)."""
-        a = self.in_proj(a_latent)
-        for i, blk in enumerate(self.blocks):
-            a = blk(a, cond)
-            if (i + 1) % self.bridge_every == 0:
-                v_tokens, a = self.bridges[(i + 1) // self.bridge_every - 1](v_tokens, a)
-        return self.out(a), v_tokens
+        a = self.start_stream(a_latent)
+        for bridge_index, bridge in enumerate(self.bridges):
+            a = self.advance_to_bridge(a, cond, bridge_index)
+            v_tokens, a = bridge(v_tokens, a)
+        return self.finish_stream(a, cond), v_tokens

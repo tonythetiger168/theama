@@ -1,10 +1,10 @@
 # SPDX-License-Identifier: Apache-2.0
 """Joint audio-video flow-matching trainer (M2 CPU-testable core).
 
-The video adapter must expose ``predict_velocity(video_tokens, t, cond)``.
-``AudioDiT`` first updates the video tokens through its cross-modal bridges;
-the frozen video adapter then predicts velocity from those joint tokens. This
-keeps both audio and video losses connected to both bridge directions.
+The external path uses ``predict_velocity(video_tokens, t, cond)`` after
+``AudioDiT`` updates flattened latent tokens. The ``wan_blocks`` path instead
+uses ``predict_joint_velocity`` to interleave audio segments and bridges inside
+Wan. Both paths keep audio and video losses connected to both bridge directions.
 
 The production Wan/DAC adapter is intentionally separate: this module contains
 only framework-independent training math and parameter/optimizer handling.
@@ -97,8 +97,9 @@ class JointAVTrainer:
 
     Config keys: ``phase`` (``bridge`` or ``full``), ``lr``, ``weight_decay``,
     ``audio_loss_weight``, ``video_loss_weight``, ``max_grad_norm``, ``mu``,
-    ``sigma``, ``time_scale``, ``bridge_lora_rank`` (0 disables LoRA) and
-    ``bridge_lora_alpha`` (defaults to ``2 * rank``). Changing phase rebuilds
+    ``sigma``, ``time_scale``, ``bridge_lora_rank`` (0 disables LoRA),
+    ``bridge_lora_alpha`` (defaults to ``2 * rank``) and ``bridge_location``
+    (``latent_pre_backbone`` or ``wan_blocks``). Changing phase rebuilds
     the optimizer so no stale optimizer state is carried across the
     warmup/full boundary.
 
@@ -123,8 +124,11 @@ class JointAVTrainer:
             "time_scale": 1000.0,
             "bridge_lora_rank": 0,
             "bridge_lora_alpha": None,
+            "bridge_location": "latent_pre_backbone",
             **(config or {}),
         }
+        if self.config["bridge_location"] not in {"latent_pre_backbone", "wan_blocks"}:
+            raise ValueError(f"unknown M2 bridge_location: {self.config['bridge_location']}")
         self.optimizer: torch.optim.Optimizer | None = None
         self._trainable_params: list[torch.nn.Parameter] = []
         self.set_phase(self.config["phase"])
@@ -216,20 +220,34 @@ class JointAVTrainer:
         video_t, video_target = flow_match_pair(video, noise_v, t_v)
 
         video_is_5d = video_t.ndim == 5
-        bridge_tokens = flatten_video_latents(video_t) if video_is_5d else video_t
-        audio_pred, joint_tokens = self.audio(
-            audio_t, bridge_tokens, self._condition(cond, t_a)
-        )
-        joint_video = (
-            unflatten_video_tokens(joint_tokens, tuple(video_t.shape))
-            if video_is_5d
-            else joint_tokens
-        )
-        if not hasattr(self.video, "predict_velocity"):
-            raise TypeError("video backbone must implement predict_velocity(tokens, t, cond)")
         if video_cond is None:
             video_cond = self._condition(cond, t_v)
-        video_pred = self.video.predict_velocity(joint_video, t_v, video_cond)
+        if self.config["bridge_location"] == "wan_blocks":
+            if not video_is_5d:
+                raise ValueError("wan_blocks bridging requires Wan latents (B,C,F,H,W)")
+            if not hasattr(self.video, "predict_joint_velocity"):
+                raise TypeError("wan_blocks requires a WanVideoAdapter video backbone")
+            video_pred, audio_pred = self.video.predict_joint_velocity(
+                video_t,
+                t_v,
+                video_cond,
+                audio_dit=self.audio,
+                audio_latent=audio_t,
+                audio_cond=self._condition(cond, t_a),
+            )
+        else:
+            bridge_tokens = flatten_video_latents(video_t) if video_is_5d else video_t
+            audio_pred, joint_tokens = self.audio(
+                audio_t, bridge_tokens, self._condition(cond, t_a)
+            )
+            joint_video = (
+                unflatten_video_tokens(joint_tokens, tuple(video_t.shape))
+                if video_is_5d
+                else joint_tokens
+            )
+            if not hasattr(self.video, "predict_velocity"):
+                raise TypeError("video backbone must implement predict_velocity(tokens, t, cond)")
+            video_pred = self.video.predict_velocity(joint_video, t_v, video_cond)
         audio_loss = F.mse_loss(audio_pred, audio_target)
         video_loss = F.mse_loss(video_pred, video_target)
         loss = (
