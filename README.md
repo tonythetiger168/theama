@@ -1,12 +1,15 @@
 # Theama
 
 **Theama** (Greek θέαμα — "spectacle") is an open-source audio-video generation
-project on a fully permissive license stack, with two product lines:
+project on a fully permissive license stack, with three product lines:
 
 1. **Theama Film** — **4K, 30-second MP4 movie clips with synchronized native
    audio**, at Wan 3.0 / MiniMax H3-class quality.
 2. **Theama Avatar** — **real-time interactive digital humans** (voice-driven,
    mid-stream reference swaps, large body motion), at Vidu S2-Avatar class.
+3. **Theama Image** — **text-to-image with best-in-class CJK/typography
+   rendering** (Qwen-Image-2512 quality base + Z-Image Turbo fast path, both
+   Apache-2.0), feeding keyframes to Film and identity references to Avatar.
 
 ## Design goals
 
@@ -18,6 +21,7 @@ project on a fully permissive license stack, with two product lines:
 | Resolution | 4K (3840×2160) | THEAMA-4K: two-stage in-context regenerate 720p → 2K → 4K |
 | Output | MP4 (H.264/H.265 + AAC) | `theama.inference` export / mux pipeline |
 | Avatar | 720p real-time interactive | Wan-Animate base (Apache-2.0) + causal streaming + replay anchors (clean-room SRF-class) |
+| Image | CJK-text-accurate T2I + editing | Qwen-Image-2512 (Apache-2.0) quality base; Z-Image Turbo (Apache-2.0) 8-NFE fast path |
 | License | End-to-end permissive | Apache-2.0 / MIT components only — no community-license weights anywhere in the stack |
 
 ## Why not MiniMax H3 or LTX-2.5 weights?
@@ -40,7 +44,7 @@ ideas only* from H3 / LTX-2.5. Full analysis: [`docs/license-risks.md`](docs/lic
 
 ```
 docs/            landscape survey, architecture, training plan, license risks
-src/theama/      model / data / train / inference / avatar packages
+src/theama/      model / data / train / inference / avatar / image packages
 configs/         model & pipeline configs
 scripts/         weight download + inference entry points
 tests/           CPU-only smoke tests
@@ -70,6 +74,12 @@ Avatar line:
 - **M6a** — Offline single-image + audio talking avatar (Wan-Animate base, Apache-2.0)
 - **M6b** — Streaming real-time generation (causal DiT + rolling KV cache + replay anchors)
 - **M6c** — Interactive layer: mid-stream reference swap, voice-directed control (Vidu S2 class)
+
+Image line:
+
+- **M7a** — Qwen-Image-2512 + Z-Image Turbo inference reproduction + CJK text-rendering eval
+- **M7b** — Editing pipeline (Qwen-Image-Edit-2511, multi-reference)
+- **M7c** — Integration: keyframes → Film I2V, identity references → Avatar
 
 Acceptance criteria per milestone: [`docs/training-plan.md`](docs/training-plan.md).
 Global landscape and gap analysis: [`docs/landscape-2026-11.md`](docs/landscape-2026-11.md).

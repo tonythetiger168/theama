@@ -73,6 +73,28 @@ def test_avatar_modules():
     assert session.config.height == 720
 
 
+def test_image_modules():
+    from theama.image import ImageBackbone, KeyframeBridge, KeyframeSpec
+    from theama.image.t2i import EDIT_REPO, FAST_REPO, QUALITY_REPO
+
+    assert "Qwen-Image-2512" in QUALITY_REPO
+    assert "Z-Image-Turbo" in FAST_REPO
+    assert "Edit-2511" in EDIT_REPO
+
+    bb = ImageBackbone(mode="fast")
+    assert bb.config.fast_steps == 8
+    try:
+        ImageBackbone(mode="ultra")
+        raise AssertionError("unknown mode accepted")
+    except ValueError:
+        pass
+
+    spec = KeyframeSpec(prompt="霓虹雨中的貓", style_lock="cinematic")
+    assert spec.aspect == (1280, 720)
+    bridge = KeyframeBridge(bb)
+    assert bridge.image is bb
+
+
 def test_package_version():
     import theama
 

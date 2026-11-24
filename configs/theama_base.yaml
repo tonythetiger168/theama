@@ -1,9 +1,13 @@
 # SPDX-License-Identifier: Apache-2.0
-# Theama base configuration — M1: Wan 2.2 A14B backbone (Apache-2.0)
+# Theama base configuration — Film + Avatar + Image lines
 
 model:
   video_backbone: "Wan-AI/Wan2.2-T2V-A14B"   # MoE 27B total / 14B active, Apache-2.0
   video_backbone_dev: "Wan-AI/Wan2.2-TI2V-5B" # 24GB-friendly dev/CI path
+  avatar_backbone: "Wan-AI/Wan2.2-Animate"    # placeholder id; Wan-Animate family, Apache-2.0
+  image_backbone: "Qwen/Qwen-Image-2512"      # 20B T2I quality base, Apache-2.0
+  image_backbone_fast: "Tongyi-MAI/Z-Image-Turbo" # 6B, 8 NFE, Apache-2.0 dev/draft path
+  image_edit: "Qwen/Qwen-Image-Edit-2511"     # multi-reference editing, Apache-2.0
   text_encoder: "umt5-xxl"                    # shipped with Wan 2.2
   video_vae: "wan2.2-3d-causal-vae"
   audio:
