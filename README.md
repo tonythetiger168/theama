@@ -19,7 +19,7 @@ project on a fully permissive license stack, with three product lines:
 | Native audio | 44.1 kHz stereo, dialogue + SFX + ambience | Parallel audio DiT with bidirectional A/V cross-attention (clean-room, LTX-2.5 pattern; Kandinsky 6.0 MIT / MAGI-2 Apache-2.0 as permissive references) |
 | Duration | 30 s per prompt | THEAMA-Extend: SVI-style autoregressive continuation with consistency anchors |
 | Resolution | 4K (3840×2160) | THEAMA-4K: two-stage in-context regenerate 720p → 2K → 4K |
-| Output | MP4 (H.264/H.265 + AAC) | `theama.infer` export / mux pipeline |
+| Output | MP4 (H.264/H.265 + AAC) | `theama.inference` export / mux pipeline |
 | Avatar | 720p real-time interactive | Wan-Animate base (Apache-2.0) + causal streaming + replay anchors (clean-room SRF-class) |
 | Image | CJK-text-accurate T2I + editing | Qwen-Image-2512 (Apache-2.0) quality base; Z-Image Turbo (Apache-2.0) 8-NFE fast path |
 | License | End-to-end permissive | Apache-2.0 / MIT components only — no community-license weights anywhere in the stack |
