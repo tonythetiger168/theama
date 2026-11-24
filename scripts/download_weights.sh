@@ -6,7 +6,7 @@ set -euo pipefail
 TARGET_DIR="${1:-checkpoints/wan2.2}"
 mkdir -p "$TARGET_DIR"
 
-# Diffusers-layout repos — src/theama/infer/ loads these directly.
+# Diffusers-layout repos — src/theama/inference/ loads these directly.
 echo "==> Wan 2.2 TI2V-5B Diffusers (dev/CI path, ~16GB VRAM w/ offload)"
 hf download Wan-AI/Wan2.2-TI2V-5B-Diffusers --local-dir "$TARGET_DIR/ti2v-5b"
 

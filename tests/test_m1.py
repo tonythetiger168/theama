@@ -38,7 +38,7 @@ def test_eval_set_schema():
 
 
 def test_model_specs_valid():
-    from theama.infer.config import MODELS, WAN_SPATIAL_MULT, WAN_TEMPORAL_STRIDE
+    from theama.inference.config import MODELS, WAN_SPATIAL_MULT, WAN_TEMPORAL_STRIDE
 
     for spec in MODELS.values():
         assert (spec.num_frames - 1) % WAN_TEMPORAL_STRIDE == 0
@@ -52,7 +52,7 @@ def test_model_specs_valid():
 
 
 def test_frames_for_seconds_snapping():
-    from theama.infer.config import MODELS, frames_for_seconds
+    from theama.inference.config import MODELS, frames_for_seconds
 
     spec = MODELS["ti2v-5b"]
     assert frames_for_seconds(spec, 5) == 121
@@ -86,7 +86,7 @@ def _write_frames(frames_dir: Path, n: int = 49, w: int = 160, h: int = 96) -> N
 
 @pytest.mark.skipif(shutil.which("ffmpeg") is None, reason="ffmpeg not installed")
 def test_mux_silent_aac_roundtrip(tmp_path):
-    from theama.infer.mux import mux_mp4, probe_mp4
+    from theama.inference.mux import mux_mp4, probe_mp4
 
     frames_dir = tmp_path / "frames"
     frames_dir.mkdir()
@@ -107,7 +107,7 @@ def test_mux_silent_aac_roundtrip(tmp_path):
 
 
 def test_mux_empty_frames_dir_raises(tmp_path):
-    from theama.infer.mux import MuxError, mux_mp4
+    from theama.inference.mux import MuxError, mux_mp4
 
     with pytest.raises(MuxError):
         mux_mp4(tmp_path, tmp_path / "out.mp4")

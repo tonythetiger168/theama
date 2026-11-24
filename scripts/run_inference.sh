@@ -9,5 +9,5 @@ SECONDS="${3:-5}"
 MODEL="${THEAMA_MODEL:-ti2v-5b}"   # 24GB dev path; set THEAMA_MODEL=t2v-a14b for full backbone
 
 mkdir -p "$(dirname "$OUT")"
-PYTHONPATH=src python -m theama.infer.pipeline \
+PYTHONPATH=src python -m theama.inference.pipeline \
     --prompt "$PROMPT" --out "$OUT" --seconds "$SECONDS" --model "$MODEL"

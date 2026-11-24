@@ -25,8 +25,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from theama.infer.config import MODELS  # noqa: E402
-from theama.infer.mux import mux_mp4, probe_mp4  # noqa: E402
+from theama.inference.config import MODELS  # noqa: E402
+from theama.inference.mux import mux_mp4, probe_mp4  # noqa: E402
 
 
 def load_eval_set(path: Path) -> list[dict]:
@@ -82,8 +82,8 @@ def main() -> int:
 
     pipe = None
     if pending:
-        from theama.infer.i2v import generate_frames_i2v, load_i2v_pipeline
-        from theama.infer.t2v import generate_frames, load_pipeline, save_frames
+        from theama.inference.i2v import generate_frames_i2v, load_i2v_pipeline
+        from theama.inference.t2v import generate_frames, load_pipeline, save_frames
 
         is_i2v = spec.task == "i2v"
         if is_i2v:
