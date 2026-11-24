@@ -78,7 +78,7 @@
   2026-11-25 補查同清單，新增觀察 **joint audio-video reward** 線：**VA-Judger**
   （VAPref-10K 影音偏好對訓練的 A/V 聯合 judge，直接獎勵跨模態一致性而非手工拼接
   分維指標）與 **AVBench**（人本影音評測器，二元判決信心可轉連續分，可作 RLHF
-  reward 與資料過過濾）——與 M2 原生音訊路線後續的 A/V 偏好後訓練直接相關；
+  reward 與資料過濾）——與 M2 原生音訊路線後續的 A/V 偏好後訓練直接相關；
   授權／權重可得性同樣未核實，列為 P1a 之後的觀察候選，現階段不改動 P1a 配方。
   同輪覆核再補三筆 A/V reward 觀察（同清單 2026-10-06 版）：**AV-GRPO**（2026，
   modality-anchored 解耦擴散 RL——rollout 錨定單模態、凍結另一塔，異構 reward
