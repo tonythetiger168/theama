@@ -48,11 +48,14 @@ def latent_pair_paths(out_dir: str | Path, index: int) -> tuple[Path, Path]:
     return out / f"pair{index:04d}_win.pt", out / f"pair{index:04d}_lose.pt"
 
 
-def is_valid_latent(path: str | Path) -> bool:
-    """True when `path` holds a loadable, finite, 5D (1,C,F,H,W) tensor.
+def is_valid_latent(path: str | Path, *, ndim: int = 5) -> bool:
+    """True when `path` holds a loadable, finite tensor with `ndim` dims.
 
-    A truncated write from a killed run must fail this check so the pair is
-    re-encoded instead of poisoning DPO training.
+    The DPO pair cache stores 5D (1,C,F,H,W) video latents (the default);
+    the AV cache (theama.data.av_latent_cache) reuses this with ``ndim=3``
+    for (1,T_lat,C) audio token latents. A truncated write from a killed
+    run must fail this check so the sample is re-encoded instead of
+    poisoning training.
     """
     p = Path(path)
     if not p.exists():
@@ -65,7 +68,7 @@ def is_valid_latent(path: str | Path) -> bool:
         return False
     return (
         torch.is_tensor(t)
-        and t.ndim == 5
+        and t.ndim == ndim
         and bool(torch.isfinite(t).all())
     )
 
