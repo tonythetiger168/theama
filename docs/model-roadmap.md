@@ -40,10 +40,23 @@
 
 ## Watchlist（上游釋出追蹤）
 
-- **Wan-Animate-2-14B**（Apache-2.0）— M6a 升級候選，HF repo id 待核對
-- **Wan 3.x 開權重** — Wan 3.0 目前 API-only；若開權重且授權乾淨，評估骨幹替換
-- **Qwen-Image 新版** — 追 Apache-2.0 線的後繼（2.1 為研究非商用，不碰）
-- **開源 video reward 新模型** — VideoReward 若被超越，註冊表可加第二把尺交叉驗證
+最近核查：**2026-11-24**。
+
+- **Wan-Animate-2-14B**（Apache-2.0）— M6a 升級候選。repo id 已核對：
+  `Wan-AI/Wan2.2-Animate-2-14B`（2026-08-07 發布，arXiv 2608.06009），另有
+  `Wan2.2-Animate-2-14B-Diffusers` 與 `Wan2.2-Animate-2-14B-Distilled-Diffusers`
+  （2026-08-06，base + distilled 權重）。animation / replacement 雙模式同一 checkpoint。
+- **Wan 3.x 開權重** — 仍 API-only（截至 2026-11-05 多方核查：Wan-AI HF 27 個 repo、
+  Wan-Video GitHub 6 個 repo 均無 2.5/2.6/2.7/3.0 權重；官方
+  `AlibabaCloud-Official/Wan3.0` 僅 README + license 檔）。骨幹續用 Wan 2.2。
+  旁註：新開放控制模型 `Wan-Dancer-14B`（Apache-2.0，2026-07）可留意。
+- **Qwen-Image 新版** — **Qwen-Image-2.1（7B，2026-09-20）統一 T2I+編輯+原生 RGBA，
+  但為 Qwen Research License（非商用）→ 紅線確認，不碰**；2.1-Turbo（2026-10-09，8-step）
+  同授權。Qwen-Image-3.0 為 hosted-only。Apache-2.0 線最新仍是
+  Qwen-Image-2512 與 Qwen-Image-Edit-2511 —— M7a 選型不變。
+- **開源 video reward 新模型** — awesome-rm-for-video-generation（2026-10 更新）新增
+  AesRM（專家標註美學 RM，base + CoT 變體）、UnifiedReward-Flex、GT-SVJ（self-supervised
+  judge）等；授權與權重可得性未逐一核實，VideoReward 仍為首選，暫不加第二把尺。
 
 ## 發布策略
 
