@@ -1,4 +1,4 @@
-# Theama 訓練與開發計畫（M1–M5 + M6 avatar 線）
+# Theama 訓練與開發計畫（M1–M5 + M6 avatar 線 + M7 文生圖線）
 
 每個里程碑附**可量測驗收條件**；不通過不往下走。
 
@@ -65,3 +65,29 @@
 | Wan-Animate 非音訊驅動，lip-sync 需自接 | M6a 先用 LatentSync（Apache-2.0）唇形管線墊底，再原生整合 |
 | 實時化 VRAM/延遲不達標 | 退守 540p（Vidu S1 規格）先達實時，再升 720p |
 | 人像/聲音權利合規 | 僅用自有或授權肖像；README 加合規聲明 |
+
+## M7 — 文生圖線（2026-11-24 新增）
+
+### M7a — 推理重現 + CJK 文字評測
+
+- Qwen-Image-2512（品質）+ Z-Image Turbo（快速）雙路徑推理跑通。
+- 自建 100-prompt CJK 文字渲染評測集（繁中長文、海報、招牌場景）。
+- **驗收**：繁中文字準確率達 Qwen-Image 官方報告同量級；兩路徑 eval set 全數產出落盤。
+
+### M7b — 編輯管線
+
+- Qwen-Image-Edit-2511 多參考編輯接入。
+- **驗收**：編輯 eval（局部替換/風格轉換/文字修改各 20 組）通過率 ≥ 90%（人工檢）。
+
+### M7c — 三線整合
+
+- KeyframeBridge：T2I 產首末幀 → Film 線 I2V；identity 參考圖 → Avatar IdentityEncoder。
+- **驗收**：端到端「prompt → 關鍵幀 → 5s 720p clip」與「prompt → 參考圖 → avatar clip」各跑通 10 組。
+
+### 風險
+
+| 風險 | 對策 |
+|---|---|
+| 2512 品質離 2.1 有距離 | LoRA 收斂；2.1 權重/輸出授權不乾淨，不碰 |
+| 20B 權重 40GB BF16 部署重 | FP8（~20GB）為預設；dev 走 Z-Image Turbo |
+| 繁中評測集覆蓋不足 | 評測集版本化（eval/cjk-v1.jsonl），持續擴充 |
