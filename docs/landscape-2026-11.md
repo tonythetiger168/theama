@@ -30,3 +30,25 @@
 - Wan 2.2 骨幹（720p/5s）離 H3（768p/15s/音訊）有不小差距：theama 的貢獻在「整合 + 延長 + 升解析 + 加音訊」，不是重新發明 base model。
 - 4K/30s 的 VRAM 與訓練成本是硬約束：M1–M2 在單卡 24–80GB 驗證，M3 之後需要多卡。
 - H3/LTX-2.5 只讀 paper、model card 與公開架構描述做 clean-room 參考；**不逆向權重、不用其輸出**。
+
+## 加掛：Avatar 互動數字人線盤點（2026-11-24 補）
+
+對標：Vidu S2-Avatar 級實時互動數字人。
+
+| 專案 | 定位 | 關鍵規格 | 授權 | 對 theama-avatar 的啟發 |
+|---|---|---|---|---|
+| **Vidu S2-Avatar**（ShengShu × 清華，2026-09-15，arXiv 2609.11638） | 實時互動數字人標竿 | 720p 實時（S1 為 540p）@25–42fps；串流中可動態換參考圖（VLM Agent）；大動作（跳舞）指令跟隨；Self-Replay Forcing 防長流漂移；消費級 GPU 實時；StreamAV-Bench 九項第一 | 閉源 API | **品質對標**；SRF 概念 clean-room 參考 |
+| **Wan-Animate**（Alibaba） | 開源 avatar 動畫 | 圖生影片角色動畫，可自架；Wan 家族同門 | **Apache-2.0** | **Avatar 線首選底座**——與主線 Wan 2.2 同家族，整合成本最低 |
+| **LongCat-Video-Avatar**（Meituan） | 開源單圖+音訊說話人 | 單照片 + 音訊 → talking avatar | **MIT** | 備選底座 / 對照實作 |
+| HunyuanVideo-Avatar（Tencent，2.2k★） | 開源情緒可控多角色 | 情緒控制、多角色 talking video | Tencent Community（排除歐/英/韓） | 僅架構參考 |
+| OmniHuman 2.0（ByteDance，2026-10-15） | 閉源長片 avatar | 單圖 + 最長 5 分鐘音訊一鏡到底；720p；多人/動物/動漫 | 閉源 API（$0.07/s） | 長片 avatar 對標線 |
+| SadTalker / Hallo / LatentSync | 早期開源 talking-head | 唇形同步管線 | Apache-2.0 / MIT / Apache-2.0 | eval baseline 與唇形管線參考 |
+| Tavus Phoenix-4 / HeyGen Avatar IV | 閉源商用實時 avatar | sub-600ms 延遲（Tavus）；177+ 語言（HeyGen） | 閉源 API | 商用延遲標竿 |
+
+### Avatar 線差距分析
+
+| 前沿指標 | 開源現況 | 差距 | 對策 |
+|---|---|---|---|
+| 實時串流生成（720p、消費級 GPU） | 開源多為離線 clip 生成；實時僅 Vidu S2 / Tavus 等閉源 | 🔴 | causal DiT 改造 + rolling KV cache + replay anchor（SRF 概念自建） |
+| 串流中動態換參考圖 | 僅 Vidu S2 | 🔴 | VLM agent + identity embedding 熱替換介面（M6c） |
+| 單圖+音訊 talking avatar（離線） | Wan-Animate / LongCat-Video-Avatar 已可自架 | 🟢 | 直接以 Wan-Animate 起步（M6a） |

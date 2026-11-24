@@ -66,3 +66,30 @@ prompt ──► [1] Base 生成（Wan 2.2 A14B, 720p, 5s）
 | M2 音訊 LoRA | 單卡 80GB |
 | M3–M4 | 多卡節點（8×H100 級）|
 | 4K 推理 | 分層 offload + tiled decode，48GB+ 目標 |
+
+## Avatar 互動數字人線（theama-avatar，M6）
+
+對標 Vidu S2-Avatar：720p 實時互動、串流中換參考圖、大動作指令跟隨。
+
+### 模組
+
+```
+參考圖 ──► IdentityEncoder ──► identity embedding（可熱替換）
+音訊流 ──► AudioDrive（音訊→面部/身體 motion 條件，lip-sync）
+語音/文字指令 ──► VLM Agent ──► 生成引導 + 參考圖動態更新
+Wan-Animate 底座（Apache-2.0）──► StreamingAvatarSession
+    （causal DiT + rolling KV cache + replay anchor 防漂移）
+──► 實時幀流輸出（720p 目標）
+```
+
+### 與 Film 主線共享
+
+- Audio DiT / DAC latent（M2 成果直接複用）
+- Extend 的 anchor 一致性技術 → streaming 的 replay anchor
+- Eval harness（AV-sync 指標共用）
+
+### 關鍵技術（clean-room）
+
+- **Streaming 化**：雙向 attention 改 causal/block-causal，rolling KV cache，
+  每 N 幀 replay anchor 幀防誤差累積（概念對齊 Vidu S2 的 Self-Replay Forcing，自實作）
+- **互動層**：VLM agent 解析語音指令、串流中觸發 identity/參考圖熱替換

@@ -1,8 +1,12 @@
 # Theama
 
 **Theama** (Greek θέαμα — "spectacle") is an open-source audio-video generation
-project targeting **4K, 30-second MP4 movie clips with synchronized native audio**,
-at Wan 3.0 / MiniMax H3-class quality, on a fully permissive license stack.
+project on a fully permissive license stack, with two product lines:
+
+1. **Theama Film** — **4K, 30-second MP4 movie clips with synchronized native
+   audio**, at Wan 3.0 / MiniMax H3-class quality.
+2. **Theama Avatar** — **real-time interactive digital humans** (voice-driven,
+   mid-stream reference swaps, large body motion), at Vidu S2-Avatar class.
 
 ## Design goals
 
@@ -13,6 +17,7 @@ at Wan 3.0 / MiniMax H3-class quality, on a fully permissive license stack.
 | Duration | 30 s per prompt | THEAMA-Extend: SVI-style autoregressive continuation with consistency anchors |
 | Resolution | 4K (3840×2160) | THEAMA-4K: two-stage in-context regenerate 720p → 2K → 4K |
 | Output | MP4 (H.264/H.265 + AAC) | `theama.inference` export / mux pipeline |
+| Avatar | 720p real-time interactive | Wan-Animate base (Apache-2.0) + causal streaming + replay anchors (clean-room SRF-class) |
 | License | End-to-end permissive | Apache-2.0 / MIT components only — no community-license weights anywhere in the stack |
 
 ## Why not MiniMax H3 or LTX-2.5 weights?
@@ -35,7 +40,7 @@ ideas only* from H3 / LTX-2.5. Full analysis: [`docs/license-risks.md`](docs/lic
 
 ```
 docs/            landscape survey, architecture, training plan, license risks
-src/theama/      model / data / train / inference packages
+src/theama/      model / data / train / inference / avatar packages
 configs/         model & pipeline configs
 scripts/         weight download + inference entry points
 tests/           CPU-only smoke tests
@@ -52,11 +57,19 @@ bash scripts/run_inference.sh "a cat walking through neon rain" out.mp4
 
 ## Roadmap
 
+Film line:
+
 - **M1** — Wan 2.2 inference reproduction + eval harness (VBench + AV-sync metrics)
 - **M2** — Audio DiT branch + joint A/V fine-tune (LoRA → full)
 - **M3** — THEAMA-Extend: 5 s → 30 s continuation without drift
 - **M4** — THEAMA-4K: two-stage 720p → 2K → 4K regenerate
 - **M5** — Quality closure vs H3 / Wan 3.0 API on a fixed eval set
+
+Avatar line:
+
+- **M6a** — Offline single-image + audio talking avatar (Wan-Animate base, Apache-2.0)
+- **M6b** — Streaming real-time generation (causal DiT + rolling KV cache + replay anchors)
+- **M6c** — Interactive layer: mid-stream reference swap, voice-directed control (Vidu S2 class)
 
 Acceptance criteria per milestone: [`docs/training-plan.md`](docs/training-plan.md).
 Global landscape and gap analysis: [`docs/landscape-2026-11.md`](docs/landscape-2026-11.md).
@@ -66,4 +79,5 @@ Global landscape and gap analysis: [`docs/landscape-2026-11.md`](docs/landscape-
 Code in this repository: **Apache-2.0** (see `LICENSE`). Commercial use —
 including in products and hosted services — needs no royalty or feedback.
 Third-party model weights are downloaded by the user and remain under their own
-licenses; see `NOTICE` and `docs/license-risks.md`.
+licenses; see `NOTICE` and `docs/license-risks.md`. Avatars involve real
+likenesses and voices — only use imagery and audio you have rights to.
