@@ -12,7 +12,8 @@
 | **Wan 2.2 T2V-A14B** | 生產骨幹 | Apache-2.0 | MoE 27B total / 14B active；81f@16fps、CFG 3.0/4.0 雙專家、boundary 0.875；40GB+ w/ offload | ✅ 使用中（M1） |
 | **Wan 2.2 I2V-A14B** | 圖生影片（M7c 關鍵幀路徑） | Apache-2.0 | 同上 | ✅ 使用中（M1） |
 | **VideoReward**（KlingTeam） | P1a 偏好打分（Qwen2-VL-2B 多維：視覺品質/時序一致/動態程度/文字對齊） | Apache-2.0 | ~5GB bf16 | ✅ 已選定，GPU 驗證待跑 |
-| **THEAMA Audio DiT** | 原生音訊（對白+音效+環境音 44.1kHz stereo） | 自研 clean-room（LTX-2.5 雙流範式；Kandinsky 6.0 MIT / MAGI-2 Apache-2.0 對照） | DAC latent，並聯 DiT | 📋 M2 |
+| **THEAMA Audio DiT** | 原生音訊（對白+音效+環境音 44.1kHz stereo） | 自研 clean-room（LTX-2.5 雙流範式；Kandinsky 6.0 MIT / MAGI-2 Apache-2.0 對照） | DAC latent，並聯 DiT | 🚧 M2 CPU trainer + Wan adapter 落地 |
+| **Descript DAC 44.1kHz** | M2 音訊 continuous-latent codec | MIT | mono 1024 維、hop 512、86.13Hz；Theama 以 mid/side 組成立體聲 2048 維 tokens | 🚧 contract/mock 落地，真實權重 smoke 待跑 |
 | **THEAMA-Extend** | 5s → 30s 自回歸接續 + consistency anchors | 自研（SVI 式） | — | 📋 M3 |
 | **THEAMA-4K / 8K Regen** | 720p→2K→4K（→8K）in-context 重建 | 自研（H3 In-Context Regeneration 範式） | tiled VAE decode；80GB 卡 | 📋 M4 / M4b |
 
@@ -21,7 +22,7 @@
 | 模型 | 角色 | 授權 | 現況 |
 |---|---|---|---|
 | **Wan-Animate** | 離線 talking avatar 底座（單圖+音訊） | Apache-2.0 | 📋 M6a |
-| **Wan-Animate-2-14B** | M6a 升級候選（2026-08-07 釋出；HF repo id 待核對） | Apache-2.0 | 👀 watchlist |
+| **Wan-Animate-2-14B** | M6a 升級候選（`Wan-AI/Wan2.2-Animate-2-14B`，repo id 已核對） | Apache-2.0 | 👀 watchlist |
 | **LatentSync** | 唇形管線墊底方案（Wan-Animate 非音訊驅動） | Apache-2.0 | 📋 M6a 備案 |
 | **LongCat-Video-Avatar** | 底座備選 | MIT | 👀 watchlist |
 | 實時化改造 | causal/block-causal attention + rolling KV cache + replay anchor | 自研 | 📋 M6b/M6c |

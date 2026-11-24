@@ -55,7 +55,7 @@ tests/           CPU-only tests (M1 / P1a / M2 / smoke)
 
 ```bash
 pip install -e .[dev]                         # add [train] for DPO / M2 training deps
-bash scripts/download_weights.sh              # Wan 2.2 + VideoReward weights (Apache-2.0), user-side download
+bash scripts/download_weights.sh              # Wan 2.2 + VideoReward (Apache-2.0) + DAC (MIT), user-side
 pytest tests/                                 # CPU tests: M1 configs/eval set/mux, P1a DPO math, M2 audio DiT trainer
 ```
 
@@ -81,8 +81,9 @@ python scripts/train_dpo.py --pairs dpo_out/latents/pairs_latents.jsonl --out dp
 ```
 
 M2 — the joint A/V trainer (`theama.train.train_joint_av`, config
-`configs/m2_joint_av.yaml`) is exercised by `tests/test_m2.py`; GPU training
-waits on DAC / Wan adapter wiring.
+`configs/m2_joint_av.yaml`) has CPU-tested DAC latent and external Wan adapter
+contracts, including a 5-D tiny A/V forward/backward smoke. Real-weight GPU
+smoke is next; internal Wan block bridges and LoRA injection are still pending.
 
 ## Roadmap
 
@@ -90,7 +91,7 @@ Film line:
 
 - **M1** — Wan 2.2 inference reproduction + eval harness (VBench + AV-sync metrics) — code landed 2026-11-24, GPU acceptance run pending
 - **P1a** — Preference post-training: VideoReward (Apache-2.0) scoring + LoRA-DPO on Wan 2.2 — code landed 2026-11-24, GPU run pending
-- **M2** — Audio DiT branch + joint A/V fine-tune (bridge warmup → full) — CPU trainer landed 2026-11-24, DAC/Wan GPU wiring pending
+- **M2** — Audio DiT branch + joint A/V fine-tune (bridge warmup → full) — CPU trainer + DAC/Wan adapter landed 2026-11-24, real-weight GPU smoke pending
 - **M3** — THEAMA-Extend: 5 s → 30 s continuation without drift
 - **M4** — THEAMA-4K: two-stage 720p → 2K → 4K regenerate
 - **M4b** — THEAMA-8K: 4K → 8K tiled regenerate + HEVC/AV1 + HDR10 delivery (halo tier, after M4 is stable) — HEVC/AV1 + HDR10/HLG mux landed 2026-11-24

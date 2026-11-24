@@ -42,9 +42,11 @@
 
 - `src/theama/model/audio_dit.py`：audio self-attention/adaLN blocks + 雙向 `CrossModalBridge`；音訊與影片 loss 都能反傳到 v2a/a2v。
 - `src/theama/train/train_joint_av.py`：可實際 forward/backward/optimizer step 的 `JointAVTrainer`。Wan 永遠凍結；`bridge` 階段只更新 bridges，`full` 階段更新整條 audio stream。兩個 stream 各自抽 logit-normal timestep，採 Wan 一致的 `x_t=(1-t)x+t·noise`、`v=noise-x`。
-- Video adapter contract：`predict_velocity(video_tokens, t, cond)`；audio bridges 先產生 joint video tokens，再由凍結 video adapter 預測 velocity，確保 video loss 也接到 cross-modal bridge。
-- 配置：`configs/m2_joint_av.yaml`；19 個 M2 CPU tests 覆蓋 endpoint/速度符號、time embedding、參數凍結、真實參數更新、adapter/batch 守衛。
-- **尚未完成**：DAC codec 與 Wan 內部層級 adapter、LoRA 注入、實際 AV 資料管線與 GPU 訓練；上述 40ms/盲測閘仍未驗收。
+- `src/theama/model/audio_codec.py`：DAC 44.1kHz MIT 規格（hop 512、1024 維 continuous latent、86.13Hz）、mid/side stereo、deterministic CPU mock；DiT 直接吃 2048 維 mid+side tokens。`src/theama/model/dac_codec.py` 隔離官方 `dac.DAC.load` 的 frozen lazy `DACAudioCodec`（上游 `(B,D,T)` ↔ Theama `(B,T,D)`），核心 contract 不需安裝第三方 DAC 套件。
+- `src/theama/model/wan_adapter.py`：官方 Diffusers config 對齊（A14B 16 通道、TI2V-5B 48 通道、text 4096）；5D latent ↔ bridge tokens、0–1 flow t → Wan 0–1000 integer timestep、lazy weight loading。
+- Video adapter contract：`predict_velocity(video, t, video_cond)`；`video_cond` 是獨立 `(B,L,4096)` 序列文字 embedding，不再拿 pooled audio cond 冒充。外部 latent-grid bridge 先更新 tokens、還原 5D 後送 Wan forward，雙 loss 都接到 cross-modal bridge。
+- 配置：`configs/m2_joint_av.yaml`；42 個 M2 CPU tests 覆蓋 AudioDiT/trainer、DAC contract/wrapper、Wan 規格/布局/forward 與 5D tiny A/V smoke。
+- **尚未完成**：真實 DAC/Wan 權重 GPU smoke、Wan 內部 block 層級 bridge、LoRA 注入、實際 AV 資料管線與 GPU 訓練；上述 40ms/盲測閘仍未驗收。目前 `latent_pre_backbone` 只是外部 bridge 驗證路徑，不冒充內層整合。
 
 ## M3 — THEAMA-Extend（30s）
 

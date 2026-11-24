@@ -69,7 +69,7 @@ class AudioCodecSpec:
         return 2 * self.latent_dim
 
     def frames_for_seconds(self, seconds: float) -> int:
-        """Latent frames needed for ``seconds" of audio, padding up to a full hop."""
+        """Latent frames needed for ``seconds`` of audio, padding up to a full hop."""
         samples = seconds * self.sample_rate
         if samples != int(samples):
             raise ValueError(f"{seconds}s is not an integer number of samples")

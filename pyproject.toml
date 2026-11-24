@@ -27,7 +27,8 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-train = ["deepspeed", "wandb", "datasets", "peft"]
+train = ["deepspeed", "wandb", "datasets", "peft", "descript-audio-codec"]
+audio = ["descript-audio-codec"]
 dev = ["pytest", "ruff"]
 
 [tool.setuptools.packages.find]

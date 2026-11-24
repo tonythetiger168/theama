@@ -27,12 +27,12 @@ cd theama
 
 echo "==> python deps (torch comes from the RunPod pytorch template)"
 pip install -q -e .[dev]
-pip install -q diffusers transformers accelerate peft soundfile av
+pip install -q diffusers transformers accelerate peft soundfile av descript-audio-codec
 
 export HF_HOME="$WORKSPACE/hf_cache"
 echo "==> HF_HOME=$HF_HOME (persists on the network volume)"
 
-echo "==> weights -> $WORKSPACE/checkpoints (Wan 2.2 x3 + VideoReward)"
+echo "==> weights -> $WORKSPACE/checkpoints (Wan 2.2 x3 + VideoReward + DAC 44.1kHz)"
 bash scripts/download_weights.sh "$WORKSPACE/checkpoints/wan2.2"
 
 echo "==> CPU test suite"
