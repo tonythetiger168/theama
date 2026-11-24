@@ -21,9 +21,9 @@
 
 | 模型 | 角色 | 授權 | 現況 |
 |---|---|---|---|
-| **Wan-Animate** | 離線 talking avatar 底座（單圖+音訊） | Apache-2.0 | 📋 M6a |
-| **Wan-Animate-2-14B** | M6a 升級候選（`Wan-AI/Wan2.2-Animate-2-14B`，repo id 已核對） | Apache-2.0 | 👀 watchlist |
-| **LatentSync** | 唇形管線墊底方案（Wan-Animate 非音訊驅動） | Apache-2.0 | 📋 M6a 備案 |
+| **Wan-Animate** | 離線 talking avatar 底座備案（replacement 需求回退此第一代） | Apache-2.0 | 📋 M6a 備案 |
+| **Wan-Animate-2-14B** | M6a 底座（`Wan-AI/Wan2.2-Animate-2-14B`，animation-only） | Apache-2.0 | ✅ 已選定（base config 已更新） |
+| **LatentSync** | 唇形管線墊底方案（Wan-Animate-2 非音訊驅動） | Apache-2.0 | 📋 M6a 備案 |
 | **LongCat-Video-Avatar** | 底座備選 | MIT | 👀 watchlist |
 | 實時化改造 | causal/block-causal attention + rolling KV cache + replay anchor | 自研 | 📋 M6b/M6c |
 

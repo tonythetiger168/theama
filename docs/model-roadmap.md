@@ -4,7 +4,7 @@
 [`training-plan.md`](training-plan.md)，品質對標邏輯見
 [`quality-path-wan3-h3.md`](quality-path-wan3-h3.md)。
 
-## 現況（2026-11-24）
+## 現況（2026-11-25）
 
 | 階段 | 模型交付物 | 狀態 |
 |---|---|---|
@@ -28,7 +28,7 @@
 |---|---|---|
 | M4b | **theama-8k-regen** | 4K→8K tiled regenerate + HEVC/AV1 + HDR10（光環級，M4 穩定後才動） |
 | M5 | 品質收斂版 Film 模型 | 盲測 vs H3 win/tie ≥50%、vs Wan 3.0 ≥40%；VBench 開源前三 |
-| M6a | **theama-avatar-offline** | Wan-Animate（或 Wan-Animate-2-14B）底座 + LatentSync 墊底唇形 |
+| M6a | **theama-avatar-offline** | Wan-Animate-2-14B（animation-only）底座 + LatentSync 墊底唇形 |
 | M7a | **theama-image 雙路徑** | Qwen-Image-2512（品質）+ Z-Image Turbo（快速）推理重現 + CJK 評測 |
 
 ## 遠期
@@ -42,12 +42,15 @@
 
 ## Watchlist（上游釋出追蹤）
 
-最近核查：**2026-11-24**。
+最近核查：**2026-11-25**。
 
-- **Wan-Animate-2-14B**（Apache-2.0）— M6a 升級候選。repo id 已核對：
-  `Wan-AI/Wan2.2-Animate-2-14B`（2026-08-07 發布，arXiv 2608.06009），另有
-  `Wan2.2-Animate-2-14B-Diffusers` 與 `Wan2.2-Animate-2-14B-Distilled-Diffusers`
-  （2026-08-06，base + distilled 權重）。animation / replacement 雙模式同一 checkpoint。
+- **Wan-Animate-2-14B**（Apache-2.0）— M6a 底座候選，已寫入
+  `configs/theama_base.yaml`。repo id 已核對：`Wan-AI/Wan2.2-Animate-2-14B`
+  （2026-08-07 發布，arXiv 2608.06009），另有
+  `Wan-AI/Wan2.2-Animate-2-14B-Diffusers` 與
+  `Wan-AI/Wan2.2-Animate-2-14B-Distilled-Diffusers`（base + distilled 權重）。
+  官方 quick start 只列 character animation；replacement 仍是第一代
+  `Wan-AI/Wan2.2-Animate-14B` 的能力，M6a 不預設使用。
 - **Wan 3.x 開權重** — 仍 API-only（2026-11-24 再次確認；2026-11-05 多方核查：Wan-AI HF 27 個 repo、
   Wan-Video GitHub 6 個 repo 均無 2.5/2.6/2.7/3.0 權重；官方
   `AlibabaCloud-Official/Wan3.0` 僅 README + license 檔）。骨幹續用 Wan 2.2。

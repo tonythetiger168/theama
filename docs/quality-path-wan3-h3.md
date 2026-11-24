@@ -62,4 +62,4 @@ Wan 3.0 值得注意的事實：**參數量從未公布**（網傳 60B/27B 均�
 - **資料規模**：MiniMax/阿里資料管線是億級＋自有平台回流，我們做不到也不假裝。追法是「小而精」：高品質子集 + 後訓練效率（DPO 以小博大）+ 繁中/CJK 利基。
 - **Wan 3.0 閉源**：永遠不能當骨幹也不能蒸餾其輸出（API ToS）；H3 同理（授權明文禁止輸出訓練）。**盲測對標可以，訓練資料不行。**
 - **Wan 3.0 無 4K**：M4 完成時 Theama 在解析度維度直接贏它。
-- Wan-Animate-2-14B（2026-08-07，Apache-2.0）已確認發布 — Avatar 線底座從 placeholder 升級為真型號，M6a 動工時核對 HF repo id 後更新 config。
+- Wan-Animate-2-14B（2026-08-07，Apache-2.0）已確認發布並寫入 base config（animation-only；replacement 需求回退第一代）。
