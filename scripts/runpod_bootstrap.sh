@@ -41,9 +41,12 @@ PYTHONPATH=src python -m pytest tests/ -q -p no:cacheprovider
 cat <<EOF
 
 Bootstrap OK. GPU pipeline (in order):
-  # 1. M1 acceptance — 50-clip eval set (add --limit 5 for a smoke first)
+  # 1. M2 real-weight contract smokes (JSON + WAV/VRAM reports)
+  PYTHONPATH=src python scripts/smoke_m2_real_weights.py dac --weights "$WORKSPACE/checkpoints/wan2.2/dac_44khz/weights.pth" --out "$WORKSPACE/smoke_out/dac"
+  PYTHONPATH=src python scripts/smoke_m2_real_weights.py wan --model-path "$WORKSPACE/checkpoints/wan2.2/ti2v-5b" --out "$WORKSPACE/smoke_out/wan_ti2v_5b"
+  # 2. M1 acceptance — 50-clip eval set (add --limit 5 for a smoke first)
   PYTHONPATH=src python scripts/gen_eval_set.py --model ti2v-5b --out "$WORKSPACE/eval_out/ti2v-5b"
-  # 2. P1a — candidates -> scores -> pairs -> latents -> DPO
+  # 3. P1a — candidates -> scores -> pairs -> latents -> DPO
   PYTHONPATH=src python scripts/gen_candidates.py --model ti2v-5b --out "$WORKSPACE/dpo_out/candidates" --candidates 4
   PYTHONPATH=src python scripts/score_eval_set.py --videos "$WORKSPACE/dpo_out/candidates" --smoke
   PYTHONPATH=src python scripts/score_eval_set.py --videos "$WORKSPACE/dpo_out/candidates"
