@@ -13,6 +13,17 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+from theama.data.latent_cache import (
+    is_valid_latent,
+    latent_pair_paths,
+    load_reusable_rows,
+    plan_encoding,
+    read_cache_meta,
+    run_encoding,
+    save_latent_atomic,
+    summarize_encoding,
+    write_cache_meta,
+)
 from theama.reward.config import ALLOWED_LICENSES, REWARD_MODELS, get_reward_spec
 from theama.reward.pairs import build_pairs, coverage_report
 from theama.reward.score import load_successful_scores, summarize_scores
@@ -205,6 +216,199 @@ def test_summarize_scores_empty():
     assert summarize_scores([]) == {
         "scored": 0, "failed": 0, "mean_overall": None, "dims": {}
     }
+
+
+# ---- encode_pairs latent-cache helpers --------------------------------------
+
+
+def _latent(path: Path, fill: float = 0.0) -> None:
+    save_latent_atomic(torch.full((1, 4, 2, 3, 3), fill), path)
+
+
+def _pairs(n: int) -> list[dict]:
+    return [
+        {
+            "prompt_id": f"T2V-{i:03d}",
+            "prompt": f"prompt {i}",
+            "win_video": f"/v/{i}/win.mp4",
+            "lose_video": f"/v/{i}/lose.mp4",
+        }
+        for i in range(n)
+    ]
+
+
+def test_latent_pair_paths_naming(tmp_path):
+    win, lose = latent_pair_paths(tmp_path, 7)
+    assert win.name == "pair0007_win.pt"
+    assert lose.name == "pair0007_lose.pt"
+
+
+def test_is_valid_latent(tmp_path):
+    good = tmp_path / "good.pt"
+    _latent(good)
+    assert is_valid_latent(good)
+    assert not is_valid_latent(tmp_path / "missing.pt")
+
+    corrupt = tmp_path / "corrupt.pt"
+    corrupt.write_bytes(b"half-written tensor")  # truncated-run artifact
+    assert not is_valid_latent(corrupt)
+
+    wrong_ndim = tmp_path / "2d.pt"
+    torch.save(torch.randn(3, 3), wrong_ndim)
+    assert not is_valid_latent(wrong_ndim)
+
+    nonfinite = tmp_path / "nan.pt"
+    torch.save(torch.full((1, 4, 2, 3, 3), float("nan")), nonfinite)
+    assert not is_valid_latent(nonfinite)
+
+
+def test_save_latent_atomic_roundtrip_and_overwrite(tmp_path):
+    dest = tmp_path / "x.pt"
+    t1 = torch.randn(1, 4, 2, 3, 3)
+    save_latent_atomic(t1, dest)
+    assert torch.equal(torch.load(dest, weights_only=True), t1)
+    assert not (tmp_path / "x.pt.tmp").exists()  # temp file cleaned up
+
+    t2 = torch.randn(1, 4, 2, 3, 3)
+    save_latent_atomic(t2, dest)
+    assert torch.equal(torch.load(dest, weights_only=True), t2)
+
+
+def test_load_reusable_rows_filters(tmp_path):
+    f = tmp_path / "pairs_latents.jsonl"
+    rows = [
+        {"index": 0, "prompt_id": "A", "model": "ti2v-5b",
+         "win_latent": "w", "lose_latent": "l"},
+        {"index": 1, "prompt_id": "B", "model": "ti2v-5b",
+         "error": "RuntimeError: boom"},                          # retried
+        {"index": 2, "prompt_id": "C", "model": "other-model",
+         "win_latent": "w", "lose_latent": "l"},                  # wrong model
+        {"index": "3", "prompt_id": "D", "model": "ti2v-5b"},     # non-int idx
+        {"prompt_id": "E", "model": "ti2v-5b"},                   # legacy, no idx
+        {"index": 0, "prompt_id": "A", "model": "ti2v-5b",
+         "win_latent": "w2", "lose_latent": "l2"},                # dup: later wins
+    ]
+    f.write_text("".join(json.dumps(r) + "\n" for r in rows) + "not json\n")
+    kept = load_reusable_rows(f, model="ti2v-5b")
+    assert sorted(kept) == [0]
+    assert kept[0]["win_latent"] == "w2"
+    assert load_reusable_rows(tmp_path / "nope.jsonl", model="ti2v-5b") == {}
+
+
+def test_summarize_encoding():
+    rows = [
+        {"index": 0, "reused": False},
+        {"index": 1, "reused": True},
+        {"index": 2, "error": "boom"},
+    ]
+    assert summarize_encoding(rows) == {
+        "total": 3, "encoded": 1, "reused": 1, "failed": 1
+    }
+    assert summarize_encoding([]) == {
+        "total": 0, "encoded": 0, "reused": 0, "failed": 0
+    }
+
+
+def test_plan_encoding_manifest_resume_and_guards(tmp_path):
+    pairs = _pairs(3)
+    win0, lose0 = latent_pair_paths(tmp_path, 0)
+    _latent(win0)
+    _latent(lose0)
+    manifest = tmp_path / "pairs_latents.jsonl"
+    manifest.write_text("".join(json.dumps(r) + "\n" for r in [
+        {"index": 0, "prompt_id": "T2V-000", "prompt": "prompt 0",
+         "model": "ti2v-5b", "win_latent": str(win0), "lose_latent": str(lose0)},
+        # prompt_id drifted at index 1 -> must re-encode even with a row
+        {"index": 1, "prompt_id": "STALE", "prompt": "old", "model": "ti2v-5b",
+         "win_latent": "w", "lose_latent": "l"},
+        # error row at index 2, no valid files on disk -> retried
+        {"index": 2, "prompt_id": "T2V-002", "model": "ti2v-5b",
+         "error": "RuntimeError: boom"},
+    ]))
+    plan = plan_encoding(pairs, tmp_path, "ti2v-5b")
+    assert sorted(plan.reusable) == [0]
+    assert plan.reusable[0]["reused"] is True
+    assert plan.todo == [1, 2]
+    assert not plan.cache_invalidated
+
+
+def test_plan_encoding_legacy_file_fallback(tmp_path):
+    pairs = _pairs(3)
+    win0, lose0 = latent_pair_paths(tmp_path, 0)
+    _latent(win0)
+    _latent(lose0)                      # pair 0: both sides -> reused
+    win1, _ = latent_pair_paths(tmp_path, 1)
+    _latent(win1)                       # pair 1: one side only -> re-encode
+    corrupt = tmp_path / "pair0002_win.pt"
+    corrupt.write_bytes(b"junk")        # pair 2: corrupt -> re-encode
+    plan = plan_encoding(pairs, tmp_path, "ti2v-5b")
+    assert sorted(plan.reusable) == [0]
+    assert plan.reusable[0]["prompt_id"] == "T2V-000"  # row synthesized
+    assert plan.todo == [1, 2]
+
+
+def test_plan_encoding_meta_model_mismatch_invalidates(tmp_path):
+    pairs = _pairs(1)
+    win, lose = latent_pair_paths(tmp_path, 0)
+    _latent(win)
+    _latent(lose)
+    write_cache_meta(tmp_path, "other-model")
+    plan = plan_encoding(pairs, tmp_path, "ti2v-5b")
+    assert plan.cache_invalidated
+    assert plan.todo == [0]
+    assert read_cache_meta(tmp_path)["model"] == "other-model"
+
+
+def test_run_encoding_three_round_resume(tmp_path):
+    pairs = _pairs(3)
+    calls: list[str] = []
+
+    def make_encoder(fail_on: str | None):
+        def encode(video_path, dest):
+            calls.append(video_path)
+            if video_path == fail_on:
+                raise RuntimeError("simulated GPU failure")
+            _latent(Path(dest))
+        return encode
+
+    # round 1: pair 1 fails -> error row, pairs 0/2 encoded
+    plan1 = plan_encoding(pairs, tmp_path, "ti2v-5b")
+    s1 = run_encoding(plan1, make_encoder("/v/1/win.mp4"))
+    assert s1 == {"model": "ti2v-5b", "total": 3,
+                  "encoded": 2, "reused": 0, "failed": 1}
+    assert len(calls) == 5  # pair0 win+lose, pair1 win (fails), pair2 win+lose
+    manifest_rows = [
+        json.loads(l) for l in plan1.manifest_path.read_text().splitlines()
+    ]
+    assert sum("error" in r for r in manifest_rows) == 1
+
+    # round 2: only the failed pair re-runs; cached pairs cost zero calls
+    calls.clear()
+    plan2 = plan_encoding(pairs, tmp_path, "ti2v-5b")
+    assert plan2.todo == [1]
+    s2 = run_encoding(plan2, make_encoder(None))
+    assert s2 == {"model": "ti2v-5b", "total": 3,
+                  "encoded": 1, "reused": 2, "failed": 0}
+    assert calls == ["/v/1/win.mp4", "/v/1/lose.mp4"]
+
+    # round 3: everything cached -> encoder never needed (encode_fn=None ok)
+    plan3 = plan_encoding(pairs, tmp_path, "ti2v-5b")
+    assert plan3.todo == []
+    s3 = run_encoding(plan3, None)
+    assert s3 == {"model": "ti2v-5b", "total": 3,
+                  "encoded": 0, "reused": 3, "failed": 0}
+    assert json.loads(plan3.summary_path.read_text()) == s3
+    assert read_cache_meta(tmp_path)["model"] == "ti2v-5b"
+
+
+def test_run_encoding_strict_raises(tmp_path):
+    plan = plan_encoding(_pairs(2), tmp_path, "ti2v-5b")
+
+    def bad_encoder(video_path, dest):
+        raise RuntimeError("boom")
+
+    with pytest.raises(RuntimeError, match="boom"):
+        run_encoding(plan, bad_encoder, strict=True)
 
 
 # ---- config + scripts -------------------------------------------------------
