@@ -75,7 +75,7 @@
   Reward Weighting 融合 VideoReward／JavisScore／ImageBind／AVHScore——可作
   M2/M5 推理期增益與評測交叉驗證）、**Hallo-Live**（2026，fudan-generative-vision
   有開源 repo，HP-DMD reward 重加權蒸餾把串流 A/V avatar 拉向人本偏好——M6b
-  avatar-stream 線的 reward 參考）。三者授權／權重可得性均未核均未核實，維持觀察，
+  avatar-stream 線的 reward 參考）。三者授權／權重可得性均未核實，維持觀察，
   不改動 P1a／M2 配方。
 
 ## 發布策略
