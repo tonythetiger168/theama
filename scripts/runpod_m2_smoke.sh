@@ -58,12 +58,7 @@ for tool in git python3; do
   command -v "$tool" >/dev/null || { echo "ERROR: missing $tool" >&2; exit 2; }
 done
 
-echo "==> Python dependencies (PyTorch comes from the RunPod template)"
-python3 -m pip install -q -e '.[dev]'
-python3 -m pip install -q \
-  diffusers transformers accelerate soundfile descript-audio-codec huggingface_hub
-
-echo "==> CUDA preflight"
+echo "==> CUDA preflight (before any install or download)"
 python3 - <<'PY'
 import json
 from pathlib import Path
@@ -87,6 +82,43 @@ out = Path(os.environ["WORKSPACE"]) / "smoke_out" / "runpod_environment.json"
 out.parent.mkdir(parents=True, exist_ok=True)
 out.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
 PY
+
+free_gib="$(df -Pk "$WORKSPACE" | awk 'NR==2 {print int($4/1048576)}')"
+echo "==> free space on $WORKSPACE: ${free_gib} GiB"
+if (( free_gib < 30 )); then
+  echo "WARNING: <30 GiB free on $WORKSPACE; TI2V-5B transformer + caches may not fit" >&2
+fi
+
+echo "==> Python dependencies (PyTorch comes from the RunPod template)"
+# Pin the template's CUDA-matched torch stack. descript-audio-codec pulls in
+# torchaudio; without this pin pip may replace torch with a PyPI build whose
+# CUDA runtime does not match the pod driver.
+TORCH_CONSTRAINTS="$OUT_DIR/torch_constraints.txt"
+python3 - "$TORCH_CONSTRAINTS" <<'PY'
+import sys
+from importlib import metadata
+
+pins = []
+for name in ("torch", "torchvision", "torchaudio"):
+    try:
+        pins.append(f"{name}=={metadata.version(name)}")
+    except metadata.PackageNotFoundError:
+        if name == "torchaudio" and pins and pins[0].startswith("torch=="):
+            # torchaudio is ABI-locked to torch; pip would otherwise pick the
+            # newest torchaudio even when it cannot load against this torch.
+            major, minor = pins[0].split("==")[1].split("+")[0].split(".")[:2]
+            pins.append(f"torchaudio=={major}.{minor}.*")
+with open(sys.argv[1], "w", encoding="utf-8") as fh:
+    fh.write("\n".join(pins) + "\n")
+print("pinned:", ", ".join(pins))
+PY
+python3 -m pip install -q -c "$TORCH_CONSTRAINTS" -e '.[dev]'
+python3 -m pip install -q -c "$TORCH_CONSTRAINTS" \
+  diffusers transformers accelerate soundfile descript-audio-codec "huggingface_hub>=0.34"
+command -v hf >/dev/null || { echo "ERROR: hf CLI not found; upgrade huggingface_hub" >&2; exit 2; }
+# Fail before the multi-GB download if the install broke torch or DAC imports.
+python3 -c 'import torch; assert torch.cuda.is_available(), "CUDA lost after pip install"'
+python3 -c 'import dac, diffusers; from diffusers import WanTransformer3DModel; print("imports OK: diffusers", diffusers.__version__)'
 
 echo "==> TI2V-5B transformer only (Wan 2.2, Apache-2.0)"
 hf download Wan-AI/Wan2.2-TI2V-5B-Diffusers \
