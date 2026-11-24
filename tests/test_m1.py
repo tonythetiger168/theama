@@ -113,6 +113,91 @@ def test_mux_empty_frames_dir_raises(tmp_path):
         mux_mp4(tmp_path, tmp_path / "out.mp4")
 
 
+@pytest.mark.skipif(shutil.which("ffmpeg") is None, reason="ffmpeg not installed")
+def test_mux_hevc_roundtrip(tmp_path):
+    """M4b 8K path: HEVC mux + probe (libx265, hvc1 tag)."""
+    from theama.inference.mux import mux_mp4, probe_mp4
+
+    frames_dir = tmp_path / "frames"
+    frames_dir.mkdir()
+    _write_frames(frames_dir)
+    out = tmp_path / "out_8k.mp4"
+    mux_mp4(frames_dir, out, fps=24, vcodec="hevc")
+
+    info = probe_mp4(out)
+    assert info["video_codec"] == "hevc"
+    assert info["fps"] == pytest.approx(24.0)
+    assert info["has_audio"] is True
+
+
+def test_mux_unknown_vcodec_raises(tmp_path):
+    from theama.inference.mux import MuxError, mux_mp4
+
+    frames_dir = tmp_path / "frames"
+    frames_dir.mkdir()
+    _write_frames(frames_dir)
+    with pytest.raises(MuxError):
+        mux_mp4(frames_dir, tmp_path / "out.mp4", vcodec="vp9")
+
+
+def _has_ffmpeg_encoder(name: str) -> bool:
+    if shutil.which("ffmpeg") is None:
+        return False
+    import subprocess
+
+    out = subprocess.run(
+        ["ffmpeg", "-hide_banner", "-encoders"], capture_output=True, text=True
+    ).stdout
+    return name in out
+
+
+@pytest.mark.skipif(not _has_ffmpeg_encoder("libsvtav1"), reason="no SVT-AV1")
+def test_mux_av1_roundtrip(tmp_path):
+    """AV1 web-delivery path (SVT-AV1; preset is the encoder's 0-13 scale)."""
+    from theama.inference.mux import mux_mp4, probe_mp4
+
+    frames_dir = tmp_path / "frames"
+    frames_dir.mkdir()
+    _write_frames(frames_dir)
+    out = tmp_path / "out_av1.mp4"
+    mux_mp4(frames_dir, out, fps=24, vcodec="av1", preset="8")
+
+    info = probe_mp4(out)
+    assert info["video_codec"] == "av1"
+    assert info["fps"] == pytest.approx(24.0)
+    assert info["has_audio"] is True
+
+
+@pytest.mark.skipif(shutil.which("ffmpeg") is None, reason="ffmpeg not installed")
+def test_mux_hevc_hdr10_roundtrip(tmp_path):
+    """HDR10: 10-bit pixel format + BT.2020/PQ color tags survive the mux."""
+    from theama.inference.mux import mux_mp4, probe_mp4
+
+    frames_dir = tmp_path / "frames"
+    frames_dir.mkdir()
+    _write_frames(frames_dir)
+    out = tmp_path / "out_hdr10.mp4"
+    mux_mp4(frames_dir, out, fps=24, vcodec="hevc", hdr="hdr10")
+
+    info = probe_mp4(out)
+    assert info["video_codec"] == "hevc"
+    assert info["pix_fmt"] == "yuv420p10le"
+    assert info["color_primaries"] == "bt2020"
+    assert info["color_transfer"] == "smpte2084"
+    assert info["color_space"] == "bt2020nc"
+    assert info["has_audio"] is True
+
+
+def test_mux_unknown_hdr_raises(tmp_path):
+    from theama.inference.mux import MuxError, mux_mp4
+
+    frames_dir = tmp_path / "frames"
+    frames_dir.mkdir()
+    _write_frames(frames_dir)
+    with pytest.raises(MuxError):
+        mux_mp4(frames_dir, tmp_path / "out.mp4", hdr="dolby-vision")
+
+
 def test_gpu_scripts_parse():
     """Scripts must at least be valid Python (compile-checked on CPU)."""
     for script in ("gen_eval_set.py", "run_vbench.py"):
