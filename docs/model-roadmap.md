@@ -10,13 +10,15 @@
 |---|---|---|
 | M1 | Wan 2.2 推理重現（TI2V-5B / T2V-A14B / I2V-A14B）+ eval harness + MP4 mux | 程式落地，GPU 驗收待跑 |
 | P1a | **theama-ti2v-5b-dpo**（VideoReward 偏好對 + LoRA-DPO） | 程式落地，GPU 驗收待跑 |
+| M2 | **theama-audio-dit v1**（並聯音訊 DiT + 雙向 CrossModalBridge） | CPU trainer 落地（bridge warmup → full），DAC / Wan GPU 串接待做 |
+| M4b（前置） | HEVC / AV1 + HDR10 / HLG 10-bit 封裝 | mux 落地；8K regenerate 本體待 M4 穩定 |
 
 ## 近期（下一季）
 
 | 階段 | 模型交付物 | 說明 |
 |---|---|---|
 | P1a→A14B | **theama-t2v-a14b-dpo** | 5B 全綠後同配方推 A14B（80GB 卡） |
-| M2 | **theama-audio-dit v1** | 並聯音訊 DiT，LoRA 先訓 CrossModalBridge → full FT；驗收：AV-sync < 40ms |
+| M2 | **theama-audio-dit v1** | 接 DAC codec 與 Wan adapter、LoRA 注入、AV 資料管線後上 GPU 訓練；驗收：AV-sync < 40ms |
 | M3 | **theama-extend-30s** | SVI 式接續，anchor_frames=8；驗收：identity drift ≤ 單段 1.5× |
 | M4 | **theama-4k-regen** | 720p→2K→4K 兩段 in-context 重建；驗收：LPIPS 不劣化 >10% |
 
@@ -46,7 +48,7 @@
   `Wan-AI/Wan2.2-Animate-2-14B`（2026-08-07 發布，arXiv 2608.06009），另有
   `Wan2.2-Animate-2-14B-Diffusers` 與 `Wan2.2-Animate-2-14B-Distilled-Diffusers`
   （2026-08-06，base + distilled 權重）。animation / replacement 雙模式同一 checkpoint。
-- **Wan 3.x 開權重** — 仍 API-only（截至 2026-11-05 多方核查：Wan-AI HF 27 個 repo、
+- **Wan 3.x 開權重** — 仍 API-only（2026-11-24 再次確認；2026-11-05 多方核查：Wan-AI HF 27 個 repo、
   Wan-Video GitHub 6 個 repo 均無 2.5/2.6/2.7/3.0 權重；官方
   `AlibabaCloud-Official/Wan3.0` 僅 README + license 檔）。骨幹續用 Wan 2.2。
   旁註：新開放控制模型 `Wan-Dancer-14B`（Apache-2.0，2026-07）可留意。

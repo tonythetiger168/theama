@@ -15,12 +15,12 @@ project on a fully permissive license stack, with three product lines:
 
 | Goal | Target | Approach |
 | --- | --- | --- |
-| Video quality | Wan 2.2 A14B class | Wan 2.2 MoE DiT backbone (27B total / 14B active, Apache-2.0) |
+| Video quality | Wan 3.0 / H3 class (M5 gate); Wan 2.2 A14B parity at M1 | Wan 2.2 MoE DiT backbone (27B total / 14B active, Apache-2.0) + preference post-training (P1a DPO) |
 | Native audio | 44.1 kHz stereo, dialogue + SFX + ambience | Parallel audio DiT with bidirectional A/V cross-attention (clean-room, LTX-2.5 pattern; Kandinsky 6.0 MIT / MAGI-2 Apache-2.0 as permissive references) |
 | Duration | 30 s per prompt | THEAMA-Extend: SVI-style autoregressive continuation with consistency anchors |
 | Resolution | 4K (3840×2160) | THEAMA-4K: two-stage in-context regenerate 720p → 2K → 4K |
 | Output | MP4 (H.264 / HEVC / AV1 + AAC, SDR / HDR10 / HLG) | `theama.inference` export / mux pipeline |
-| Avatar | 720p real-time interactive | Wan-Animate base (Apache-2.0) + causal streaming + replay anchors (clean-room SRF-class) |
+| Avatar | 720p real-time interactive | Wan-Animate base (Apache-2.0) + LatentSync (Apache-2.0) lip-sync fallback + causal streaming + replay anchors (clean-room SRF-class) |
 | Image | CJK-text-accurate T2I + editing | Qwen-Image-2512 (Apache-2.0) quality base; Z-Image Turbo (Apache-2.0) 8-NFE fast path |
 | License | End-to-end permissive | Apache-2.0 / MIT components only — no community-license weights anywhere in the stack |
 
@@ -43,23 +43,46 @@ ideas only* from H3 / LTX-2.5. Full analysis: see Docs below.
 ## Repository layout
 
 ```
-docs/            landscape survey, architecture, training plan, license risks
-src/theama/      model / data / train / inference / avatar / image packages
-configs/         model & pipeline configs
-scripts/         weight download + inference entry points
-tests/           CPU-only smoke tests
+docs/            landscape survey, architecture, model stack & roadmap, training plan, license risks
+src/theama/      model / data / train / inference / reward / avatar / image packages
+configs/         base model, P1a DPO and M2 joint A/V configs
+eval/            50-prompt T2V eval set + VBench reference scores
+scripts/         weight download, inference, eval/VBench, P1a DPO pipeline, RunPod bootstrap
+tests/           CPU-only tests (M1 / P1a / M2 / smoke)
 ```
 
-## Quick start (M1 scope)
+## Quick start
 
 ```bash
-pip install -e .[dev]
-bash scripts/download_weights.sh              # Wan 2.2 weights (Apache-2.0), user-side download
-pytest tests/                                 # CPU tests: configs, eval set, MP4 mux
-bash scripts/run_inference.sh "a cat walking through neon rain" out.mp4   # GPU
-python scripts/gen_eval_set.py --model ti2v-5b --out eval_out/ti2v-5b     # GPU: 50-prompt eval set
-python scripts/run_vbench.py --videos eval_out/t2v-a14b --model t2v-a14b  # GPU: VBench gate vs reference
+pip install -e .[dev]                         # add [train] for DPO / M2 training deps
+bash scripts/download_weights.sh              # Wan 2.2 + VideoReward weights (Apache-2.0), user-side download
+pytest tests/                                 # CPU tests: M1 configs/eval set/mux, P1a DPO math, M2 audio DiT trainer
 ```
+
+On a fresh RunPod pod, `bash scripts/runpod_bootstrap.sh [/workspace]` clones the
+repo, installs deps, downloads weights to the network volume and runs the CPU tests.
+
+M1 — inference + eval harness (GPU):
+
+```bash
+bash scripts/run_inference.sh "a cat walking through neon rain" out.mp4
+python scripts/gen_eval_set.py --model ti2v-5b --out eval_out/ti2v-5b     # 50-prompt eval set
+python scripts/run_vbench.py --videos eval_out/ti2v-5b --model ti2v-5b    # VBench gate vs reference
+```
+
+P1a — preference post-training (GPU, see `docs/training-plan.md`):
+
+```bash
+python scripts/gen_candidates.py --model ti2v-5b --out dpo_out/candidates --candidates 4
+python scripts/score_eval_set.py --videos dpo_out/candidates               # -> scores.jsonl
+python scripts/make_pref_pairs.py --scores dpo_out/candidates/scores.jsonl --out dpo_out/pairs.jsonl
+python scripts/encode_pairs.py --pairs dpo_out/pairs.jsonl --out dpo_out/latents
+python scripts/train_dpo.py --pairs dpo_out/latents/pairs_latents.jsonl --out dpo_out/run1
+```
+
+M2 — the joint A/V trainer (`theama.train.train_joint_av`, config
+`configs/m2_joint_av.yaml`) is exercised by `tests/test_m2.py`; GPU training
+waits on DAC / Wan adapter wiring.
 
 ## Roadmap
 
@@ -70,12 +93,12 @@ Film line:
 - **M2** — Audio DiT branch + joint A/V fine-tune (bridge warmup → full) — CPU trainer landed 2026-11-24, DAC/Wan GPU wiring pending
 - **M3** — THEAMA-Extend: 5 s → 30 s continuation without drift
 - **M4** — THEAMA-4K: two-stage 720p → 2K → 4K regenerate
-- **M4b** — THEAMA-8K: 4K → 8K tiled regenerate + HEVC/AV1 + HDR10 delivery (halo tier, after M4 is stable)
+- **M4b** — THEAMA-8K: 4K → 8K tiled regenerate + HEVC/AV1 + HDR10 delivery (halo tier, after M4 is stable) — HEVC/AV1 + HDR10/HLG mux landed 2026-11-24
 - **M5** — Quality closure vs Wan 3.0 / H3 API on a fixed eval set (see docs/quality-path-wan3-h3.md)
 
 Avatar line:
 
-- **M6a** — Offline single-image + audio talking avatar (Wan-Animate base, Apache-2.0)
+- **M6a** — Offline single-image + audio talking avatar (Wan-Animate base, Apache-2.0; LatentSync lip-sync fallback)
 - **M6b** — Streaming real-time generation (causal DiT + rolling KV cache + replay anchors)
 - **M6c** — Interactive layer: mid-stream reference swap, voice-directed control (Vidu S2 class)
 

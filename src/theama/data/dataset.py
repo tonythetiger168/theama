@@ -33,7 +33,7 @@ class AVDataset(Dataset):
         self.manifest_path = Path(manifest_path)
         self.seconds, self.fps, self.sample_rate = seconds, fps, sample_rate
         self.samples: list[AVSample] = []
-        # TODO(M1): load manifest (jsonl), build AVSample list, validate sources
+        # TODO(M2): load manifest (jsonl), build AVSample list, validate sources
         # via check_source() before accepting any row.
 
     @staticmethod
@@ -48,6 +48,6 @@ class AVDataset(Dataset):
     def __getitem__(self, idx: int) -> dict[str, torch.Tensor]:
         sample = self.samples[idx]
         self.check_source(sample.source)
-        # TODO(M1/M2): decode video -> (T,H,W,C) tensor; decode audio -> stereo
+        # TODO(M2): decode video -> (T,H,W,C) tensor; decode audio -> stereo
         # waveform; encode text; return latents-ready tensors.
-        raise NotImplementedError("M1: decode + tokenize path lands with the eval harness")
+        raise NotImplementedError("M2: decode + tokenize path lands with the A/V data pipeline")
