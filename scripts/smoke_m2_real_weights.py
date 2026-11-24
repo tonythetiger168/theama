@@ -10,6 +10,10 @@ Examples (weights stay user-side):
     python scripts/smoke_m2_real_weights.py wan \
       --model-path checkpoints/wan2.2/ti2v-5b --out smoke_out/wan_ti2v_5b
 
+    python scripts/smoke_m2_real_weights.py wan \
+      --model-path checkpoints/wan2.2/ti2v-5b --out smoke_out/wan_internal_lora \
+      --bridge-location wan_blocks --bridge-lora-rank 8 --bridge-lora-alpha 16
+
 Each command writes a JSON report and exits nonzero on a failed contract. DAC
 also saves input.wav and reconstructed.wav for an optional listening check.
 """
@@ -83,6 +87,9 @@ def _wan(args: argparse.Namespace) -> int:
         latent_height=args.latent_height,
         latent_width=args.latent_width,
         learning_rate=args.learning_rate,
+        bridge_location=args.bridge_location,
+        bridge_lora_rank=args.bridge_lora_rank,
+        bridge_lora_alpha=args.bridge_lora_alpha,
         seed=args.seed,
     )
     target = _write_report(Path(args.out), "m2_wan_smoke.json", report)
@@ -113,6 +120,14 @@ def build_parser() -> argparse.ArgumentParser:
     wan.add_argument("--latent-height", type=int, default=2)
     wan.add_argument("--latent-width", type=int, default=2)
     wan.add_argument("--learning-rate", type=float, default=1e-4)
+    wan.add_argument(
+        "--bridge-location",
+        choices=("latent_pre_backbone", "wan_blocks"),
+        default="latent_pre_backbone",
+        help="external latent bridge (default) or bridges inside Wan transformer blocks",
+    )
+    wan.add_argument("--bridge-lora-rank", type=int, default=0)
+    wan.add_argument("--bridge-lora-alpha", type=float)
     wan.add_argument("--seed", type=int, default=42)
     wan.set_defaults(handler=_wan)
     return parser

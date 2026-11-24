@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-# M2 CPU-validated adapter/training defaults; real-weight GPU smoke is pending.
+# M2 defaults; external real-weight GPU smoke passed, internal-block GPU smoke is pending.
 model:
   audio:
     codec: dac_44k  # MIT, hop 512, 1024-dim continuous latents, mid/side stereo
@@ -18,7 +18,7 @@ model:
     dev_latent_channels: 48
     text_dim: 4096
     timestep_scale: 1000
-    bridge_location: latent_pre_backbone  # smoke path; internal Wan blocks are a later milestone
+    bridge_location: latent_pre_backbone  # wan_blocks = internal path; set audio.video_dim to Wan inner dim
     frozen: true
 training:
   phase: bridge  # bridge warmup first; set_phase("full") for full-audio FT
