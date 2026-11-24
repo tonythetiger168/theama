@@ -67,6 +67,15 @@
   分維指標）與 **AVBench**（人本影音評測器，二元判決信心可轉連續分，可作 RLHF
   reward 與資料過濾）——與 M2 原生音訊路線後續的 A/V 偏好後訓練直接相關；
   授權／權重可得性同樣未核實，列為 P1a 之後的觀察候選，現階段不改動 P1a 配方。
+  同輪覆核再補三筆 A/V reward 觀察（同清單 2026-10-06 版）：**AV-GRPO**（2026，
+  modality-anchored 解耦擴散 RL——rollout 錨定單模態、凍結另一塔，異構 reward
+  分模態歸因，形式直接對應 M2 雙流架構的 A/V 偏好後訓練）、**Joint A/V
+  Inference-Time Scaling**（2026，多 verifier Best-of-N + 演化搜尋，Adaptive
+  Reward Weighting 融合 VideoReward／JavisScore／ImageBind／AVHScore——可作
+  M2/M5 推理期增益與評測交叉驗證）、**Hallo-Live**（2026，fudan-generative-vision
+  有開源 repo，HP-DMD reward 重加權蒸餾把串流 A/V avatar 拉向人本偏好——M6b
+  avatar-stream 線的 reward 參考）。三者授權／權重可得性均未核實，維持觀察，
+  不改動 P1a／M2 配方。
 
 ## 發布策略
 
