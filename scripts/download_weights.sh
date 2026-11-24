@@ -16,4 +16,7 @@ hf download Wan-AI/Wan2.2-T2V-A14B-Diffusers --local-dir "$TARGET_DIR/t2v-a14b"
 echo "==> Wan 2.2 I2V-A14B Diffusers (keyframe-conditioned path for M7c)"
 hf download Wan-AI/Wan2.2-I2V-A14B-Diffusers --local-dir "$TARGET_DIR/i2v-a14b"
 
+echo "==> VideoReward (P1a preference scoring, Apache-2.0, ~5GB)"
+hf download KlingTeam/VideoReward --local-dir "$TARGET_DIR/videoreward"
+
 echo "Done. Weights are under $TARGET_DIR (gitignored)."
