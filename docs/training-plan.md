@@ -45,8 +45,10 @@
 - `src/theama/model/audio_codec.py`：DAC 44.1kHz MIT 規格（hop 512、1024 維 continuous latent、86.13Hz）、mid/side stereo、deterministic CPU mock；DiT 直接吃 2048 維 mid+side tokens。`src/theama/model/dac_codec.py` 隔離官方 `dac.DAC.load` 的 frozen lazy `DACAudioCodec`（上游 `(B,D,T)` ↔ Theama `(B,T,D)`），核心 contract 不需安裝第三方 DAC 套件。
 - `src/theama/model/wan_adapter.py`：官方 Diffusers config 對齊（A14B 16 通道、TI2V-5B 48 通道、text 4096）；5D latent ↔ bridge tokens、0–1 flow t → Wan 0–1000 integer timestep、lazy weight loading。
 - Video adapter contract：`predict_velocity(video, t, video_cond)`；`video_cond` 是獨立 `(B,L,4096)` 序列文字 embedding，不再拿 pooled audio cond 冒充。外部 latent-grid bridge 先更新 tokens、還原 5D 後送 Wan forward，雙 loss 都接到 cross-modal bridge。
-- 配置：`configs/m2_joint_av.yaml`；42 個 M2 CPU tests 覆蓋 AudioDiT/trainer、DAC contract/wrapper、Wan 規格/布局/forward 與 5D tiny A/V smoke。
-- **尚未完成**：真實 DAC/Wan 權重 GPU smoke、Wan 內部 block 層級 bridge、LoRA 注入、實際 AV 資料管線與 GPU 訓練；上述 40ms/盲測閘仍未驗收。目前 `latent_pre_backbone` 只是外部 bridge 驗證路徑，不冒充內層整合。
+- `src/theama/model/lora.py`：bridge warmup LoRA 注入——只包每個 bridge 的 `v2a`/`a2v` out_proj（`nn.MultiheadAttention` 直接讀 `.weight`/`bias`，`LoRALinear` 暴露 effective-weight 屬性讓梯度照走 A/B），B 零初始化（注入即恆等），alpha/rank 縮放；`merge_lora` 折回 plain Linear，切 `full` phase 時自動合併。trainer 接 `bridge_lora_rank`/`bridge_lora_alpha`（yaml 預設 8/16；0 = dense warmup）。
+- 配置：`configs/m2_joint_av.yaml`；46 個 M2 CPU tests 覆蓋 AudioDiT/trainer、DAC contract/wrapper、Wan 規格/布局/forward、5D tiny A/V smoke 與實權重 smoke orchestration，另有 13 個 LoRA tests。
+- 實權重入口：`scripts/smoke_m2_real_weights.py dac|wan`，核心在 `src/theama/train/real_weight_smoke.py`。DAC 輸出 JSON＋input/reconstructed WAV；TI2V-5B 跑單步 5D A/V forward/backward/optimizer step，驗證 Wan 凍結、bridge 梯度與參數更新，並記錄 peak CUDA memory。Wan smoke 使用 random latents/text embeddings，只驗證真實權重 contract，不冒充 prompt-to-video 或品質驗收。
+- **尚未完成**：真實 DAC/Wan 權重 GPU smoke **執行**、Wan 內部 block 層級 bridge、實際 AV 資料管線與 GPU 訓練；上述 40ms/盲測閘仍未驗收。目前 `latent_pre_backbone` 只是外部 bridge 驗證路徑，不冒充內層整合。
 
 ## M3 — THEAMA-Extend（30s）
 

@@ -82,8 +82,19 @@ python scripts/train_dpo.py --pairs dpo_out/latents/pairs_latents.jsonl --out dp
 
 M2 — the joint A/V trainer (`theama.train.train_joint_av`, config
 `configs/m2_joint_av.yaml`) has CPU-tested DAC latent and external Wan adapter
-contracts, including a 5-D tiny A/V forward/backward smoke. Real-weight GPU
-smoke is next; internal Wan block bridges and LoRA injection are still pending.
+contracts, including a 5-D tiny A/V forward/backward smoke, plus LoRA injection
+for bridge warmup (`theama.model.lora`, rank-8 default, merged back before the
+full phase). Real-weight GPU smoke runners are ready; internal Wan block
+bridges are still pending.
+
+```bash
+python scripts/smoke_m2_real_weights.py dac --weights checkpoints/wan2.2/dac_44khz/weights.pth --out smoke_out/dac
+python scripts/smoke_m2_real_weights.py wan --model-path checkpoints/wan2.2/ti2v-5b --out smoke_out/wan_ti2v_5b
+```
+
+DAC writes a JSON report plus input/reconstructed WAVs. The Wan command checks
+one frozen-TI2V-5B A/V optimizer step, bridge updates and peak CUDA memory using
+random latent/text conditioning; it is a contract smoke, not a quality gate.
 
 ## Roadmap
 

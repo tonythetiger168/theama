@@ -9,6 +9,7 @@ from theama.model.audio_codec import (
     MockAudioCodec,
 )
 from theama.model.dac_codec import DACAudioCodec
+from theama.model.lora import LoRALinear, inject_lora_into_audio_dit, merge_lora
 
 __all__ = [
     "VideoBackbone",
@@ -18,4 +19,7 @@ __all__ = [
     "AudioCodecSpec",
     "MockAudioCodec",
     "DACAudioCodec",
+    "LoRALinear",
+    "inject_lora_into_audio_dit",
+    "merge_lora",
 ]

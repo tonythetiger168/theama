@@ -22,6 +22,8 @@ model:
     frozen: true
 training:
   phase: bridge  # bridge warmup first; set_phase("full") for full-audio FT
+  bridge_lora_rank: 8  # bridge warmup trains low-rank residuals only; 0 = dense warmup
+  bridge_lora_alpha: 16
   lr: 0.0001
   weight_decay: 0.01
   audio_loss_weight: 1.0

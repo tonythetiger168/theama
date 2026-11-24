@@ -17,6 +17,12 @@ import math
 import torch
 import torch.nn.functional as F
 
+from theama.model.lora import (
+    inject_lora_into_audio_dit,
+    iter_lora_modules,
+    lora_parameters,
+    merge_lora,
+)
 from theama.model.wan_adapter import flatten_video_latents, unflatten_video_tokens
 
 
@@ -91,8 +97,15 @@ class JointAVTrainer:
 
     Config keys: ``phase`` (``bridge`` or ``full``), ``lr``, ``weight_decay``,
     ``audio_loss_weight``, ``video_loss_weight``, ``max_grad_norm``, ``mu``,
-    ``sigma`` and ``time_scale``. Changing phase rebuilds the optimizer so no
-    stale optimizer state is carried across the warmup/full boundary.
+    ``sigma``, ``time_scale``, ``bridge_lora_rank`` (0 disables LoRA) and
+    ``bridge_lora_alpha`` (defaults to ``2 * rank``). Changing phase rebuilds
+    the optimizer so no stale optimizer state is carried across the
+    warmup/full boundary.
+
+    With ``bridge_lora_rank > 0`` the bridge phase injects LoRA into every
+    bridge ``v2a``/``a2v`` out-projection and trains only the low-rank
+    tensors; switching to ``full`` merges the adapters back into plain
+    linears first, so full fine-tuning starts from the warmed-up bridges.
     """
 
     def __init__(self, video_backbone, audio_dit, config: dict | None = None):
@@ -108,6 +121,8 @@ class JointAVTrainer:
             "mu": 0.0,
             "sigma": 1.0,
             "time_scale": 1000.0,
+            "bridge_lora_rank": 0,
+            "bridge_lora_alpha": None,
             **(config or {}),
         }
         self.optimizer: torch.optim.Optimizer | None = None
@@ -120,12 +135,23 @@ class JointAVTrainer:
             raise ValueError(f"unknown M2 training phase: {phase}")
         self.phase = phase
         self.config["phase"] = phase
+        rank = int(self.config["bridge_lora_rank"])
+        if phase == "full" and rank > 0 and iter_lora_modules(self.audio):
+            merge_lora(self.audio)
         for param in self.video.parameters():
             param.requires_grad_(False)
         for param in self.audio.parameters():
             param.requires_grad_(False)
-        params = self.audio.bridges.parameters() if phase == "bridge" else self.audio.parameters()
-        self._trainable_params = list(params)
+        if phase == "bridge" and rank > 0:
+            inject_lora_into_audio_dit(
+                self.audio, rank=rank, alpha=self.config["bridge_lora_alpha"]
+            )
+            self._trainable_params = lora_parameters(self.audio.bridges)
+        else:
+            params = (
+                self.audio.bridges.parameters() if phase == "bridge" else self.audio.parameters()
+            )
+            self._trainable_params = list(params)
         if not self._trainable_params:
             raise ValueError(f"{phase} phase has no trainable parameters; check bridge schedule")
         for param in self._trainable_params:

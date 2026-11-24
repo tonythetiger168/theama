@@ -18,7 +18,7 @@
 | 階段 | 模型交付物 | 說明 |
 |---|---|---|
 | P1a→A14B | **theama-t2v-a14b-dpo** | 5B 全綠後同配方推 A14B（80GB 卡） |
-| M2 | **theama-audio-dit v1** | 真實 DAC/Wan 權重 smoke → Wan 內層 bridge、LoRA 注入、AV 資料管線與 GPU 訓練；驗收：AV-sync < 40ms |
+| M2 | **theama-audio-dit v1** | 真實 DAC/Wan 權重 smoke → Wan 內層 bridge、AV 資料管線與 GPU 訓練（bridge warmup LoRA 已落地）；驗收：AV-sync < 40ms |
 | M3 | **theama-extend-30s** | SVI 式接續，anchor_frames=8；驗收：identity drift ≤ 單段 1.5× |
 | M4 | **theama-4k-regen** | 720p→2K→4K 兩段 in-context 重建；驗收：LPIPS 不劣化 >10% |
 
