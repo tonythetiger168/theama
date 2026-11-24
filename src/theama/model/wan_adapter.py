@@ -107,15 +107,20 @@ class WanVideoAdapter(torch.nn.Module):
     def from_pretrained(
         cls,
         name: str,
+        model_path: str | None = None,
         device: str | torch.device | None = None,
         dtype: torch.dtype = torch.bfloat16,
     ) -> "WanVideoAdapter":
-        """Load only the Wan transformer; VAE/text encoding stay outside this adapter."""
+        """Load only the Wan transformer; VAE/text encoding stay outside this adapter.
+
+        ``model_path`` may point at a user-downloaded Diffusers repository;
+        otherwise the registered Hugging Face repo id is resolved user-side.
+        """
         from diffusers import WanTransformer3DModel  # noqa: PLC0415
 
         spec = get_wan_adapter_spec(name)
         transformer = WanTransformer3DModel.from_pretrained(
-            spec.repo_id,
+            model_path or spec.repo_id,
             subfolder=spec.subfolder,
             torch_dtype=dtype,
         )

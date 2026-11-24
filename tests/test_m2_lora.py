@@ -66,6 +66,18 @@ def test_lora_linear_freezes_base_and_trains_ab():
     assert lora.lora_a.requires_grad and lora.lora_b.requires_grad
 
 
+def test_lora_linear_preserves_mha_contract_and_base_device():
+    base = torch.nn.Linear(8, 8)
+    lora = LoRALinear(base, rank=2, alpha=4)
+    assert torch.equal(lora.weight, base.weight)  # zero-init B, fused MHA path
+    assert lora.bias is base.bias
+    assert lora.lora_a.device == base.weight.device
+    assert lora.lora_b.device == base.weight.device
+    merged = lora.merged_linear()
+    assert merged.weight.device == base.weight.device
+    assert merged.bias.device == base.bias.device
+
+
 def test_lora_linear_scaling_math():
     base = torch.nn.Linear(8, 8)
     lora = LoRALinear(base, rank=2, alpha=6)  # scale = 3
