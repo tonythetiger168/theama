@@ -46,6 +46,33 @@ def test_audio_dit_forward_shapes():
     assert v_out.shape == v.shape
 
 
+def test_avatar_modules():
+    import torch
+
+    from theama.avatar import AudioDrive, IdentityEncoder, StreamingAvatarSession
+    from theama.avatar.identity import IdentityBank as IB
+
+    enc = IdentityEncoder(dim=64)
+    emb = enc(torch.randn(1, 512))
+    assert emb.shape == (1, 64)
+
+    bank = IB()
+    bank.register("alice", emb)
+    assert bank.swap("alice") is emb
+    try:
+        bank.swap("bob")
+        raise AssertionError("unknown identity accepted")
+    except KeyError:
+        pass
+
+    drive = AudioDrive(audio_dim=32, motion_dim=16)
+    out = drive(torch.randn(2, 40, 32), n_video_frames=10)
+    assert out.shape == (2, 10, 16)
+
+    session = StreamingAvatarSession(backbone=None, identity_bank=bank)
+    assert session.config.height == 720
+
+
 def test_package_version():
     import theama
 
