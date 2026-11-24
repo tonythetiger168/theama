@@ -16,6 +16,21 @@
 - VBench 對標基準：AMD Quark 研究 BF16 reference **0.8681**（832×480、81f@16fps、30 steps、CFG 5.0）；AWS Neuron 卡 6 維平均 67.63%；MLPerf v6.0 reference 70.48。數值隨評測配置浮動，對齊時須複製同一 eval config。
 - GPU 驗收腳本：`scripts/gen_eval_set.py`（可續跑，50 支 MP4 全數產出+probe 驗證）、`scripts/run_vbench.py`（6 維子集 ±0.02 gate）。
 
+## P1a — 偏好後訓練（VideoReward + LoRA-DPO，2026-11-24 落地）
+
+品質路徑 P1 的第一刀（見 [`quality-path-wan3-h3.md`](quality-path-wan3-h3.md)）：差距在後訓練不在骨幹，先用 reward-model DPO 把 Wan 2.2 的偏好對齊補上。
+
+- Reward model：**VideoReward（KlingTeam，Apache-2.0）**，Qwen2-VL-2B 多維（視覺品質/時序一致/動態程度/文字對齊）；註冊表 `src/theama/reward/config.py` 強制 Apache/MIT 白名單。
+- 流程（全部腳本化、可續跑）：
+  1. `scripts/gen_candidates.py` — 每 prompt 4 seeds 產候選（TI2V-5B dev 路徑）
+  2. `scripts/score_eval_set.py` — VideoReward 打分 → scores.jsonl
+  3. `scripts/make_pref_pairs.py` — best-vs-worst、margin ≥ 0.5 過濾（防 noise-driven drift）→ pairs.jsonl
+  4. `scripts/encode_pairs.py` — Wan VAE 預編碼 latents（訓練熱迴圈不背 VAE）
+  5. `scripts/train_dpo.py` — Diffusion-DPO flow-matching 版，LoRA rank 32，β=500，凍結 reference
+- 配置：`configs/dpo_ti2v_5b.yaml`；數學（flow_match_pair / dpo_loss）CPU 單測覆蓋。
+- **驗收**：(1) held-out prompt 盲測 vs 未後訓練 Wan 2.2 win ≥ 65%；(2) VBench 6 維子集對 DPO 前 baseline 不掉超過 ±0.01（防 reward hacking / motion collapse）；(3) dpo_metrics.json 500 steps 收斂、loss 持續下降。
+- 5B 全綠後同配方推 A14B（80GB 卡）。
+
 ## M2 — Audio DiT + 聯合微調
 
 - DAC 44.1kHz stereo latent 接入；`CrossModalBridge` 每 3 層一組。
