@@ -67,7 +67,7 @@ Film line:
 
 - **M1** — Wan 2.2 inference reproduction + eval harness (VBench + AV-sync metrics) — code landed 2026-11-24, GPU acceptance run pending
 - **P1a** — Preference post-training: VideoReward (Apache-2.0) scoring + LoRA-DPO on Wan 2.2 — code landed 2026-11-24, GPU run pending
-- **M2** — Audio DiT branch + joint A/V fine-tune (LoRA → full)
+- **M2** — Audio DiT branch + joint A/V fine-tune (bridge warmup → full) — CPU trainer landed 2026-11-24, DAC/Wan GPU wiring pending
 - **M3** — THEAMA-Extend: 5 s → 30 s continuation without drift
 - **M4** — THEAMA-4K: two-stage 720p → 2K → 4K regenerate
 - **M4b** — THEAMA-8K: 4K → 8K tiled regenerate + HEVC/AV1 + HDR10 delivery (halo tier, after M4 is stable)

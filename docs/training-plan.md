@@ -38,6 +38,14 @@
 - 指標：AV-sync（SyncNet 類偏移量）、音質（PESQ/STOI 對參考集）。
 - **驗收**：5s 片段音畫同步偏移 < 40ms；人聽盲測 ≥ 7/10 認為「聲音屬於畫面」。
 
+### M2 實作落點（2026-11-24，CPU 核心）
+
+- `src/theama/model/audio_dit.py`：audio self-attention/adaLN blocks + 雙向 `CrossModalBridge`；音訊與影片 loss 都能反傳到 v2a/a2v。
+- `src/theama/train/train_joint_av.py`：可實際 forward/backward/optimizer step 的 `JointAVTrainer`。Wan 永遠凍結；`bridge` 階段只更新 bridges，`full` 階段更新整條 audio stream。兩個 stream 各自抽 logit-normal timestep，採 Wan 一致的 `x_t=(1-t)x+t·noise`、`v=noise-x`。
+- Video adapter contract：`predict_velocity(video_tokens, t, cond)`；audio bridges 先產生 joint video tokens，再由凍結 video adapter 預測 velocity，確保 video loss 也接到 cross-modal bridge。
+- 配置：`configs/m2_joint_av.yaml`；19 個 M2 CPU tests 覆蓋 endpoint/速度符號、time embedding、參數凍結、真實參數更新、adapter/batch 守衛。
+- **尚未完成**：DAC codec 與 Wan 內部層級 adapter、LoRA 注入、實際 AV 資料管線與 GPU 訓練；上述 40ms/盲測閘仍未驗收。
+
 ## M3 — THEAMA-Extend（30s）
 
 - SVI 式接續，anchor_frames=8，audio crossfade 250ms。

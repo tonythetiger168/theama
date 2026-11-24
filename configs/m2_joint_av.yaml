@@ -1,0 +1,28 @@
+# SPDX-License-Identifier: Apache-2.0
+# M2 CPU-validated optimization defaults; Wan/DAC GPU adapter wiring is pending.
+model:
+  audio:
+    dim: 1024
+    layers: 12
+    heads: 16
+    video_dim: 5120
+    bridge_every: 3
+    latent_dim: 128
+  video:
+    repo_id: Wan-AI/Wan2.2-T2V-A14B
+    dev_repo: Wan-AI/Wan2.2-TI2V-5B
+    frozen: true
+training:
+  phase: bridge  # bridge warmup first; set_phase("full") for full-audio FT
+  lr: 0.0001
+  weight_decay: 0.01
+  audio_loss_weight: 1.0
+  video_loss_weight: 1.0
+  max_grad_norm: 1.0
+  mu: 0.0
+  sigma: 1.0
+  time_scale: 1000.0
+acceptance:
+  av_sync_offset_ms_max: 40
+  human_belonging_score_min: 7
+  clip_seconds: 5
