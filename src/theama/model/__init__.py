@@ -3,5 +3,13 @@
 
 from theama.model.dit import VideoBackbone
 from theama.model.audio_dit import AudioDiT, CrossModalBridge
+from theama.model.audio_codec import DAC_44K, AudioCodecSpec, MockAudioCodec
 
-__all__ = ["VideoBackbone", "AudioDiT", "CrossModalBridge"]
+__all__ = [
+    "VideoBackbone",
+    "AudioDiT",
+    "CrossModalBridge",
+    "DAC_44K",
+    "AudioCodecSpec",
+    "MockAudioCodec",
+]
