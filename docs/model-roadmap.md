@@ -71,7 +71,7 @@
 ## 發布策略
 
 - 自研微調權重（DPO LoRA、audio DiT、extend/4K 模組）以 **Apache-2.0** 發布於
-  Hugging Face `chienhsinlin` namespace，模型卡遵循 HF model card 規規範（訓練資料來源、
+  Hugging Face `chienhsinlin` namespace，模型卡遵循 HF model card 規範（訓練資料來源、
   評測分數、限制與合規聲明）。
 - 第三方權重（Wan 2.2、Qwen-Image 等）不轉售不重新打包，使用者自行下載
   （`scripts/download_weights.sh`），權重授權各自保留。
