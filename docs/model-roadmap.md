@@ -12,6 +12,7 @@
 | P1a | **theama-ti2v-5b-dpo**（VideoReward 偏好對 + LoRA-DPO） | 程式落地，GPU 驗收待跑 |
 | M2 | **theama-audio-dit v1**（並聯音訊 DiT + 雙向 CrossModalBridge） | CPU trainer + DAC contract + 外部 Wan adapter 落地，真實權重 GPU smoke 待跑 |
 | M4b（前置） | HEVC / AV1 + HDR10 / HLG 10-bit 封裝 | mux 落地；8K regenerate 本體待 M4 穩定 |
+| M7a（前置） | CJK T2I eval seed v1（24 條繁中文字渲染 prompt + expected_text） | 已落地；Qwen-Image-2512 / Z-Image Turbo 推理重現待跑 |
 
 ## 近期（下一季）
 
@@ -29,7 +30,7 @@
 | M4b | **theama-8k-regen** | 4K→8K tiled regenerate + HEVC/AV1 + HDR10（光環級，M4 穩定後才動） |
 | M5 | 品質收斂版 Film 模型 | 盲測 vs H3 win/tie ≥50%、vs Wan 3.0 ≥40%；VBench 開源前三 |
 | M6a | **theama-avatar-offline** | Wan-Animate-2-14B（animation-only）底座 + LatentSync 墊底唇形 |
-| M7a | **theama-image 雙路徑** | Qwen-Image-2512（品質）+ Z-Image Turbo（快速）推理重現 + CJK 評測 |
+| M7a | **theama-image 雙路徑** | Qwen-Image-2512（品質）+ Z-Image Turbo（快速）推理重現 + CJK 評測（seed v1 已落地，擴充到 100 prompts 後作為驗收閘） |
 
 ## 遠期
 
@@ -74,7 +75,7 @@
   Reward Weighting 融合 VideoReward／JavisScore／ImageBind／AVHScore——可作
   M2/M5 推理期增益與評測交叉驗證）、**Hallo-Live**（2026，fudan-generative-vision
   有開源 repo，HP-DMD reward 重加權蒸餾把串流 A/V avatar 拉向人本偏好——M6b
-  avatar-stream 線的 reward 參考）。三者授權／權重可得性均未核實，維持觀察，
+  avatar-stream 線的 reward 參考）。三者授權／權重可得性均未核均未核實，維持觀察，
   不改動 P1a／M2 配方。
 
 ## 發布策略
