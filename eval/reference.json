@@ -1,0 +1,36 @@
+{
+  "t2v-a14b": {
+    "provenance": [
+      "AMD Quark Wan2.2 mixed-precision study (2026-11): BF16 reference VBench overall 0.8681 (832x480, 81f@16fps, 30 steps, CFG 5.0, 25 held-out prompts, MI350)",
+      "AWS Neuron Wan2.2-T2V-A14B model card (BF16, Trn2): subject 87.60 / background 85.70 / motion_smoothness 96.50 / dynamic_degree 61.04 / appearance_style 27.11 / scene 47.82, 6-dim avg 67.63",
+      "MLPerf Inference v6.0 T2V reference implementation: VBench 70.48, minimum accuracy threshold 69.77 (99% of reference)"
+    ],
+    "vbench_overall_bf16": 0.8681,
+    "tolerance": 0.02,
+    "six_dim_subset": [
+      "subject_consistency",
+      "background_consistency",
+      "motion_smoothness",
+      "dynamic_degree",
+      "aesthetic_quality",
+      "imaging_quality"
+    ],
+    "note": "VBench overall varies with eval config (resolution/frames/steps/prompt set); reproduce the AMD BF16 config for an apples-to-apples gate."
+  },
+  "ti2v-5b": {
+    "provenance": [
+      "No official VBench report for TI2V-5B; dev-path gate is functional (all 50 eval MP4s produced + probe-valid) plus manual spot check."
+    ],
+    "vbench_overall_bf16": null,
+    "tolerance": 0.02,
+    "six_dim_subset": [
+      "subject_consistency",
+      "background_consistency",
+      "motion_smoothness",
+      "dynamic_degree",
+      "aesthetic_quality",
+      "imaging_quality"
+    ],
+    "note": "If a VBench number is wanted for the dev path, run scripts/run_vbench.py against the same 6-dim subset and record it here as our own baseline."
+  }
+}

@@ -44,3 +44,10 @@ training:
   method: "lora_first"                        # LoRA on A/V bridge layers, then full FT
   precision: "bf16"
   forbid_third_party_outputs: true            # never train on H3/LTX outputs (license)
+
+eval:
+  prompt_set: "eval/t2v_v1.jsonl"             # fixed 50-prompt T2V set (M1)
+  vbench_subset: ["subject_consistency", "background_consistency", "motion_smoothness",
+                  "dynamic_degree", "aesthetic_quality", "imaging_quality"]
+  reference: "eval/reference.json"            # AMD BF16 0.8681 @ 832x480/81f/16fps/30 steps
+  tolerance: 0.02

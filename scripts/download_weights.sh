@@ -6,10 +6,14 @@ set -euo pipefail
 TARGET_DIR="${1:-checkpoints/wan2.2}"
 mkdir -p "$TARGET_DIR"
 
-echo "==> Wan 2.2 TI2V-5B (dev/CI path, ~24GB VRAM)"
-hf download Wan-AI/Wan2.2-TI2V-5B --local-dir "$TARGET_DIR/ti2v-5b"
+# Diffusers-layout repos — src/theama/infer/ loads these directly.
+echo "==> Wan 2.2 TI2V-5B Diffusers (dev/CI path, ~16GB VRAM w/ offload)"
+hf download Wan-AI/Wan2.2-TI2V-5B-Diffusers --local-dir "$TARGET_DIR/ti2v-5b"
 
-echo "==> Wan 2.2 T2V-A14B (full backbone, 80GB-class)"
-hf download Wan-AI/Wan2.2-T2V-A14B --local-dir "$TARGET_DIR/t2v-a14b"
+echo "==> Wan 2.2 T2V-A14B Diffusers (full backbone, 40GB+ w/ offload, 80GB-class native)"
+hf download Wan-AI/Wan2.2-T2V-A14B-Diffusers --local-dir "$TARGET_DIR/t2v-a14b"
+
+echo "==> Wan 2.2 I2V-A14B Diffusers (keyframe-conditioned path for M7c)"
+hf download Wan-AI/Wan2.2-I2V-A14B-Diffusers --local-dir "$TARGET_DIR/i2v-a14b"
 
 echo "Done. Weights are under $TARGET_DIR (gitignored)."
