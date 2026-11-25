@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "theama"
-version = "0.1.0"
+version = "0.2.0"
 description = "Open audio-video generation model targeting 4K 30s MP4 clips (Wan 2.2 backbone, joint A/V DiT, SVI-style continuation, two-stage 4K regenerate)"
 readme = "README.md"
 license = { text = "Apache-2.0" }
