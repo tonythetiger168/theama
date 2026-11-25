@@ -2,35 +2,63 @@
 # Theama session checkpoint — hourly agent runs save/restore THIS file.
 # 設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
 schema: 1
-updated_at: "2026-11-25T08:14:00Z"
-head: a7cb7697f200c2912a4a89c6cd10b239baab9139
+updated_at: "2026-11-25T08:45:00Z"
+head: a8a8f803fa11556c0432cd56f17fd5a773d2eb1e
 head_verified: true
-last_increment: "runbook §4.1 補 Ming 第三路徑驗收段（gen/score 指令對＋單卡 80 GiB 需求＋diagnostic-only 不入 M7a 驗收閘；commit be140326 首推漏檔尾換行、blob 驗證當場抓到，a7cb7697 補 byte-exact）；同輪對岸落地 M7a score 來源標註強化 a3067d9b（CPU 220 passed），已消化合併進本檔"
+last_increment: "① GPU 判讀：消化 Claude PR #3（a8a8f803 合併）——M2 外部 latent-bridge 真實權重 smoke 雙跑通過（11-24 RTX 4090＋11-25 A40 全 runbook 復跑，DAC rel-L2 0.0935/0.0942、Wan TI2V-5B bf16 峰值 9.37 GiB、EXIT=0）；M1 RunPod runner 落地（runpod_m1_eval.sh，M1_EVAL_SMOKE_OK 閘）；本地樹 10 檔 byte-exact 同步、CPU 全套 222 passed；記錄使用者新指示：Claude 可做其他底模＋HDL on RunPod（紅線不變）"
 ci_yml: content_ready_pending_user_upload   # MCP token 推 .github/workflows 被 403（insufficient scopes）；內容已交付使用者
 issues: 0
-gpu_outputs: none_pending_review            # Claude 接手 GPU 驗收；若其 push 結果，下輪 RESTORE 對帳
+gpu_outputs: m2_external_smoke_passed_reviewed   # PR #3 雙跑通過已判讀（pass 18）；M1/P1a/M2 internal 仍待 Claude 跑
 blockers: []
 division_of_labor:
   hourly_agent: "watchlist 核查、docs、CPU 側程式準備、repo 健康、session checkpoint"
-  claude: "GPU 驗收執行（runbook 第 1–5 節）、CI.yml 上傳（人工作業）、結果回報/落盤、git tag v0.2.0（人工作業）"
+  claude: "GPU 驗收執行（runbook 第 1–5 節＋status.md next steps）、CI.yml 上傳（人工作業）、結果回報/落盤、git tag v0.2.0（人工作業）；2026-11-25 使用者擴權：可做其他底模＋HDL on RunPod（紅線不變：H3/LTX/Qwen2.1/FLUX3-Klein/Krea2 不碰）"
 next_hour:
-  - "RESTORE：核對 HEAD 與本檔 head；Claude 若已 push GPU 結果或 v0.2.0 tag，先消化再增量"
-  - "pass 17 雙增量皆已落地請勿重做：M7a score provenance 強化（a3067d9b）＋ runbook §4.1 Ming 第三路徑段（a7cb7697）；gen 側第三路徑 pass 16 已落地（4e1d202f）"
+  - "RESTORE：核對 HEAD 與本檔 head；Claude 若已 push M1/P1a/internal-wan_blocks GPU 結果或 v0.2.0 tag，先消化再增量"
+  - "pass 16–18 增量皆已落地請勿重做：Ming gen 第三路徑（4e1d202f）／score provenance（a3067d9b）／runbook §4.1（a7cb7697）／PR #3 判讀＋同步（本輪）；agent 入口改為 docs/status.md＋AGENTS.md"
   - "使用者上傳 CI.yml 後：Actions 即為驗證引擎（CI image 需 ffmpeg + tesseract chi-tra，否則 decode/M7a 測試 skip）"
   - "③ 候選：encode_texts 進一步強化（如 error 重試配額上限）；watchlist 固定四項覆核（阿里下一代 11 月窗口 11-30 關閉，仍無發布）"
-  - "model-roadmap.md 本地已與遠端 byte-exact（pass 15 癒合），後續可正常從本地推送此檔"
+  - "model-roadmap.md 本地已與遠端 byte-exact（pass 18 同步至 b11ccf28），後續可正常從本地推送此檔"
+  - "GPU 下一棒（Claude，依 status.md）：M1 runpod_m1_eval.sh 5→50 prompts→VBench ±0.02 → P1a（先驗 reward/score.py::_invoke 對真實 VideoReward）→ M2 internal wan_blocks＋LoRA smoke → 正式訓練前換 stable-torch image"
 ---
 
 # Session State（每小時 checkpoint）
 
 ## 現況一句話
 
-版本 0.2.0（CPU 側程式全落地、GPU 驗收待跑）；P1b 鏈路補齊：雙 cache →
-joint loader → runner＋薄殼 → runbook 第 5 節驗收段（含 dev/prod 雙路徑
-config），220 CPU tests 全綠；GPU 驗收由 Claude 依
-docs/gpu-acceptance-runbook.md 執行；CI.yml 內容備妥待上傳；紅線不變。
+版本 0.2.0；**M2 外部 latent-bridge 真實權重 GPU smoke 已通過**（PR #3：
+11-24 RTX 4090＋11-25 A40 全 runbook 復跑，詳 docs/status.md）；M1 RunPod
+runner 落地待跑（runpod_m1_eval.sh）；P1b 鏈路補齊（雙 cache → joint
+loader → runner → runbook 第 5 節），222 CPU tests 全綠；GPU 驗收由
+Claude 執行（使用者 11-25 擴權：其他底模＋HDL on RunPod 亦可）；
+CI.yml 內容備妥待上傳；紅線不變。
 
 ## 本輪記錄（新輪加在最上面，保留最近 10 輪）
+
+- 2026-11-25 pass 18 @ a8a8f803 — ① GPU 輸出判讀（本 session 增量）：
+  消化 Claude PR #3（08:13:46Z 合併，base d96b7192，10 檔 +447/-16）。
+  **M2 外部 latent-bridge 真實權重 smoke 雙跑通過**：11-24 RTX 4090
+  （c13d0f2）＋11-25 A40 全 runbook 復跑（4c2d828；三 JSON＋雙 WAV＋
+  logs 齊、pod 刪除、network volume theama-m2 保留、< $0.05）——
+  DAC 44.1kHz rel-L2 0.0935/0.0942（對照隨機權重 ≈1.0，證實真實權重
+  載入）、latent [1,87,2048]；Wan TI2V-5B bf16 凍結骨幹反傳＋bridge
+  優化器更新（32 grad tensors／28 updated）、峰值 9.37 GiB 兩卡一致。
+  證明範圍僅 contract（真實權重載入、tensor 配置、反傳、記憶體
+  餘裕）；不證明 prompt-to-video 品質／感知音質／AV sync——M1 品質閘、
+  P1a、M2 internal wan_blocks GPU 驗收仍待跑。**M1 RunPod runner
+  落地**：runpod_m1_eval.sh（TI2V-5B 全 repo 入 volume＋容量預檢＋
+  M1_EVAL_SMOKE_OK 閘）；配套修正 gen_candidates tuple unpack、
+  gen_eval_set --model-path、t2v.py 本地路徑載入＋numpy 幀轉 PIL，
+  test_m1 +2。新增 docs/status.md（handoff 單一入口）＋AGENTS.md；
+  .gitignore 加 results/（原始 GPU 產物不入庫，存 Tony PC）。
+  本地同步：10 檔逐檔 git hash-object 對遠端 sha 全一致（
+  runpod_m1_eval.sh 首推比對抓到一處 PR 後修正——disk check 的
+  Path(sys.argv[2]) → sys.argv[2]，以遠端為準修齊）；bash -n 通過；
+  CPU 全套 **222 passed**（220+2，合併態獨立重跑）。**使用者新指示
+  （11-25）：Claude 可做其他底模＋HDL on RunPod**——已記入
+  division_of_labor，紅線不變（H3/LTX/Qwen2.1/FLUX3-Klein/Krea2
+  權重程式碼輸出皆不碰；其他底模僅限授權相容者）。tags 空、issues 0、
+  temp 無新上傳；watchlist 本輪不重查（pass 15/16 已覆核）。
 
 - 2026-11-25 pass 17 @ a7cb7697 — runbook §4.1 Ming 第三路徑驗收段
   （本 session 增量，next_hour 明列的「替對岸補」候選）：`### 4.1 第三
