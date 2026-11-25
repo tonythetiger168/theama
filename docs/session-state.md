@@ -2,10 +2,10 @@
 # Theama session checkpoint — hourly agent runs save/restore THIS file.
 # 設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
 schema: 1
-updated_at: "2026-11-25T18:50:00Z"
-head: 79191bc3272158d2391bc810003812dd58b25c13
+updated_at: "2026-11-25T19:15:00Z"
+head: 42ec2a643e5c172469f3e9be0ac6bca14f37a77e
 head_verified: true
-last_increment: "③ M4 小件：HLS fMP4/CMAF 分發包 packager 落地（承接 11-26 交付格式拍板）——inference/hls.py（LADDER 階梯表＋build_ladder 純函數＋RFC 6381 codecs＋deterministic master m3u8＋逐 rung ffmpeg fMP4 分段＋ffprobe 驗證不過不交付；cwd=variant_dir 解 ffmpeg 相對 segment pattern 對 CWD 解析陷阱）＋scripts/package_hls.py CLI；code commit 79191bc3，三檔 blob 7357267d／b446a755／49a7b6d0 首次即 byte-exact，CPU 338 passed；對岸 pass-31 5d1d26a5（M7a scorer 簡繁分軌）已獨立驗證消化"
+last_increment: "② watchlist 第十五輪覆核（roadmap commit 42ec2a64，blob 74cfefbe 首次即 byte-exact——curl raw＋cmp 雙驗）：Wan 3.x API-only 三方一致／阿里下一代影片模型 11 月窗口 T-4 仍無發布／Wan-Animate-2 repo id 無變化／Qwen-Image 譜系資料點（2.1 研究授權、2512 唯一可商用 Apache 線——紅線不變）／video reward 新觀察四筆（Reward Lightning、GT-SVJ、Reward Forcing、RewardDance，授權均未核實，VideoReward 首選不變）；CPU 338 passed 重跑確認"
 ci_yml: content_ready_pending_user_upload   # MCP token 推 .github/workflows 被 403（insufficient scopes）；內容已交付使用者
 issues: 1   # #4 RunPod: M2 internal wan_blocks + LoRA real-weight smoke（Claude GPU 任務書，11-25 17:20Z 開立，runbook §0 入口）
 gpu_outputs: m2_external_smoke_passed_reviewed   # PR #3 雙跑通過已判讀（pass 18）；M1/P1a/M2 internal 仍待 Claude 跑
@@ -14,10 +14,10 @@ division_of_labor:
   hourly_agent: "watchlist 核查、docs、CPU 側程式準備、repo 健康、session checkpoint"
   claude: "GPU 驗收執行（runbook 第 1–5 節＋status.md next steps）、CI.yml 上傳（人工作業）、結果回報/落盤、git tag v0.2.0（人工作業）；2026-11-25 使用者擴權：可做其他底模＋HDL on RunPod（紅線不變：H3/LTX/Qwen2.1/FLUX3-Klein/Krea2 不碰）"
 next_hour:
-  - "RESTORE：核對 HEAD 與本檔 head（pass-31 雙 entry：對岸 M7a scorer 簡繁分軌 5d1d26a5＋本 session M4 HLS packager 79191bc3——皆已消化，CPU 338）；repo 已轉 public（匿名 api.github.com 200），拉檔可走 curl raw 零轉錄路線；對岸若推 v1.3 簡繁對照 seed，先消化再增量；Claude 若回報 issue #4 GPU 結果或 v0.2.0 tag，先消化再增量"
-  - "pass 16–31 增量皆已落地請勿重做：Ming gen 第三路徑（4e1d202f）／score provenance（a3067d9b）／runbook §4.1（a7cb7697）／PR #3 判讀＋同步（0a2a3cd7）／watchlist 第十～十四輪（4fad1f38、918001c0+3f3fa0ac、129d5d67 PAVRM Apache 升格）／encode_texts retry budget（e1896295）／build_av_manifest（3f94b385）／pair+AV latent cache retry budget（1e64d0c1）／joint loader skipped 列明確報缺（cc85d330）／M7a eval seed 24→48（153be48c＋9d83f6c3）／M7a seed 48→100 v1.2（1596c716，漂移已由 ea97af39／6f478fd5 覆正）／manifest_stats 剖析器（1b896e72）／M7a 跨模型 summary 比較器（d4e8d0e3＋773f61e9）／pairs_stats 偏好對剖析器（19881f0a）／pair-latent 預檢閘＋train_dpo fail-fast（afde66af）／score_eval_set.collect() 測試（59163737）／scores 預檢閘＋make_pref_pairs fail-fast（3840eb88）／M7a scorer 簡繁分軌（5d1d26a5）／M4 HLS fMP4/CMAF 分發包 packager（79191bc3）；agent 入口改為 docs/status.md＋AGENTS.md"
+  - "RESTORE：核對 HEAD 與本檔 head（pass-32：watchlist 第十五輪 42ec2a64 已落地——roadmap blob 74cfefbe byte-exact）；repo 已轉 public（匿名 api.github.com 200），拉檔可走 curl raw 零轉錄路線；對岸若推 v1.3 簡繁對照 seed 或新 checkpoint，先消化再增量；Claude 若回報 issue #4 GPU 結果或 v0.2.0 tag，先消化再增量"
+  - "pass 16–32 增量皆已落地請勿重做：Ming gen 第三路徑（4e1d202f）／score provenance（a3067d9b）／runbook §4.1（a7cb7697）／PR #3 判讀＋同步（0a2a3cd7）／watchlist 第十～十五輪（4fad1f38、918001c0+3f3fa0ac、129d5d67 PAVRM Apache 升格、42ec2a64）／encode_texts retry budget（e1896295）／build_av_manifest（3f94b385）／pair+AV latent cache retry budget（1e64d0c1）／joint loader skipped 列明確報缺（cc85d330）／M7a eval seed 24→48（153be48c＋9d83f6c3）／M7a seed 48→100 v1.2（1596c716，漂移已由 ea97af39／6f478fd5 覆正）／manifest_stats 剖析器（1b896e72）／M7a 跨模型 summary 比較器（d4e8d0e3＋773f61e9）／pairs_stats 偏好對剖析器（19881f0a）／pair-latent 預檢閘＋train_dpo fail-fast（afde66af）／score_eval_set.collect() 測試（59163737）／scores 預檢閘＋make_pref_pairs fail-fast（3840eb88）／M7a scorer 簡繁分軌（5d1d26a5）／M4 HLS fMP4/CMAF 分發包 packager（79191bc3）；agent 入口改為 docs/status.md＋AGENTS.md"
   - "使用者上傳 CI.yml 後：Actions 即為驗證引擎（CI image 需 ffmpeg + tesseract chi-tra＋chi-sim，否則 decode/M7a 測試 skip）"
-  - "③ 候選：M2 audio DiT 骨架／P1b 資料引擎下一小件（對齊 docs/model-roadmap.md 現況表）／M7a v1.3 簡繁對照 seed 擴充（100 條補同語意簡中成對＋script 標籤——對岸可能已在進行，開工前必查 mtime 與遠端）；阿里 11 月窗口 11-30 關閉——最後覆核已於第十六輪完成（無 delta），窗口過後降為每數輪抽查"
+  - "③ 候選：M2 audio DiT 骨架／P1b 資料引擎下一小件（對齊 docs/model-roadmap.md 現況表）／M7a v1.3 簡繁對照 seed 擴充（100 條補同語意簡中成對＋script 標籤——對岸可能已在進行，開工前必查 mtime 與遠端）；阿里 11 月窗口 11-30 關閉——最近覆核為第十五輪（2026-11-26，無 delta），窗口過後降為每數輪抽查"
   - "GPU 下一棒（Claude，依 status.md＋runbook §0）：issue #4 M2 internal wan_blocks＋LoRA real-weight smoke → M1 runpod_m1_eval.sh 5→50 prompts→VBench ±0.02 → P1a（先驗 reward/score.py::_invoke 對真實 VideoReward）→ 正式訓練前換 stable-torch image"
 
 # Session State（每小時 checkpoint）
@@ -48,6 +48,33 @@ wan_blocks＋LoRA real-weight smoke 任務書）；CI.yml 內容備妥待
 上傳；紅線不變。
 
 ## 本輪記錄（新輪加在最上面，保留最近 10 輪）
+
+- 2026-11-25 pass 32 @ 42ec2a64（本 session）— ② watchlist 第十五輪
+  覆核落地（docs commit `42ec2a64`，roadmap blob **74cfefbe** 首次
+  即 byte-exact——curl raw＋cmp 雙驗零轉錄）：四固定項——Wan 3.x
+  仍 API-only（atlascloud 2026-08-26 逐 33 repo 核查、evolink
+  供應路由核查、11-15 第三方榜單快照三方一致；Wan 3.0 無 HF
+  checkpoint／GitHub repo／license 文本，最新開放權重仍 Wan 2.2
+  系）；Wan-Animate-2 repo id 無變化（base＋distilled 皆在 Wan-AI
+  HF，Apache-2.0）；阿里下一代影片模型 11 月窗口 T-4（11-30
+  關閉）中英文檢索仍無發布公告或權重；Qwen-Image 補產品線譜系
+  資料點（juejin 2026-10-08 同題對比，B 級：2.0 架構換代未放
+  權重→3.0 純閉源 API→2.1 回開源線但 Qwen Research License
+  非商用；2512 為 20B 分支收官版、Apache-2.0 唯一可商用線）——
+  紅線不變、M7a 選型不變。video reward 新觀察四筆（awesome-rm
+  清單 2026-10-06 版，S 級）：**Reward Lightning**（latent RM
+  與對抗蒸餾共享骨幹，同步對齊＋加速 few-step）、**GT-SVJ**
+  （生成器即 energy-based judge，self-supervised 不依賴外部
+  VLM，授權暴露面小）、**Reward Forcing**（reward-guided DMD
+  串流蒸餾，M6b 串流線方法參考）、**RewardDance**（reward
+  scaling 規模律與抗 hacking）——授權／權重均未核實，
+  VideoReward 首選不變，維持觀察。RESTORE 對帳乾淨（開工 HEAD
+  c1005ea4＝記憶，session-state blob ce1b9456＝本地 hash-object；
+  issue #4 OPEN 無新回報、tags 空、遠端無 .github、temp 無新
+  GPU 輸出、mtime 掃描無對岸活動）；推送前再對帳無競態。CPU
+  全套 **338 passed** 重跑確認（docs-only 輪，測試數基線第三網
+  無對岸活動）。trim pass-24 一條移出（事實存專案記憶第二十四
+  輪存檔），維持 11 entries。
 
 - 2026-11-25 pass 31 @ 79191bc3（對帳驗證側，本 session）— **③ M4
   小件：HLS fMP4/CMAF 分發包 packager 落地（承接 11-26 交付格式
@@ -424,43 +451,6 @@ wan_blocks＋LoRA real-weight smoke 任務書）；CI.yml 內容備妥待
   pytest 沙箱重置洗掉已重裝；全套曾現兩次環境性零星 flake
   （p1a compile／m7a 各一次，重跑即綠，隔離重跑 10/10 綠，
   FUSE 讀取 8 次 md5 一致——記錄觀察，非程式缺陷）。
-
-- 2026-11-25 pass 24 @ 9d83f6c3 — ③ M7a CJK T2I eval seed 24→48
-  （v1.1；roadmap 明列「擴充到 100 prompts 後作為驗收閘」的第一步）。
-  新 24 列（T2I-CJK-025…048）：補齊薄弱類別（newspaper／ticket／
-  receipt／banner 各 +2、sticker／packaging／menu 補量）＋新增
-  calendar／label／coupon／map 四類；難度梯度——數字混排
-  （2027年1月）、冒號標點（今日例湯：苦瓜排骨）、直排（特製豚骨
-  拉麵／霧中車站）、3 字短目標（美食區）。test_m7a 計數 24→48
-  ＋新契約斷言「expected_text 必須逐字出現在 prompt」（48 列全數
-  成立，防 scorer 目標與生成指令漂移）＋類別覆蓋斷言擴至九類。
-  roadmap M7a 行與 Ming diagnostic 註同步更新。RESTORE 對帳乾淨
-  （開工 HEAD 01926a10、無 Claude GPU commit、tags 空、issues 0、
-  temp 無新上傳、開工前 mtime 掃描無對岸活動中檔案）；推送前再
-  對帳無競態。CPU 全套 255 passed。push_files 三檔一次 commit
-  153be48c；test／roadmap blob 首次即 byte-exact（9432fb21／
-  d3870969）。
-  **SAVE 事故第十一實例（最嚴重：同一檔連續四次壞 payload，
-  對岸救援收場）**：eval jsonl（48 行、12KB 全 CJK）首推
-  153be48c 轉錄疊字於 row 034（「紅色布前的紅色布條」，blob
-  驗證當場攔下）；三次修復推送各自引入新隨機疊字（fc32f727
-  壞 008/013/022/045 → c3b09ca8 壞 010/048 → 42b3462d 壞
-  006）——每次 fetch-diff 定位皆正確，但全檔重抄的每遍錯誤率
-  獨立非零（1～4 列／遍），whack-a-mole 不收斂。對岸 12:20:52Z
-  以正確本地檔覆推 9d83f6c3（eval blob c96b7cbb＝本地
-  hash-object）收尾；本 session 第五次 payload（又帶三處新疊字）
-  恰因 stale-SHA 被拒——**stale-SHA 閘這次反向保護了正確版本**。
-  **教訓（新）：同一長檔連續兩次 blob 驗證失敗即停手——第三次起
-  改用「fetch 遠端→本地 diff→只信任單行修補」或等待對岸乾淨副本，
-  禁止無限全檔重抄；CJK 長檔全量重抄錯誤率不隨謹慎歸零。**
-  對岸同分鐘增量：129d5d67（12:14:14Z）watchlist 第十四輪——
-  PAVRM 官方 repo Tencent-Hunyuan/HY-Video-PRFL 授權核實
-  Apache-2.0，由觀察升格紅線內可直接參考實作（latent 空間打分
-  免 VAE decode、PRFL ≥1.4× 加速、骨幹 Wan2.1 Apache 譜系）；
-  本地 roadmap 早已含該段（對岸工作期間寫入），本 session 推送
-  的 roadmap 版本 d3870969 與之合體無衝突。三壞 commit 留史
-  不強推。HEAD 現為 9d83f6c3。
-
 
 ## RESTORE 協議（每輪第 0 步，依序執行）
 
