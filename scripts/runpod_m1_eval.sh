@@ -114,6 +114,9 @@ echo "==> eval-set generation: first $LIMIT prompts"
 nvidia-smi --query-gpu=timestamp,memory.used,utilization.gpu --format=csv -l 15 \
   > "$LOG_DIR/nvidia_smi.csv" 2>/dev/null &
 SMI_PID=$!
+# Let a generation failure fall through to the report step (the ERR trap
+# would otherwise fire on the failed pipeline even under `set +e`).
+trap - ERR
 set +e
 python3 scripts/gen_eval_set.py \
   --model ti2v-5b \
@@ -123,6 +126,7 @@ python3 scripts/gen_eval_set.py \
 GEN_STATUS=${PIPESTATUS[0]}
 set -e
 kill "$SMI_PID" 2>/dev/null || true
+trap 'status=$?; echo "M1_EVAL_FAILED status=$status line=$LINENO" >&2; exit "$status"' ERR
 
 python3 - "$OUT_DIR" "$GEN_STATUS" "$LIMIT" <<'PY'
 import csv, json, sys
