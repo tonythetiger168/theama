@@ -57,7 +57,7 @@ python scripts/score_cjk_text.py --images eval_out/m7a/zimage
 ```
 
 **驗收**：各 24/24 PNG（exit 0）；記下兩路的 exact_hit_rate 與
-mean_char_recall 當 M7a 基線（第一輪無對標值，如实記錄）。
+mean_char_recall 當 M7a 基線（第一輪無對標值，如實記錄）。
 
 ## 回報格式（貼回 hourly agent 或寫 docs/gpu-results.md）
 
