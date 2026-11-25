@@ -2,20 +2,20 @@
 # Theama session checkpoint — hourly agent runs save/restore THIS file.
 # 設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
 schema: 1
-updated_at: "2026-11-25T00:15:35Z"
-head: 07b0a2eedb27c048c6bd4f9236215fb8a97782d6
+updated_at: "2026-11-25T01:13:54Z"
+head: 3738703ced791acba7dfd8355403e4b7375bddfd
 head_verified: true
-last_increment: "session save/restore 機制落地（本檔建立）＋ watchlist 第五輪（WeMM-Video 入觀察、Kandinsky OmniNFT sync 分支方法參考）"
+last_increment: "watchlist 第七輪：Omni-RRM（2602.00846）／LongCat-Video-Avatar 1.6（2611.18822）／FlowPortrait hard id（2603.00159）入觀察；docs-only"
 ci_yml: not_uploaded            # 使用者尚未上傳 .github/workflows/CI.yml；repo 無 .github/ 目錄
 issues: 0
 gpu_outputs: none_pending_review
 blockers:
-  - "專案記憶 mount（/1a20b091…/areas/theama.md）本 session 讀取失敗 → 本檔暫為唯一可靠 checkpoint"
-  - "沙箱執行環境不可用（shell/ipython 全掛）→ 無法跑 pytest / GPU smoke，本輪僅 docs 級增量"
+  - "專案記憶 mount（/1a20b091…/areas/theama.md）連續兩輪讀取失敗 → 本檔續為唯一可靠 checkpoint"
+  - "沙箱執行環境連續兩輪不可用（shell/ipython 全掛）→ 無法跑 pytest / GPU smoke，僅 docs 級增量"
 next_hour:
   - "RESTORE：核對 HEAD 與本檔 head；不一致先 list_commits 對帳再增量"
   - "沙箱若恢復：補寫專案記憶；優先 ③ 程式小件（M2 audio DiT 骨架 / P1b 資料引擎管線 / encode-score 腳本強化），CI.yml 上傳後跑 pytest"
-  - "沙箱仍未恢復：續做 ② watchlist 輕量核查或 ④ repo 健康巡檢（CI.yml、issues）"
+  - "沙箱仍未恢復：續做 ② watchlist 輕量核查（重點：阿里下一代模型 11 月窗口最後一週、Omni-RL Judge arXiv id、Omni-RRM 授權）或 ④ repo 健康巡檢"
 ---
 
 # Session State（每小時 checkpoint）
@@ -23,12 +23,23 @@ next_hour:
 ## 現況一句話
 
 M1 / P1a / M2 程式全部落地、GPU 驗收全部待跑；watchlist 已核查至
-2026-11-25 第五輪（WeMM-Video 列為聯合 A/V judge 觀察候選，不改 P1a/M2
-配方）；session save/restore 機制已落地（本檔）；CI.yml 待使用者上傳；
-授權紅線不變。
+2026-11-25 第七輪（新增 Omni-RRM、LongCat-Video-Avatar 1.6、FlowPortrait
+hard id 三筆觀察，不改 P1a/M2 配方）；session save/restore 機制運作中
+（本檔）；CI.yml 待使用者上傳；授權紅線不變。
 
 ## 本輪記錄（新輪加在最上面，保留最近 10 輪）
 
+- 2026-11-25 pass 7 @ 3738703 — watchlist 第七輪：Omni-RRM（arXiv
+  2602.00846，四模態統一 RM，P1a＋M2 reward 單一 judge 候選）、
+  LongCat-Video-Avatar 1.6（arXiv 2611.18822v2，frozen 底座雙 LoRA
+  分支 GRPO＋OPSD，M6a/M6b 方法參考）、FlowPortrait hard id 補齊
+  （arXiv 2603.00159，複合 reward＋防 hacking ablation，M6a 參考）；
+  Omni-RL Judge 仍無 arXiv id；四大固定項覆核無變化；CI.yml 未上傳、
+  issues 0；沙箱仍掛，docs-only。
+- 2026-11-25 pass 6 @ 4c2d828 — watchlist 第六輪：Omni-RL Judge（Adobe，
+  verifiable-reward omni A/V judge，僅 ResearchGate 條目）＋
+  Ming-Image-0.1-Design（MIT 設計 T2I，M7a 第三路徑觀察候選）入觀察；
+  docs-only。（本輪原未回寫本檔，pass 7 補記。）
 - 2026-11-25 pass 5 @ 07b0a2e — session save/restore 落地：建立
   docs/session-state.md（front matter 狀態 + RESTORE/SAVE 協議 + 滾動
   記錄）；README 加入口；緣由：專案記憶 mount 與沙箱執行環境同時失效，
