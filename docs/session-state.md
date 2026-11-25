@@ -267,7 +267,7 @@ wan_blocks＋LoRA real-weight smoke 任務書）；CI.yml 內容備妥待
   （生成器即 energy-based judge，self-supervised 不依賴外部
   VLM，授權暴露面小）、**Reward Forcing**（reward-guided DMD
   串流蒸餾，M6b 串流線方法參考）、**RewardDance**（reward
-  scaling 規律與抗 hacking）——授權／權重均未核實，
+  scaling 規模律與抗 hacking）——授權／權重均未核實，
   VideoReward 首選不變，維持觀察。RESTORE 對帳乾淨（開工 HEAD
   c1005ea4＝記憶，session-state blob ce1b9456＝本地 hash-object；
   issue #4 OPEN 無新回報、tags 空、遠端無 .github、temp 無新
@@ -284,8 +284,8 @@ wan_blocks＋LoRA real-weight smoke 任務書）；CI.yml 內容備妥待
   §0 開 pod SOP）＋pass-31 code 5d1d26a5。**新發現：repo 已轉
   public**（匿名 curl api.github.com/repos 200＋Accept raw 直拉
   成功——本地 docs 同步自此改走 curl raw 零轉錄風險路線；roadmap
-  首抄 939575f5 差 3B，靠 raw 對比定位兩處：「線、」實為
-  「線／」（MCP 顯示層誤導，兩次 fetch 皆顯示 、）＋漏字「不改動」；
+  首抄 939575f5 差 3B，靠 raw 對比定位兩處：「線、」實為「線／」
+  （MCP 顯示層誤導，兩次 fetch 皆顯示 、）＋漏字「不改動」；
   training-plan 70b8580e／runbook 09fc9852 轉錄一次過）。issue
   #4 已讀（Claude GPU 任務書：M2 internal wan_blocks＋LoRA
   smoke；指令旗標 --bridge-location wan_blocks／--bridge-lora-rank
@@ -322,7 +322,7 @@ wan_blocks＋LoRA real-weight smoke 任務書）；CI.yml 內容備妥待
   099c31c1＋本 entry＋front matter head→79191bc3＋trim pass-23
   code 側一條（事實存專案記憶第二十三輪存檔），維持 11 entries。
 
-- 2026-11-25 pass 31 @ 5d1d26a5（本 session）— ③ score 腳本強化：
+- 2026-11-25 pass 31 @ 5d1d26a5（本 session）— ③ score 腦本強化：
   **M7a scorer 簡繁分軌（zh-Hans／zh-Hant script split）**——承接對岸
   17:49Z 拍板 docs（9db4c982：M7a 驗收閘改 zh-Hans 達 Qwen-Image 官方
   同量級、zh-Hant 並行統計不擋放行、seed 須簡繁對照）。缺口：scorer
@@ -354,7 +354,7 @@ wan_blocks＋LoRA real-weight smoke 任務書）；CI.yml 內容備妥待
   「簡繁轉換、」hash 對帳攔下即修／roadmap ac716a95 一次過）。
   **repo 健康新事項：issue #4 OPEN（RunPod: M2 internal wan_blocks
   ＋ LoRA real-weight smoke——Claude GPU 任務書，runbook §0 入口）**；
-  tags 仍空、遠端無 .github、temp 無新 GPU 輸出。**本地
+  tags 仍空、遠端仍無 .github、temp 無新 GPU 輸出。**本地
   session-state 結構修復（未推送、本地攔修）**：本地檔在 pass-30
   trim 時踩中 pass-27 同型錨點事故——pass-26…pass-23 五條 entry
   整段重複（逐塊比對 byte-identical）＋pass-23 驗證側 entry 尾部帶
@@ -366,7 +366,7 @@ wan_blocks＋LoRA real-weight smoke 任務書）；CI.yml 內容備妥待
   對岸推（遠端仍 b529a70c 五疊字版——front matter 完好、RESTORE
   功能正常）。
 
-- 2026-11-25 pass 30 @ 3840eb88（本 session）— ③ score 腳本強化：
+- 2026-11-25 pass 30 @ 3840eb88（本 session）— ③ score 腦本強化：
   **scores.jsonl 預檢閘＋make_pref_pairs fail-fast**（對岸 pass-28
   pair-latent 閘 afde66af 的 scores 側對應件，P1a 鏈最後一處裸
   comprehension）。缺口：score_eval_set 把失敗列（{error}）寫進
@@ -379,7 +379,7 @@ wan_blocks＋LoRA real-weight smoke 任務書）；CI.yml 內容備妥待
   （stdlib only、無磁碟檢查——scores 列只引用路徑，encode_pairs
   自有 retry budget；root-cause-first：score_failed／missing_keys
   含 bool overall 拒絕／non_finite_score／reward_mismatch 可選
-  閘——無標籤列依 load_successful_scores 慣例計
+  閘——無 reward 標籤列依 load_successful_scores 慣例計
   videoreward；deterministic report 四 reason 零填充＋rewards
   直方圖排序輸出，過濾關閉時混 scorer 仍可見）＋
   `scripts/check_scores.py`（check_pair_latents 的 scores 側
@@ -430,7 +430,7 @@ wan_blocks＋LoRA real-weight smoke 任務書）；CI.yml 內容備妥待
   重跑 **303 passed**（295+8）；設計審閱無異議——root-cause
   -first drop reason 與 joint loader 同款 fail-closed 契約、
   全可用 manifest 行為不變、--no-files schema-only 模式合
-  CI 場景。本 session 增量（③ score 腳本強化）：collect()
+  CI 場景。本 session 增量（③ score 腦本強化）：collect()
   測試 +8——per-prompt dir 佈局／flat stem 佈局／nested
   fallback／unmatched＋non-mp4＋deep skip／duplicate stem
   父目錄優先／deterministic 排序連跑一致／empty dir／CLI
