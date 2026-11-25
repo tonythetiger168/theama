@@ -2,10 +2,10 @@
 # Theama session checkpoint — hourly agent runs save/restore THIS file.
 # 設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
 schema: 1
-updated_at: "2026-11-25T10:33:00Z"
-head: 1e64d0c18784af9249155f0742d82bda665abe75
+updated_at: "2026-11-25T11:20:00Z"
+head: cc85d3307aa366dcac16b04dc5aad239c95e7ab6
 head_verified: true
-last_increment: "③ P1b pair/AV latent cache 對齊 text_cache 同款 retry budget（pair_failures.json／av_failures.json opt-in ledger、--max-retries/--reset-failures、skipped 列不計 encoded/reused/failed、預設行為逐字節不變）；tests +12（test_p1a／test_m2_av_latent_cache 各 6），CPU 253 passed；commit 1e64d0c1 六檔 blob SHA 驗證一致"
+last_increment: "③ P1b 下游消費者補強：joint_latent_loader 對 retry-budget skipped 列明確報缺（skipped_av_row／skipped_text_row drop reason，不再誤報 missing_keys；fail-closed serving 不變）；tests +2（skipped 列真因報缺＋reset 重燒回補 lifecycle），CPU 255 passed；commit cc85d330 雙檔 blob SHA 驗證一致"
 ci_yml: content_ready_pending_user_upload   # MCP token 推 .github/workflows 被 403（insufficient scopes）；內容已交付使用者
 issues: 0
 gpu_outputs: m2_external_smoke_passed_reviewed   # PR #3 雙跑通過已判讀（pass 18）；M1/P1a/M2 internal 仍待 Claude 跑
@@ -15,9 +15,9 @@ division_of_labor:
   claude: "GPU 驗收執行（runbook 第 1–5 節＋status.md next steps）、CI.yml 上傳（人工作業）、結果回報/落盤、git tag v0.2.0（人工作業）；2026-11-25 使用者擴權：可做其他底模＋HDL on RunPod（紅線不變：H3/LTX/Qwen2.1/FLUX3-Klein/Krea2 不碰）"
 next_hour:
   - "RESTORE：核對 HEAD 與本檔 head；Claude 若已 push M1/P1a/internal-wan_blocks GPU 結果或 v0.2.0 tag，先消化再增量"
-  - "pass 16–22 增量皆已落地請勿重做：Ming gen 第三路徑（4e1d202f）／score provenance（a3067d9b）／runbook §4.1（a7cb7697）／PR #3 判讀＋同步（0a2a3cd7）／watchlist 第十～十二輪（4fad1f38、918001c0+3f3fa0ac）／encode_texts retry budget（e1896295）／build_av_manifest（3f94b385）／pair+AV latent cache retry budget（1e64d0c1）；agent 入口改為 docs/status.md＋AGENTS.md"
+  - "pass 16–23 增量皆已落地請勿重做：Ming gen 第三路徑（4e1d202f）／score provenance（a3067d9b）／runbook §4.1（a7cb7697）／PR #3 判讀＋同步（0a2a3cd7）／watchlist 第十～十二輪（4fad1f38、918001c0+3f3fa0ac）／encode_texts retry budget（e1896295）／build_av_manifest（3f94b385）／pair+AV latent cache retry budget（1e64d0c1）／joint loader skipped 列明確報缺（cc85d330）；agent 入口改為 docs/status.md＋AGENTS.md"
   - "使用者上傳 CI.yml 後：Actions 即為驗證引擎（CI image 需 ffmpeg + tesseract chi-tra，否則 decode/M7a 測試 skip）"
-  - "③ 候選：下游消費者對 skipped 列的行為核查＋補強（joint_latent_loader／loader 遇到 skipped: true 列應略過或明確報缺，現無測試覆蓋）；或阿里 11 月窗口 11-30 關閉前最後 watchlist 覆核"
+  - "③ 候選：阿里 11 月窗口 11-30 關閉前最後 watchlist 覆核；或 M2 audio DiT 骨架／P1b 資料引擎下一小件（對齊 docs/model-roadmap.md 現況表）"
   - "model-roadmap.md 已推至 3f3fa0ac（watchlist 第十二輪：M5 終局目標＝超越 Seedance 2.5／Wan 3.0 登頂 AA with-audio 三榜），後續可正常從本地推送此檔"
   - "GPU 下一棒（Claude，依 status.md）：M1 runpod_m1_eval.sh 5→50 prompts→VBench ±0.02 → P1a（先驗 reward/score.py::_invoke 對真實 VideoReward）→ M2 internal wan_blocks＋LoRA smoke → 正式訓練前換 stable-torch image"
 ---
@@ -30,11 +30,38 @@ next_hour:
 11-24 RTX 4090＋11-25 A40 全 runbook 復跑，詳 docs/status.md）；M1 RunPod
 runner 落地待跑（runpod_m1_eval.sh）；P1b 鏈路補齊（manifest builder →
 雙 cache → joint loader → runner → runbook 第 5 節），三 cache（text／
-pair／AV）retry budget 全數對齊，253 CPU tests
+pair／AV）retry budget 全數對齊＋下游 joint loader 對 skipped 列明確
+報缺，255 CPU tests
 全綠；GPU 驗收由 Claude 執行（使用者 11-25 擴權：其他底模＋HDL on
 RunPod 亦可）；CI.yml 內容備妥待上傳；紅線不變。
 
 ## 本輪記錄（新輪加在最上面，保留最近 10 輪）
+
+- 2026-11-25 pass 23 @ cc85d330 — ③ P1b 下游消費者對 skipped 列的
+  行為核查＋補強（本 session 增量，pass-22 next_hour 明列候選）：
+  核查結論——三 cache planner 對 skipped 列皆安全（reuse 一律要求
+  磁碟上 .pt 驗證通過，skipped 列無 .pt 永不誤用；manifest compaction
+  會覆寫舊 skipped 列），唯一缺口在下游：joint_latent_loader 的
+  join 把 skipped 列（無 latent keys）掉進誤導性的 missing_keys
+  桶。補強：join 新增明確 drop reason skipped_av_row／
+  skipped_text_row（先於 caption/missing_keys 判定）——fail-closed
+  serving 行為不變（skipped 列本就不可能上桌），只改回報真因；
+  train_joint_av.py 本來就印 dropped dict，真因自動進 training log
+  與 runbook dropped=0 閘。測試 +2（test_m2_joint_latent_loader）：
+  雙 manifest 各帶一條 skipped 列（預算 1、兩 run 耗盡）→ join
+  records [0,3]、dropped＝{skipped_av_row:1, skipped_text_row:1}，
+  且斷言 skipped 列無 latent keys、非 error 列；lifecycle——
+  reset_failure_ledger 雙側＋重燒成功 → records [0,1,2,3]、
+  dropped {}。RESTORE 對帳乾淨（HEAD c1d93362＝pass-22 雙 entry
+  checkpoint、無 Claude GPU commit、tags 空、issues 0、temp 無新
+  上傳）；開工前 mtime 掃描無對岸活動中檔案（對岸最後活動 10:33Z），
+  推送前再對帳無競態。push_files 雙檔一次 commit HEAD cc85d330；
+  **雙檔 blob SHA 首次即 byte-exact**（joint_latent_loader 723a2506／
+  test 91981524，本地 git hash-object 重算相同）。CPU 全套
+  **255 passed**（253+2）；pytest 沙箱重置洗掉已重裝。watchlist
+  本輪不重查（第十三輪今早無 delta，阿里窗口 11-30 才關閉）。
+  下一個③候選：阿里 11-30 窗口關閉前最後覆核；或 M2 audio DiT
+  骨架小件。
 
 - 2026-11-25 pass 22 @ 1e64d0c1 — ③ P1b pair/AV latent cache 對齊 retry
   budget（本 session 增量，對岸 pass-20 next_hour 明列候選）：把
@@ -290,22 +317,6 @@ RunPod 亦可）；CI.yml 內容備妥待上傳；紅線不變。
   issues 0／temp 兩張 KIMI jpeg 仍為 11-24 RunPod 截圖非新 GPU 輸出。
   CPU 全套 217 passed（215+2）；--help 列出第三選項。推送前後各對帳
   一次無競態；blob SHA 驗證一致（gen 82c4bf02／test bc37dfd1）。
-
-- 2026-11-25 pass 15 @ 5455691 — watchlist 第九輪（本 session 增量）：
-  model-roadmap.md 新增 **GenRM-Flow**（arXiv 2611.11421，2026-11-08——
-  偏好微調後的生成器即 process-aware RM，在含噪 latent 空間以
-  velocity-prediction 誤差相對差打分、免外部 reward 網路；DPO/IPO/RWR
-  證為通往同一最優 policy 的等價路徑；對 P1a LoRA-DPO 的 BoN／資料
-  過濾與 M2 flow 後訓練直接相關）與 **PAVRM**（arXiv 2511.21541v3，
-  CVPR 2026 Findings，latent 空間打分免 decode）觀察條目，授權皆未
-  核實、不改 P1a／M2 配方；四固定項覆核無變化（阿里下一代 11 月
-  窗口倒數仍無發布）。競態實例三視角補記：本 session 的 runbook
-  第 5 節草稿（5a/5b/5c）於對岸推送 58b2bdc 後主動擱置、本地還原，
-  兩項獨有改進經對岸 b9c4bb4 採納合併——結案。順帶癒合本地
-  model-roadmap.md 的 33-byte echo 漂移：以遠端版 byte-exact 回寫
-  （git blob sha 3b607a49 本地重算一致），blocker 移除。推送前後各
-  對帳一次（對岸 checkpoint 16ac8e7 於本 session roadmap 推送前
-  17 秒落地，內容已消化）。blob SHA 驗證一致（roadmap 3b607a49）。
 
 ## RESTORE 協議（每輪第 0 步，依序執行）
 
