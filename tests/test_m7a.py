@@ -21,17 +21,20 @@ CJK_RE = re.compile(r"[\u4e00-\u9fff]")
 
 def test_cjk_t2i_seed_set_loads_and_covers_categories():
     prompts = load_t2i_eval(ROOT / "eval" / "cjk_t2i_v1.jsonl")
-    assert len(prompts) == 48  # v1.1 seed (24→48); full 100-prompt gate remains M7a acceptance
+    assert len(prompts) == 100  # v1.2 seed (48→100): the 100-prompt M7a acceptance gate is now populated
     assert len({p.id for p in prompts}) == len(prompts)
     assert all(CJK_RE.search(p.prompt) for p in prompts)
     assert all(p.expected_text for p in prompts)
     # Contract: the text the scorer looks for must be spelled out in the prompt.
     assert all(p.expected_text in p.prompt for p in prompts)
     summary = summarize_t2i_eval(prompts)
-    assert summary["prompts"] == 48
-    assert summary["with_expected_text"] == 48
+    assert summary["prompts"] == 100
+    assert summary["with_expected_text"] == 100
+    # Coverage: all sixteen categories (v1.1 asserted the nine core; v1.2 asserts all).
     for category in ("poster", "sign", "product", "ui", "menu",
-                     "newspaper", "ticket", "receipt", "banner"):
+                     "newspaper", "ticket", "receipt", "banner",
+                     "book_cover", "sticker", "packaging", "calendar",
+                     "label", "coupon", "map"):
         assert category in summary["categories"]
 
 
