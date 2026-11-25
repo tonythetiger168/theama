@@ -137,7 +137,7 @@ RunPod 亦可）；CI.yml 內容備妥待上傳；紅線不變。
   check_av_manifest.py（49ac389a）等無漂移。設計審閱：通用
   _ledger_* 核心＋per-cache 綁定 wrappers、預設 None 零 ledger
   I/O、tmp+replace 原子寫／毀損降級 {}／strict 先記後 raise 皆與
-  text_cache 對對齊，無異議；觀察一項（非缺陷，不另開工）：skip
+  text_cache 對齊，無異議；觀察一項（非缺陷，不另開工）：skip
   判定純 index-keyed（ledger entry 存 prompt_id/prompt 但未參與
   比對）——pairs.jsonl reorder／編輯後同 index 換成不同 pair 會
   沿用舊 entry 被跳過；recovery 路徑已足（--reset-failures，或
@@ -181,7 +181,7 @@ RunPod 亦可）；CI.yml 內容備妥待上傳；紅線不變。
   .wav>.mp3>.flac>.m4a）與檔名 tie-break，與目錄列舉順序無關。
   ffprobe best-effort 補 duration/fps/width/height（無 ffprobe 或
   失敗則省略，可 --no-probe）；unpaired／無 caption／無 source 列
-  skip reason 不半不半寫；輸出已存在須 --force。新測試檔
+  skip reason 不半寫；輸出已存在須 --force。新測試檔
   test_m2_build_av_manifest.py +13（happy path 排序、sidecar 覆寫、
   三類 skip、無 source、forbidden 參數化 ×3、副檔名優先級、壞
   sidecar、main→load_manifest strict roundtrip、覆寫守衛、無
@@ -193,7 +193,7 @@ RunPod 亦可）；CI.yml 內容備妥待上傳；紅線不變。
   （228+13）後推送，無衝突（不同檔）。雙檔 blob SHA 驗證一致
   （script 1c76fafe／test 0bb4887c，本地 git hash-object 重算相同）。
   RESTORE：HEAD adcf6b40 乾淨、無 Claude GPU 新 commit、tags 空、
-  issues 0、temp 無新上傳。**順帶修復 checkpoint 檔檔歷史殘段**：遠端
+  issues 0、temp 無新上傳。**順帶修復 checkpoint 檔歷史殘段**：遠端
   f27f2a24 版「## RESTORE 協議」重複出現兩次，且第一份 item 2 混入
   pass-13 entry 截尾（「…改以 `docs0 未打）、issues 0…199 passed…
   39225c0f／8b41f5de」）——應為過往 trim 10 輪時切錯邊界所致；
