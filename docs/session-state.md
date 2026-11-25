@@ -2,34 +2,42 @@
 # Theama session checkpoint — hourly agent runs save/restore THIS file.
 # 設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
 schema: 1
-updated_at: "2026-11-25T01:28:12Z"
-head: 0b7359be61f6cf185b7dc6066488606b74c54b41
+updated_at: "2026-11-25T01:30:44Z"
+head: a1244b31e7ddc906e27fb368363d23fa2cb64198
 head_verified: true
-last_increment: "M7a 成雙：gen_cjk_images.py（GPU 雙路徑生成）＋score_cjk_text.py（tesseract OCR 文字準確率評分）；CI.yml 內容備妥但 token 無 workflow scope，待使用者上傳"
+last_increment: "GPU 執行面交接 Claude：docs/gpu-acceptance-runbook.md 落地（M1→P1a→M2→M7a 順序 playbook＋回報格式＋紅線）；分工入帳"
 ci_yml: content_ready_pending_user_upload   # MCP token 推 .github/workflows 被 403（insufficient scopes）；內容已交付使用者
 issues: 0
-gpu_outputs: none_pending_review
+gpu_outputs: none_pending_review            # Claude 接手 GPU 驗收；若其 push 結果，下輪 RESTORE 對帳
 blockers:
   - "專案記憶 mount（/1a20b091…/areas/theama.md）連續多輪讀取失敗 → 本檔續為唯一可靠 checkpoint"
   - "沙箱執行環境連續多輪不可用（shell/ipython 全掛）→ 本地 pytest 無法跑；M7a 兩支腳本為獨立 script（不被 tests import），語法/執行驗證待沙箱恢復或 CI 上線後補"
+division_of_labor:
+  hourly_agent: "watchlist 核查、docs、CPU 側程式準備、repo 健康、session checkpoint"
+  claude: "GPU 驗收執行（runbook 第 1–4 節）、CI.yml 上傳（人工作業）、結果回報/落盤"
 next_hour:
-  - "RESTORE：核對 HEAD 與本檔 head；不一致先 list_commits 對帳再增量"
+  - "RESTORE：核對 HEAD 與本檔 head；Claude 若已 push GPU 結果，先消化其提交再增量"
   - "使用者上傳 CI.yml 後：Actions 即為驗證引擎；補驗證 gen_cjk_images.py / score_cjk_text.py（python -m py_compile + CPU 試跑 scorer）"
-  - "沙箱若恢復：跑全量 pytest（預期 166 passed + 新腳本 compile check）；優先 ③ 程式小件續推（M2 audio DiT 骨架 / P1b 資料引擎管線）"
-  - "沙箱仍未恢復：續做 ② watchlist（重點：阿里下一代模型 11 月窗口倒數、Omni-RL Judge arXiv id、Omni-RRM／VA-Judger checkpoint 授權）或 ④ repo 健康巡檢"
+  - "沙箱若恢復：跑全量 pytest；優先 ③ 程式小件續推（M2 audio DiT 骨架 / P1b 資料引擎管線）"
+  - "沙箱仍未恢復：續做 ② watchlist（重點：阿里下一代模型 11 月窗口倒數、Omni-RL Judge arXiv id、Omni-RRM／VA-Judger checkpoint 授權）"
 ---
 
 # Session State（每小時 checkpoint）
 
 ## 現況一句話
 
-M1 / P1a / M2 程式全部落地、GPU 驗收全部待跑；M7a 成雙落地（24 條 CJK
-seed 的生成腳本＋OCR 文字準確率評分腳本，GPU 驗收管線就位）；watchlist
-已核查至第八輪；CI.yml 內容備妥待使用者上傳（token scope 限制）；
-授權紅線不變。
+M1 / P1a / M2 / M7a 程式與腳本全部落地、GPU 驗收由 Claude 依
+docs/gpu-acceptance-runbook.md 執行中；hourly agent 續負責 watchlist、
+docs、CPU 側準備與 checkpoint；CI.yml 內容備妥待使用者上傳；紅線不變。
 
-## 本輪記錄（新輪加在最上面，保留最近 10 ）
+## 本輪記錄（新輪加在最上面，保留最近 10 輪）
 
+- 2026-11-25 pass 10 @ a1244b3 — GPU 交接：依使用者指示，GPU 驗收執行面
+  switch to Claude；落地 docs/gpu-acceptance-runbook.md（環境前置 → M1 →
+  P1a → M2 smoke → M7a 雙路徑的順序 playbook、每節驗收閘、回報格式
+  {step, command, exit_code, summary, GPU, 耗時}、紅線重申）＋修簡繁錯字；
+  front matter 新增 division_of_labor；下輪起 RESTORE 需對帳 Claude 的
+  GPU 結果提交。docs-only。
 - 2026-11-25 pass 9 @ 0b7359b — 「我們這邊能做的全做完」批次：
   ① M7a 生成腳本 scripts/gen_cjk_images.py（Qwen-Image-2512／Z-Image
   Turbo 雙路徑、resumable、manifest+summary 閘）；② M7a 評分腳本
@@ -70,11 +78,14 @@ seed 的生成腳本＋OCR 文字準確率評分腳本，GPU 驗收管線就位�
 
 1. 讀取本檔 front matter。若 `head` 與遠端 HEAD 不一致，先 `list_commits`
    列出 recorded head 之後的提交，逐一消化後再開始本輪增量。
+   **Claude 接手 GPU 後，其結果提交（eval summaries、gpu-results.md、
+   可能的 script 修正）都從這一步對帳。**
 2. `updated_at` 距今超過 24h 視為 STALE：改以 `docs/model-roadmap.md`
    現況表 + 最近 commits 重建認知，並覆寫本檔。
 3. 本檔不存在（首輪或誤刪）：直接依 model-roadmap 現況重建，不留空窗。
 4. 恢復順序固定：本檔 → `docs/model-roadmap.md`（現況 + watchlist）→
-   使用者當輪貼文（GPU 輸出等）。專案記憶 mount 可用時亦以本檔為準對帳。
+   `docs/gpu-acceptance-runbook.md`（GPU 進度）→ 使用者當輪貼文。
+   專案記憶 mount 可用時亦以本檔為準對帳。
 
 ## SAVE 協議（每輪最後一步；僅有進度時執行）
 
