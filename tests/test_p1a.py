@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-"""CPU tests for P1a: reward registry, pair building, DPO math."""
+"""CPU tests for P1a: reward registry, pair building, DPO math, score collect."""
 
 import json
 import subprocess
@@ -617,3 +617,115 @@ def test_p1a_scripts_compile(script):
         [sys.executable, "-m", "py_compile", str(ROOT / "scripts" / script)],
         check=True,
     )
+
+
+# ---- score_eval_set.collect(): clip -> prompt matching ----------------------
+# collect() is the only CPU-reachable logic in the P1a scoring path: it
+# decides which clips the GPU pod spends reward-model time on, matching
+# gen_candidates.py's <out>/<prompt_id>/cand_<k>.mp4 layout (and the flat
+# fallback) against the eval-set ids. Pure filesystem + dict — no media
+# files are ever opened.
+
+import importlib.util  # noqa: E402
+
+_ses_spec = importlib.util.spec_from_file_location(
+    "score_eval_set", ROOT / "scripts" / "score_eval_set.py"
+)
+ses = importlib.util.module_from_spec(_ses_spec)
+_ses_spec.loader.exec_module(ses)
+
+_COLLECT_PROMPTS = {"T2V-001": "prompt one", "T2V-002": "prompt two"}
+
+
+def _touch(path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(b"\x00")  # content irrelevant: collect() never opens files
+
+
+def test_score_collect_per_prompt_dir_layout(tmp_path):
+    root = tmp_path / "candidates"
+    _touch(root / "T2V-001" / "cand_0.mp4")
+    _touch(root / "T2V-001" / "cand_1.mp4")
+    _touch(root / "T2V-002" / "cand_0.mp4")
+    items = ses.collect(root, dict(_COLLECT_PROMPTS))
+    assert items == [
+        ("T2V-001", str(root / "T2V-001" / "cand_0.mp4"), "prompt one"),
+        ("T2V-001", str(root / "T2V-001" / "cand_1.mp4"), "prompt one"),
+        ("T2V-002", str(root / "T2V-002" / "cand_0.mp4"), "prompt two"),
+    ]
+
+
+def test_score_collect_flat_layout_stem_match(tmp_path):
+    root = tmp_path / "flat"
+    _touch(root / "T2V-001.mp4")
+    _touch(root / "T2V-002.mp4")
+    items = ses.collect(root, dict(_COLLECT_PROMPTS))
+    assert [(i[0], i[2]) for i in items] == [
+        ("T2V-001", "prompt one"),
+        ("T2V-002", "prompt two"),
+    ]
+
+
+def test_score_collect_nested_falls_back_to_stem(tmp_path):
+    root = tmp_path / "candidates"
+    _touch(root / "misc" / "T2V-002.mp4")  # parent dir is not a prompt id
+    items = ses.collect(root, dict(_COLLECT_PROMPTS))
+    assert items == [("T2V-002", str(root / "misc" / "T2V-002.mp4"), "prompt two")]
+
+
+def test_score_collect_skips_unmatched_and_non_mp4(tmp_path):
+    root = tmp_path / "candidates"
+    _touch(root / "T2V-001" / "cand_0.mp4")
+    _touch(root / "T2V-099" / "cand_0.mp4")          # unknown prompt dir
+    _touch(root / "stray.mp4")                        # unknown stem
+    _touch(root / "T2V-001" / "notes.txt")            # non-mp4 ignored
+    _touch(root / "T2V-001" / "extra" / "deep.mp4")   # deep: parent+stem unmatched
+    items = ses.collect(root, dict(_COLLECT_PROMPTS))
+    assert items == [("T2V-001", str(root / "T2V-001" / "cand_0.mp4"), "prompt one")]
+
+
+def test_score_collect_duplicate_stems_scoped_by_parent_dir(tmp_path):
+    root = tmp_path / "candidates"
+    _touch(root / "T2V-001" / "cand_0.mp4")
+    _touch(root / "T2V-002" / "cand_0.mp4")
+    items = ses.collect(root, dict(_COLLECT_PROMPTS))
+    # same stem in two prompt dirs: parent dir wins over the stem
+    assert [i[0] for i in items] == ["T2V-001", "T2V-002"]
+
+
+def test_score_collect_deterministic_sorted_order(tmp_path):
+    root = tmp_path / "candidates"
+    # create in non-alphabetical order; result must still be path-sorted
+    for rel in ("T2V-002/cand_1.mp4", "T2V-001/cand_1.mp4",
+                "T2V-002/cand_0.mp4", "T2V-001/cand_0.mp4"):
+        _touch(root / rel)
+    first = ses.collect(root, dict(_COLLECT_PROMPTS))
+    second = ses.collect(root, dict(_COLLECT_PROMPTS))
+    assert first == second
+    assert [i[1] for i in first] == sorted(i[1] for i in first)
+    assert [i[0] for i in first] == ["T2V-001", "T2V-001", "T2V-002", "T2V-002"]
+
+
+def test_score_collect_empty_dir(tmp_path):
+    root = tmp_path / "empty"
+    root.mkdir()
+    assert ses.collect(root, dict(_COLLECT_PROMPTS)) == []
+
+
+def test_score_eval_set_cli_no_match_exit_1(tmp_path):
+    # no clip matches any eval prompt -> exit 1 before the scorer import,
+    # so this CLI contract is verifiable on CPU
+    prompts = tmp_path / "prompts.jsonl"
+    prompts.write_text(
+        json.dumps({"id": "T2V-001", "prompt": "prompt one"}) + "\n",
+        encoding="utf-8",
+    )
+    videos = tmp_path / "videos"
+    videos.mkdir()
+    proc = subprocess.run(
+        [sys.executable, str(ROOT / "scripts" / "score_eval_set.py"),
+         "--videos", str(videos), "--prompts", str(prompts)],
+        capture_output=True, text=True,
+    )
+    assert proc.returncode == 1
+    assert "no MP4s matched" in proc.stderr
