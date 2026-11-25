@@ -3,9 +3,9 @@
 # 設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
 schema: 1
 updated_at: "2026-11-25T08:45:00Z"
-head: a8a8f803fa11556c0432cd56f17fd5a773d2eb1e
+head: 6f4799cfb8bd6692b2dfed233b8f2b09eac3fa2b
 head_verified: true
-last_increment: "① GPU 判讀：消化 Claude PR #3（a8a8f803 合併）——M2 外部 latent-bridge 真實權重 smoke 雙跑通過（11-24 RTX 4090＋11-25 A40 全 runbook 復跑，DAC rel-L2 0.0935/0.0942、Wan TI2V-5B bf16 峰值 9.37 GiB、EXIT=0）；M1 RunPod runner 落地（runpod_m1_eval.sh，M1_EVAL_SMOKE_OK 閘）；本地樹 10 檔 byte-exact 同步、CPU 全套 222 passed；記錄使用者新指示：Claude 可做其他底模＋HDL on RunPod（紅線不變）"
+last_increment: "② watchlist 第十輪：四固定項覆核——Wan 3.x 仍 API-only（最後開放 Wan 2.2）、阿里下一代影片模型 11 月窗口 T-5 仍無發布（Model Studio 列表＋第三方 11-09/11-11 核查）、Qwen-Image 紅線四項無變化（2.1 回歸 Apache 請願 #39 無回應）、VA-Judger checkpoint 授權二次核查失敗（HF 空 README）維持使用者代查；駁 youart.ai「Wan 2.7 開權重」低權威誤報；補 efsora 資料點（Ming-Image-0.1-Design＝最高排名 fully-permissive 影像模型）"
 ci_yml: content_ready_pending_user_upload   # MCP token 推 .github/workflows 被 403（insufficient scopes）；內容已交付使用者
 issues: 0
 gpu_outputs: m2_external_smoke_passed_reviewed   # PR #3 雙跑通過已判讀（pass 18）；M1/P1a/M2 internal 仍待 Claude 跑
@@ -15,10 +15,10 @@ division_of_labor:
   claude: "GPU 驗收執行（runbook 第 1–5 節＋status.md next steps）、CI.yml 上傳（人工作業）、結果回報/落盤、git tag v0.2.0（人工作業）；2026-11-25 使用者擴權：可做其他底模＋HDL on RunPod（紅線不變：H3/LTX/Qwen2.1/FLUX3-Klein/Krea2 不碰）"
 next_hour:
   - "RESTORE：核對 HEAD 與本檔 head；Claude 若已 push M1/P1a/internal-wan_blocks GPU 結果或 v0.2.0 tag，先消化再增量"
-  - "pass 16–18 增量皆已落地請勿重做：Ming gen 第三路徑（4e1d202f）／score provenance（a3067d9b）／runbook §4.1（a7cb7697）／PR #3 判讀＋同步（本輪）；agent 入口改為 docs/status.md＋AGENTS.md"
+  - "pass 16–19 增量皆已落地請勿重做：Ming gen 第三路徑（4e1d202f）／score provenance（a3067d9b）／runbook §4.1（a7cb7697）／PR #3 判讀＋同步（0a2a3cd7）／watchlist 第十輪（6f4799cf）；agent 入口改為 docs/status.md＋AGENTS.md"
   - "使用者上傳 CI.yml 後：Actions 即為驗證引擎（CI image 需 ffmpeg + tesseract chi-tra，否則 decode/M7a 測試 skip）"
-  - "③ 候選：encode_texts 進一步強化（如 error 重試配額上限）；watchlist 固定四項覆核（阿里下一代 11 月窗口 11-30 關閉，仍無發布）"
-  - "model-roadmap.md 本地已與遠端 byte-exact（pass 18 同步至 b11ccf28），後續可正常從本地推送此檔"
+  - "③ 候選：encode_texts 進一步強化（如 error 重試配額上限）；阿里 11 月窗口 11-30 關閉前續盯下一代影片模型"
+  - "model-roadmap.md 已推至 6f4799cf（watchlist 第十輪），後續可正常從本地推送此檔"
   - "GPU 下一棒（Claude，依 status.md）：M1 runpod_m1_eval.sh 5→50 prompts→VBench ±0.02 → P1a（先驗 reward/score.py::_invoke 對真實 VideoReward）→ M2 internal wan_blocks＋LoRA smoke → 正式訓練前換 stable-torch image"
 ---
 
@@ -34,6 +34,31 @@ Claude 執行（使用者 11-25 擴權：其他底模＋HDL on RunPod 亦可）�
 CI.yml 內容備妥待上傳；紅線不變。
 
 ## 本輪記錄（新輪加在最上面，保留最近 10 輪）
+
+- 2026-11-25 pass 19 @ 6f4799cf — ② watchlist 第十輪覆核（本 session
+  增量）：四固定項全查——**Wan 3.x 仍 API-only**（usefastlane 11-01、
+  renoise 11-11 逐 repo 核查一致，最後開放權重仍 Wan 2.2）；
+  **阿里下一代影片模型 11 月窗口 T-5 仍無發布**（Model Studio 新模型
+  列表最新僅 qwen3.8-flash／wan3.0-video-prime／wan2.6・2.7 flash
+  變體／qwen-image-edit-max／kimi-k3，第三方 11-09／11-11 核查同）；
+  **Qwen-Image 紅線四項無變化**（2.1／2.1-Turbo 研究授權、2512／
+  Edit-2511 Apache 線、3.0／3.1 hosted-only；HF 討論 #39 請願回歸
+  Apache 無官方回應）；**VA-Judger checkpoint 授權二次核查失敗**
+  （HF 頁面沙箱 fetch 僅空 README、無 license metadata；gated 下載），
+  維持使用者代查。新增判讀：駁 youart.ai「Wan 2.7 已開權重」低權威
+  誤報（與既有逐 repo 核查矛盾，同 miraflow 類）；補 efsora 10-19
+  資料點——Ming-Image-0.1-Design 為排名最高 fully-permissive 影像
+  模型（差 2.1 四十二分），支持 M7a 第三路徑 diagnostic 定位。
+  RESTORE 對帳乾淨（HEAD 仍 0a2a3cd7、無 Claude GPU 新 commit、tags
+  空、issues 0、temp 無新上傳）；開工前 mtime 掃描無對岸活動中檔案。
+  **SAVE 事故第六實例（長檔轉錄漂移）**：roadmap 首推 d378836b 回傳
+  blob 41902464 ≠ 本地 c52928d8——cmp 定位兩處**未編輯舊文**轉錄錯
+  （out-of-domain 誤作 out-domain－3 bytes、形態相容誤作形狀相容），
+  本地檔始終正確；以本地內容重推 6f4799cf byte-exact 驗證一致，
+  壞 commit 留史。教訓加強：**20KB 級長檔推送後必做逐字節 cmp**
+  （api.github.com raw 可達，raw.githubusercontent 沙箱連不上）。
+  CPU 全套 222 passed（docs-only 重跑確認）。docs/model-roadmap.md
+  blob c52928d8 驗證一致。
 
 - 2026-11-25 pass 18 @ a8a8f803 — ① GPU 輸出判讀（本 session 增量）：
   消化 Claude PR #3（08:13:46Z 合併，base d96b7192，10 檔 +447/-16）。
@@ -222,19 +247,6 @@ CI.yml 內容備妥待上傳；紅線不變。
   scorer 純函數（normalize/char_recall）與無 chi_tra 錯誤路徑
   （exit 1 訊息正確）皆符合預期。CPU 全套 184 passed。三檔 blob
   SHA 驗證一致（ea921edd／f91d8c6f／cf843d4d）。
-- 2026-11-25 pass 11 @ 8d19205 — 版本化：pyproject.toml 0.1.0 → 0.2.0
-  （0.1.0=scaffold；0.2.0=CPU 側程式全落地 checkpoint：M1 推理/eval/mux、
-  P1a DPO 管線＋latent cache drift guard、M2 AudioDiT/JointAVTrainer/
-  DAC/Wan contract/AV 資料管線、M6a/b/c 骨架、M7a seed＋gen/score 腳本、
-  166 CPU tests）。tag v0.2.0 待打：MCP 工具集無建 tag 能力
-  （list/get tag 唯讀），已交付使用者以本機 git tag 或網頁 Release
-  建立。blob SHA 驗證一致（67866fe6）。
-- 2026-11-25 pass 10 @ a1244b3 — GPU 交接：依使用者指示，GPU 驗收執行面
-  switch to Claude；落地 docs/gpu-acceptance-runbook.md（環境前置 → M1 →
-  P1a → M2 smoke → M7a 雙路徑的順序 playbook、每節驗收閘、回報格式
-  {step, command, exit_code, summary, GPU, 耗時}、紅線重申）＋修簡繁錯字；
-  front matter 新增 division_of_labor；下輪起 RESTORE 需對帳 Claude 的
-  GPU 結果提交。docs-only。
 
 ## RESTORE 協議（每輪第 0 步，依序執行）
 
