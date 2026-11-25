@@ -6,6 +6,13 @@ Keeps the VAE out of the DPO hot loop. Applies the Wan 2.2 TI2V-5B latent
 normalization (per-channel latents_mean / latents_std from the pipeline) so
 the saved tensors are exactly what the DiT expects as x_0.
 
+The pairs file is preflighted before planning (theama.reward.pairs_check,
+same rules as scripts/check_pairs.py): a pairs.jsonl with unusable rows or
+bad JSON lines is rejected up front with per-row reasons instead of
+failing inside the encode loop. Rows are never dropped in place — pair
+indices key the latent cache, so a rejected file must be regenerated with
+make_pref_pairs.
+
 Resume is on by default: pairs whose win/lose .pt files already exist and
 validate (loadable, finite, 5D) are skipped, corrupt half-written files are
 re-encoded, and pairs that previously failed (manifest "error" rows) are
@@ -80,9 +87,38 @@ def main() -> int:
                          "giving budget-exhausted pairs another chance")
     args = ap.parse_args()
 
+    # Preflight the pairs file before planning: the latent cache is keyed
+    # by pair index, so unusable rows must NOT be dropped in place (that
+    # would shift every later index and misalign the cache) — refuse to
+    # start and let the user regenerate pairs.jsonl with make_pref_pairs.
+    from theama.reward.pairs_check import validate_pairs
+
+    try:
+        pairs_text = Path(args.pairs).read_text(encoding="utf-8")
+    except OSError as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
+    report = validate_pairs(pairs_text)
+    if report["dropped_rows"] or report["bad_json_lines"]:
+        for row in report["dropped_rows"]:
+            print(json.dumps(row), file=sys.stderr)
+        print(
+            f"pairs.jsonl rejected: {report['rows'] - report['usable']} "
+            f"unusable row(s) "
+            f"dropped {json.dumps(report['dropped'], sort_keys=True)}"
+            + (
+                f" + {report['bad_json_lines']} bad JSON line(s)"
+                if report["bad_json_lines"]
+                else ""
+            )
+            + " — refusing to start; regenerate with make_pref_pairs",
+            file=sys.stderr,
+        )
+        return 1
+
     pairs = [
         json.loads(line)
-        for line in Path(args.pairs).read_text().splitlines()
+        for line in pairs_text.splitlines()
         if line.strip()
     ]
     if args.smoke:
