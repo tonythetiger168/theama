@@ -29,3 +29,6 @@ outputs/
 .DS_Store
 .idea/
 .vscode/
+
+# Local RunPod / eval results (never committed, see CLAUDE.md)
+results/
