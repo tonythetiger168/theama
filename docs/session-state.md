@@ -2,10 +2,10 @@
 # Theama session checkpoint — hourly agent runs save/restore THIS file.
 # 設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
 schema: 1
-updated_at: "2026-11-25T13:50:00Z"
-head: 6f478fd5c0c8e738222b9eb6af37033680f35384
+updated_at: "2026-11-25T14:10:00Z"
+head: 773f61e95636db0be0074188b05d08a856b8f6a1
 head_verified: true
-last_increment: "③ P1b 資料引擎：scripts/manifest_stats.py manifest 剖析器（row 計數、caption 覆蓋與字長分佈、duration_s 五桶、fps／解析度分佈、source mix、紅線能見度計數；deterministic JSON＋--out；可讀即 exit 0）＋9 tests；code commit 1b896e72，雙檔 blob c0f7cf31／f1968f66 首次即 byte-exact，CPU 264 passed"
+last_increment: "③ M7a 實跑準備：scripts/compare_m7a_summaries.py 跨模型 summary 並排比較器（provenance label、類別聯集 null 填補、per-category spread、ming diagnostic_only 排除出 gate_models；文字表 stdout＋deterministic JSON --out；描述不判決）＋10 tests；code commits d4e8d0e3／773f61e9，雙檔 blob a2bb51fa／bf086ad1 首次即 byte-exact，CPU 274 passed"
 ci_yml: content_ready_pending_user_upload   # MCP token 推 .github/workflows 被 403（insufficient scopes）；內容已交付使用者
 issues: 0
 gpu_outputs: m2_external_smoke_passed_reviewed   # PR #3 雙跑通過已判讀（pass 18）；M1/P1a/M2 internal 仍待 Claude 跑
@@ -14,10 +14,10 @@ division_of_labor:
   hourly_agent: "watchlist 核查、docs、CPU 側程式準備、repo 健康、session checkpoint"
   claude: "GPU 驗收執行（runbook 第 1–5 節＋status.md next steps）、CI.yml 上傳（人工作業）、結果回報/落盤、git tag v0.2.0（人工作業）；2026-11-25 使用者擴權：可做其他底模＋HDL on RunPod（紅線不變：H3/LTX/Qwen2.1/FLUX3-Klein/Krea2 不碰）"
 next_hour:
-  - "RESTORE：核對 HEAD 與本檔 head（pass-25 四連推：對岸 1596c716→abb440d2 兩連漂、本 session ea97af39／6f478fd5 覆正，最後皆已消化）；Claude 若已 push M1/P1a/internal-wan_blocks GPU 結果或 v0.2.0 tag，先消化再增量"
-  - "pass 16–25 增量皆已落地請勿重做：Ming gen 第三路徑（4e1d202f）／score provenance（a3067d9b）／runbook §4.1（a7cb7697）／PR #3 判讀＋同步（0a2a3cd7）／watchlist 第十～十四輪（4fad1f38、918001c0+3f3fa0ac、129d5d67 PAVRM Apache 升格）／encode_texts retry budget（e1896295）／build_av_manifest（3f94b385）／pair+AV latent cache retry budget（1e64d0c1）／joint loader skipped 列明確報缺（cc85d330）／M7a eval seed 24→48（153be48c＋9d83f6c3）／M7a seed 48→100 v1.2（1596c716，漂移已由 ea97af39／6f478fd5 覆正）／manifest_stats 剖析器（1b896e72）；agent 入口改為 docs/status.md＋AGENTS.md"
+  - "RESTORE：核對 HEAD 與本檔 head（pass-26 code 雙推 d4e8d0e3／773f61e9 皆首次 byte-exact，已消化）；Claude 若已 push M1/P1a/internal-wan_blocks GPU 結果或 v0.2.0 tag，先消化再增量"
+  - "pass 16–26 增量皆已落地請勿重做：Ming gen 第三路徑（4e1d202f）／score provenance（a3067d9b）／runbook §4.1（a7cb7697）／PR #3 判讀＋同步（0a2a3cd7）／watchlist 第十～十四輪（4fad1f38、918001c0+3f3fa0ac、129d5d67 PAVRM Apache 升格）／encode_texts retry budget（e1896295）／build_av_manifest（3f94b385）／pair+AV latent cache retry budget（1e64d0c1）／joint loader skipped 列明確報缺（cc85d330）／M7a eval seed 24→48（153be48c＋9d83f6c3）／M7a seed 48→100 v1.2（1596c716，漂移已由 ea97af39／6f478fd5 覆正）／manifest_stats 剖析器（1b896e72）／M7a 跨模型 summary 比較器（d4e8d0e3＋773f61e9）；agent 入口改為 docs/status.md＋AGENTS.md"
   - "使用者上傳 CI.yml 後：Actions 即為驗證引擎（CI image 需 ffmpeg + tesseract chi-tra，否則 decode/M7a 測試 skip）"
-  - "③ 候選：阿里 11 月窗口 11-30 關閉前最後 watchlist 覆核（第十四輪已核 PAVRM，固定項無 delta）；或 M2 audio DiT 骨架／P1b 資料引擎下一小件（對齊 docs/model-roadmap.md 現況表）；M7a seed 已達 100 閘，下一小件改為 gen/score 管線對 100 列的實跑準備"
+  - "③ 候選：阿里 11 月窗口 11-30 關閉前最後 watchlist 覆核（第十四輪已核 PAVRM，固定項無 delta）；或 M2 audio DiT 骨架／P1b 資料引擎下一小件（對齊 docs/model-roadmap.md 現況表）；M7a seed 100 閘已達＋compare 工具已備，實跑只欠 GPU 排程（Claude）"
   - "GPU 下一棒（Claude，依 status.md）：M1 runpod_m1_eval.sh 5→50 prompts→VBench ±0.02 → P1a（先驗 reward/score.py::_invoke 對真實 VideoReward）→ M2 internal wan_blocks＋LoRA smoke → 正式訓練前換 stable-torch image"
 ---
 
@@ -39,6 +39,32 @@ CPU tests 全綠；GPU 驗收由 Claude 執行（使用者 11-25 擴權：其他
 底模＋HDL on RunPod 亦可）；CI.yml 內容備妥待上傳；紅線不變。
 
 ## 本輪記錄（新輪加在最上面，保留最近 10 輪）
+
+- 2026-11-25 pass 26 @ 773f61e9 — ③ M7a gen/score 實跑準備最後一塊：
+  `scripts/compare_m7a_summaries.py` 跨模型 summary 並排比較器＋10 tests
+  （code commits `d4e8d0e3`＋`773f61e9`，雙檔 blob **a2bb51fa**／
+  **bf086ad1** 首次即 byte-exact）。缺口：100 列 v1.2 seed 實跑後，
+  qwen／zimage（＋diagnostic-only ming）三路各產一份
+  `<stem>.summary.json`，驗收判讀此前要手開三檔對讀。本工具以
+  score_cjk_text provenance 的 model 欄位為列標籤（缺省退回檔名
+  stem）、重複標籤拒絕（表格歧義 fail-loud）；類別聯集 null 填補
+  （該模型沒跑過的類別顯示 `-`）＋ per-category spread（哪些類別
+  拉開模型差距）；import gen_cjk_images.EXPERIMENTAL_MODELS 把
+  ming-image-design 標 diagnostic_only 並排除出 gate_models；
+  文字表 stdout＋deterministic JSON --out（sorted keys，diff 兩次
+  run 有意義）；與 manifest_stats 同規「描述不判決」——結構錯誤
+  （缺檔／壞 JSON／缺 key）exit 1，內容高低 exit 0。純函數
+  build_comparison 無檔案依賴。測試 10 項：純函數六（標籤與
+  overall、類別聯集＋null、ming 旗標＋gate_models、重複標籤拒絕、
+  stem 退回、缺 key 拒絕）＋CLI 四（表＋deterministic --out 連跑
+  兩次一致、單檔 exit 1、壞 JSON exit 1、缺檔 exit 1）。RESTORE
+  對帳乾淨（開工 HEAD 845e29a0＝記憶、session-state blob 9dbd606f
+  ／eval aa87fac9／roadmap 77e790e4 三驗一致、無 Claude GPU commit、
+  tags 空、issues 0、temp 無新上傳、mtime 掃描無對岸活動）；推送前
+  再對帳無競態。CPU 全套 **274 passed**（264+10）。trim：pass 17
+  stub 與 pass 18 移出（事實存於專案記憶第十七／十八輪存檔）。
+  watchlist 本輪不重查（第十四輪 12:14Z 無 delta；阿里窗口 T-5，
+  11-30 關閉前最後覆核留給下輪或對岸）。
 
 - 2026-11-25 pass 25 @ 1596c716 — ③ M7a CJK T2I eval seed 48→100
   （v1.2，達 100 條驗收閘；pass-24 v1.1 的續擴，本 session 增量）。
@@ -383,37 +409,6 @@ CPU tests 全綠；GPU 驗收由 Claude 執行（使用者 11-25 擴權：其他
   「強開放底座＋後訓練可近 frontier」→ theama 的 Wan 2.2＋LoRA-DPO
   為紅線內同構對應；Apache 譜系唯一頂級底座仍 Wan 2.2；VBench 開源
   前三在 Apache 線內等價追平並超出 Wan 2.2 自報 82.61。
-
-- 2026-11-25 pass 18 @ a8a8f803 — ① GPU 輸出判讀（本 session 增量）：
-  消化 Claude PR #3（08:13:46Z 合併，base d96b7192，10 檔 +447/-16）。
-  **M2 外部 latent-bridge 真實權重 smoke 雙跑通過**：11-24 RTX 4090
-  （c13d0f2）＋11-25 A40 全 runbook 復跑（4c2d828；三 JSON＋雙 WAV＋
-  logs 齊、pod 刪除、network volume theama-m2 保留、< $0.05）——
-  DAC 44.1kHz rel-L2 0.0935/0.0942（對照隨機權重 ≈1.0，證實真實權重
-  載入）、latent [1,87,2048]；Wan TI2V-5B bf16 凍結骨幹反傳＋bridge
-  優化器更新（32 grad tensors／28 updated）、峰值 9.37 GiB 兩卡一致。
-  證明範圍僅 contract（真實權重載入、tensor 配置、反傳、記憶體
-  餘裕）；不證明 prompt-to-video 品質／感知音質／AV sync——M1 品質閘、
-  P1a、M2 internal wan_blocks GPU 驗收仍待跑。**M1 RunPod runner
-  落地**：runpod_m1_eval.sh（TI2V-5B 全 repo 入 volume＋容量預檢＋
-  M1_EVAL_SMOKE_OK 閘）；配套修正 gen_candidates tuple unpack、
-  gen_eval_set --model-path、t2v.py 本地路徑載入＋numpy 幀轉 PIL，
-  test_m1 +2。新增 docs/status.md（handoff 單一入口）＋AGENTS.md；
-  .gitignore 加 results/（原始 GPU 產物不入庫，存 Tony PC）。
-  本地同步：10 檔逐檔 git hash-object 對遠端 sha 全一致（
-  runpod_m1_eval.sh 首推比對抓到一處 PR 後修正——disk check 的
-  Path(sys.argv[2]) → sys.argv[2]，以遠端為準修齊）；bash -n 通過；
-  CPU 全套 **222 passed**（220+2，合併態獨立重跑）。**使用者新指示
-  （11-25）：Claude 可做其他底模＋HDL on RunPod**——已記入
-  division_of_labor，紅線不變（H3/LTX/Qwen2.1/FLUX3-Klein/Krea2
-  權重程式碼輸出皆不碰；其他底模僅限授權相容者）。tags 空、issues 0、
-  temp 無新上傳；watchlist 本輪不重查（pass 15/16 已覆核）。
-
-- 2026-11-25 pass 17 @ a7cb7697 —（trim：pass 17 雙則與 pass 16
-  全文移出，事實存於專案記憶第十六／十七輪存檔：score manifest
-  provenance a3067d9b 220 passed、Ming 第三路徑 plumbing
-  4e1d202f 217 passed、runbook §4.1 a7cb7697、SAVE 事故第五實例
-  尾換行教訓、競態實例五開工前攔截＋工作中疊加。）
 
 ## RESTORE 協議（每輪第 0 步，依序執行）
 
