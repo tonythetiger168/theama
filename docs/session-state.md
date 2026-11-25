@@ -2,33 +2,43 @@
 # Theama session checkpoint — hourly agent runs save/restore THIS file.
 # 設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
 schema: 1
-updated_at: "2026-11-25T01:18:39Z"
-head: 8657e3613a29089aa21e1545081e5162173718d2
+updated_at: "2026-11-25T01:28:12Z"
+head: 0b7359be61f6cf185b7dc6066488606b74c54b41
 head_verified: true
-last_increment: "watchlist 第八輪：VA-Judger repo 狀態更新（checkpoints＋VA-Judger-Bench 已釋出、RM SFT 碼與 VAPref-10K 未釋出、checkpoint 授權未標示）；四大固定項覆核無變化；repo 健康巡檢；docs-only"
-ci_yml: not_uploaded            # 使用者尚未上傳 .github/workflows/CI.yml；repo 無 .github/ 目錄
+last_increment: "M7a 成雙：gen_cjk_images.py（GPU 雙路徑生成）＋score_cjk_text.py（tesseract OCR 文字準確率評分）；CI.yml 內容備妥但 token 無 workflow scope，待使用者上傳"
+ci_yml: content_ready_pending_user_upload   # MCP token 推 .github/workflows 被 403（insufficient scopes）；內容已交付使用者
 issues: 0
 gpu_outputs: none_pending_review
 blockers:
-  - "專案記憶 mount（/1a20b091…/areas/theama.md）連續三輪讀取失敗 → 本檔續為唯一可靠 checkpoint"
-  - "沙箱執行環境連續三輪不可用（shell/ipython 全掛）→ 無法跑 pytest / GPU smoke，僅 docs 級增量"
+  - "專案記憶 mount（/1a20b091…/areas/theama.md）連續多輪讀取失敗 → 本檔續為唯一可靠 checkpoint"
+  - "沙箱執行環境連續多輪不可用（shell/ipython 全掛）→ 本地 pytest 無法跑；M7a 兩支腳本為獨立 script（不被 tests import），語法/執行驗證待沙箱恢復或 CI 上線後補"
 next_hour:
   - "RESTORE：核對 HEAD 與本檔 head；不一致先 list_commits 對帳再增量"
-  - "沙箱若恢復：補寫專案記憶；優先 ③ 程式小件（M2 audio DiT 骨架 / P1b 資料引擎管線 / encode-score 腳本強化），CI.yml 上傳後跑 pytest"
-  - "沙箱仍未恢復：續做 ② watchlist 輕量核查（重點：阿里下一代模型 11 月窗口倒數、Omni-RL Judge arXiv id、VA-Judger checkpoint 授權逐卡核驗）或 ④ repo 健康巡檢"
+  - "使用者上傳 CI.yml 後：Actions 即為驗證引擎；補驗證 gen_cjk_images.py / score_cjk_text.py（python -m py_compile + CPU 試跑 scorer）"
+  - "沙箱若恢復：跑全量 pytest（預期 166 passed + 新腳本 compile check）；優先 ③ 程式小件續推（M2 audio DiT 骨架 / P1b 資料引擎管線）"
+  - "沙箱仍未恢復：續做 ② watchlist（重點：阿里下一代模型 11 月窗口倒數、Omni-RL Judge arXiv id、Omni-RRM／VA-Judger checkpoint 授權）或 ④ repo 健康巡檢"
 ---
 
 # Session State（每小時 checkpoint）
 
 ## 現況一句話
 
-M1 / P1a / M2 程式全部落地、GPU 驗收全部待跑；watchlist 已核查至
-2026-11-25 第八輪（VA-Judger checkpoints＋bench 已於 8 月釋出、授權
-未標示待逐卡核驗；不改 P1a/M2 配方）；session save/restore 機制運作中
-（本檔）；CI.yml 待使用者上傳；授權紅線不變。
+M1 / P1a / M2 程式全部落地、GPU 驗收全部待跑；M7a 成雙落地（24 條 CJK
+seed 的生成腳本＋OCR 文字準確率評分腳本，GPU 驗收管線就位）；watchlist
+已核查至第八輪；CI.yml 內容備妥待使用者上傳（token scope 限制）；
+授權紅線不變。
 
-## 本輪記錄（新輪加在最上面，保留最近 10 輪）
+## 本輪記錄（新輪加在最上面，保留最近 10 ）
 
+- 2026-11-25 pass 9 @ 0b7359b — 「我們這邊能做的全做完」批次：
+  ① M7a 生成腳本 scripts/gen_cjk_images.py（Qwen-Image-2512／Z-Image
+  Turbo 雙路徑、resumable、manifest+summary 閘）；② M7a 評分腳本
+  scripts/score_cjk_text.py（tesseract chi_tra/chi_sim OCR、exact_hit +
+  char_recall、per-category summary、scorer-version resume）；③ CI.yml
+  已備妥但 MCP token 無 workflow scope（403 insufficient scopes），
+  內容交付使用者自行上傳；④ 兩腳本均為獨立 script 不被 tests import，
+  沙箱掛機期間無法本地驗證，標記為待驗證。blob SHA 驗證一致
+  （f0d8d613／c896a9bc）。
 - 2026-11-25 pass 8 @ 8657e36 — watchlist 第八輪：VA-Judger repo 狀態
   更新（ShareLab-SII/VA-Judger 自 2026-08-20 釋出基礎程式碼、
   checkpoints 與 VA-Judger-Bench；RM SFT 程式碼與 VAPref-10K 仍 to-do；
