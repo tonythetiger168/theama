@@ -7,7 +7,8 @@ GPU. Covers: content-addressed naming (caption edit => new path, so drift
 cannot reuse stale embeddings), fresh/resume planning, seq_len recovery
 from the manifest, error-row retry, meta.json model invalidation,
 same-run caption dedup, corrupt/NaN/wrong-ndim re-encoding, strict mode,
-and the empty-caption guard.
+the empty-caption guard, and the opt-in retry budget (failure ledger:
+record/clear/skip semantics, exhausted-budget rows, strict-mode recording).
 """
 
 import json
@@ -25,10 +26,15 @@ from theama.data.latent_cache import (  # noqa: E402
     save_latent_atomic,
 )
 from theama.data.text_cache import (  # noqa: E402
+    FAILURES_NAME,
     MANIFEST_NAME,
     SUMMARY_NAME,
+    clear_failure,
     is_valid_text_latent,
+    load_failure_ledger,
     plan_text_encoding,
+    record_failure,
+    reset_failure_ledger,
     run_text_encoding,
     text_latent_path,
 )
@@ -272,3 +278,133 @@ def test_bad_seq_len_type_is_a_failure_row(tmp_path):
     )
     assert summary["failed"] == 1
     assert "seq_len" in _read_manifest(tmp_path)[0]["error"]
+
+
+# ---- retry budget (failure ledger) ---------------------------------------------
+
+
+def test_failure_ledger_roundtrip(tmp_path):
+    assert load_failure_ledger(tmp_path) == {}
+    assert record_failure(tmp_path, "一隻貓", "RuntimeError: boom") == 1
+    assert record_failure(tmp_path, "一隻貓", "RuntimeError: boom again") == 2
+    ledger = load_failure_ledger(tmp_path)
+    entry = ledger[text_latent_path(tmp_path, "一隻貓").stem]
+    assert entry["count"] == 2
+    assert entry["caption"] == "一隻貓"
+    assert "boom again" in entry["error"]
+    # A different caption lands on a different key.
+    record_failure(tmp_path, "狗", "x")
+    assert len(load_failure_ledger(tmp_path)) == 2
+    # Success clears only that caption.
+    clear_failure(tmp_path, "一隻貓")
+    ledger = load_failure_ledger(tmp_path)
+    assert text_latent_path(tmp_path, "一隻貓").stem not in ledger
+    assert len(ledger) == 1
+    # Reset deletes the file entirely.
+    assert reset_failure_ledger(tmp_path)
+    assert not (tmp_path / FAILURES_NAME).exists()
+    assert not reset_failure_ledger(tmp_path)
+    # Corrupt ledger degrades to {} instead of crashing.
+    (tmp_path / FAILURES_NAME).write_text("{not json")
+    assert load_failure_ledger(tmp_path) == {}
+
+
+def test_plan_skips_caption_past_retry_budget(tmp_path):
+    samples = _samples("good", "bad")
+    calls1: list = []
+    summary1 = run_text_encoding(
+        plan_text_encoding(samples, tmp_path, "umt5-xxl", max_retries=2),
+        _encoder(calls1, fail_on=("bad",)), progress=_quiet, max_retries=2,
+    )
+    assert calls1 == ["good", "bad"]  # "good" is cached from here on
+    assert summary1["failed"] == 1 and summary1["encoded"] == 1
+    # Second run retries only "bad" and fills its budget (count reaches 2).
+    calls2: list = []
+    summary2 = run_text_encoding(
+        plan_text_encoding(samples, tmp_path, "umt5-xxl", max_retries=2),
+        _encoder(calls2, fail_on=("bad",)), progress=_quiet, max_retries=2,
+    )
+    assert calls2 == ["bad"]
+    assert summary2["failed"] == 1 and summary2["reused"] == 1
+    # Third run: "bad" is skipped by the planner, never encoded; "good" reused.
+    plan3 = plan_text_encoding(samples, tmp_path, "umt5-xxl", max_retries=2)
+    assert plan3.todo == []
+    assert set(plan3.reusable) == {0}
+    assert set(plan3.skipped) == {1}
+    skipped_row = plan3.skipped[1]
+    assert skipped_row["skipped"] is True
+    assert skipped_row["retries"] == 2
+    assert "boom" in skipped_row["last_error"]
+    calls3: list = []
+    summary3 = run_text_encoding(
+        plan3, _encoder(calls3), progress=_quiet, max_retries=2,
+    )
+    assert calls3 == []
+    # Skipped rows are not counted as failed, reused, or encoded.
+    assert summary3["failed"] == 0 and summary3["encoded"] == 0
+    assert summary3["reused"] == 1
+    assert summary3["skipped"] == 1
+    rows = _read_manifest(tmp_path)
+    assert any(r.get("skipped") for r in rows)
+    assert not any("error" in r for r in rows)
+    # The summary sidecar carries the skipped count too.
+    sidecar = json.loads((tmp_path / SUMMARY_NAME).read_text())
+    assert sidecar["skipped"] == 1
+
+
+def test_success_clears_ledger_entry(tmp_path):
+    samples = _samples("flaky")
+    calls1: list = []
+    run_text_encoding(
+        plan_text_encoding(samples, tmp_path, "umt5-xxl", max_retries=3),
+        _encoder(calls1, fail_on=("flaky",)), progress=_quiet, max_retries=3,
+    )
+    assert load_failure_ledger(tmp_path) != {}
+    # The caption now encodes — success wipes its failure history.
+    summary = run_text_encoding(
+        plan_text_encoding(samples, tmp_path, "umt5-xxl", max_retries=3),
+        _encoder([]), progress=_quiet, max_retries=3,
+    )
+    assert summary["encoded"] == 1 and summary["failed"] == 0
+    assert load_failure_ledger(tmp_path) == {}
+
+
+def test_no_ledger_io_when_max_retries_unset(tmp_path):
+    samples = _samples("a", "b")
+    summary = run_text_encoding(
+        plan_text_encoding(samples, tmp_path, "umt5-xxl"),
+        _encoder([], fail_on=("b",)),
+        progress=_quiet,
+    )
+    assert summary["failed"] == 1
+    assert "skipped" not in summary  # default behaviour is byte-identical
+    assert not (tmp_path / FAILURES_NAME).exists()
+    # Legacy retry loop still works: the failure row lands back in todo.
+    plan2 = plan_text_encoding(samples, tmp_path, "umt5-xxl")
+    assert plan2.todo == [1] and plan2.skipped == {}
+
+
+def test_strict_records_failure_before_reraising(tmp_path):
+    with pytest.raises(RuntimeError, match="boom"):
+        run_text_encoding(
+            plan_text_encoding(_samples("a"), tmp_path, "umt5-xxl", max_retries=2),
+            _encoder([], fail_on=("a",)),
+            strict=True,
+            progress=_quiet,
+            max_retries=2,
+        )
+    # The abort did not lose the failure: the ledger saw the attempt.
+    ledger = load_failure_ledger(tmp_path)
+    assert ledger[text_latent_path(tmp_path, "a").stem]["count"] == 1
+
+
+def test_invalid_max_retries_rejected(tmp_path):
+    with pytest.raises(ValueError):
+        plan_text_encoding(_samples("a"), tmp_path, "umt5-xxl", max_retries=0)
+    with pytest.raises(ValueError):
+        run_text_encoding(
+            plan_text_encoding(_samples("a"), tmp_path, "umt5-xxl"),
+            _encoder([]),
+            progress=_quiet,
+            max_retries=True,
+        )
