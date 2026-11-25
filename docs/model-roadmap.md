@@ -12,7 +12,7 @@
 | P1a | **theama-ti2v-5b-dpo**（VideoReward 偏好對 + LoRA-DPO） | 程式落地，GPU 驗收待跑 |
 | M2 | **theama-audio-dit v1**（並聯音訊 DiT + 雙向 CrossModalBridge） | CPU trainer + DAC contract + 外部 Wan adapter 落地，真實權重 GPU smoke 已通過（2026-11-24，RTX 4090，見 docs/status.md） |
 | M4b（前置） | HEVC / AV1 + HDR10 / HLG 10-bit 封裝 | mux 落地；8K regenerate 本體待 M4 穩定 |
-| M7a（前置） | CJK T2I eval seed v1.2（100 條繁中文字渲染 prompt + expected_text，v1.1 48 條再擴一倍） | 已落地、達驗收閘規模；Qwen-Image-2512 / Z-Image Turbo 推理重現待跑 |
+| M7a（前置） | CJK T2I eval seed v1.2（100 條文字渲染 prompt + expected_text，v1.1 48 條再擴一倍；**簡中 zh-Hans 優先**，簡繁對照成對、分開統計） | 已落地、達驗收閘規模；Qwen-Image-2512 / Z-Image Turbo 推理重現待跑 |
 
 ## 近期（下一季）
 
@@ -30,7 +30,7 @@
 | M4b | **theama-8k-regen** | 4K→8K tiled regenerate + HEVC/AV1 + HDR10（光環級，M4 穩定後才動） |
 | M5 | 品質收斂版 Film 模型 | 保底：盲測 vs H3 win/tie ≥50%、vs Wan 3.0 ≥40%、VBench 開源前三；**終局（11-25 拍板）：AA with-audio 三板登頂——T2V/editing 超越 Wan 3.0、I2V 超越 Seedance 2.5** |
 | M6a | **theama-avatar-offline** | Wan-Animate-2-14B（animation-only）底座 + LatentSync 墊底唇形 |
-| M7a | **theama-image 雙路徑** | Qwen-Image-2512（品質）+ Z-Image Turbo（快速）推理重現 + CJK 評測（seed v1.2 已達 100 prompts 驗收閘規模） |
+| M7a | **theama-image 雙路徑** | Qwen-Image-2512（品質）+ Z-Image Turbo（快速）推理重現 + CJK 評測（**簡中優先**：zh-Hans 準確率為放行閘、zh-Hant 並行統計；seed v1.2 已達 100 條驗收閘規模） |
 
 ## 遠期
 
@@ -147,7 +147,7 @@
   LoRA 後訓練驗證其 reward 可提升生成品質，惟 policy 實驗用 LTX-2（紅線模型）——
   僅取 reward 方法論參考，不碰其權重與輸出。同清單再補 **Omni-Judge**（2026，
   以 omni-modal LLM 做 text-conditioned A/V 生成的 CoT judge，覆蓋感知品質與
-  跨模態對齊維度），同列觀察，授權／權重可得性未核實。另記上游營運訊號：
+  跨模態對齊維度），同列觀察，授權／權重未核實。另記上游營運訊號：
   Wan2.2-Animate 官方 HF Space 已 401 下線（2026-11-16 確認；ModelScope Studio
   與社群 ZeroGPU Space 仍在）——M6a 走自架權重路線，不受影響。
   Wan-Animate-2 repo id／Wan 3.x API-only／Qwen-Image 紅線三項本輪覆核無變化。
@@ -297,6 +297,24 @@
   ＋M2 audio DiT（with-audio 評分主戰場）＋資料引擎擴量。
   驗收語意不變：保底閘（盲測 win rate、VBench）照舊，登頂為
   stretch 層，兩者並列於 M5 列。
+  2026-11-26 補記（蒸餾合法性盤點，依使用者提問「各榜前五或十可蒸餾？」）：
+  **四個榜（T2V／I2V／editing／T2I 總榜）top10 無一可合法蒸餾**——
+  Wan 3.0 為 hosted API（Model Studio 條款禁以模型及 Output 訓練競爭
+  產品）、Seedance 2.5 受豆包服務協議禁止以服務／生成內容做模型開發
+  與微調、MiniMax H3 及其衍生（Utopai X／Hyperflow H3／H3 Max／
+  Boreal-H3／Pika H3 Flex 等）受 Community License V.3 明文禁止以
+  Works/Outputs 改善其他模型、榜上 **MAGI-2 為 480B flagship 且權重
+  尚未釋出**（注意：Apache-2.0 的是 MAGI-2 Preview，單獨排名 T2V #21
+  ／I2V #29，114B／10 秒／需 8×Hopper 約 307GB，僅列觀察）。**可蒸餾
+  候選全在榜外或 open-weights 榜中段**：Wan 2.2（Apache-2.0，無地區
+  ／營收／輸出限制，本專案現行底座＋自我蒸餾起點）、Z-Image Turbo
+  （Apache-2.0）、Qwen-Image-2512（Apache-2.0）、Ming-Image-0.1-Design
+  （MIT，open-weights T2I 榜上名次最高的完全寬鬆授權）。Hunyuan
+  Image／Video 雖開權重，但 Tencent Community License 將蒸餾與合成
+  資料訓練納入 Model Derivatives 限制，不算乾淨，維持不碰。結論：
+  蒸餾 top10 之路不可行，強化既有路線——Wan 2.2 底座＋自我蒸餾
+  （Theama Film 自產 4K/30s 帶音訊樣本回流）＋CJK 簡中優先＋開放
+  授權差異化。
 
 ## 發布策略
 
