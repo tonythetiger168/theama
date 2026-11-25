@@ -4,15 +4,16 @@
 [`training-plan.md`](training-plan.md)，品質對標邏輯見
 [`quality-path-wan3-h3.md`](quality-path-wan3-h3.md)。
 
-## 現況（2026-11-25）
+## 現況（2026-11-26）
 
 | 階段 | 模型交付物 | 狀態 |
 |---|---|---|
 | M1 | Wan 2.2 推理重現（TI2V-5B / T2V-A14B / I2V-A14B）+ eval harness + MP4 mux | 程式落地，GPU 驗收待跑 |
-| P1a | **theama-ti2v-5b-dpo**（VideoReward 偏好對 + LoRA-DPO） | 程式落地，GPU 驗收待跑 |
-| M2 | **theama-audio-dit v1**（並聯音訊 DiT + 雙向 CrossModalBridge） | CPU trainer + DAC contract + 外部 Wan adapter 落地，真實權重 GPU smoke 已通過（2026-11-24，RTX 4090，見 docs/status.md） |
-| M4b（前置） | HEVC / AV1 + HDR10 / HLG 10-bit 封裝 | mux 落地；**2026-11-26 拍板提前至 M4 交付（獨立賣點）**；8K regenerate 本體待 M4 穩定 |
-| M7a（前置） | CJK T2I eval seed v1.2（100 條文字渲染 prompt + expected_text，v1.1 48 條再擴一倍；**簡中 zh-Hans 優先**，簡繁對照成對、分開統計） | 已落地、達驗收閘規模；Qwen-Image-2512 / Z-Image Turbo 推理重現待跑 |
+| P1a | **theama-ti2v-5b-dpo**（VideoReward 偏好對 + LoRA-DPO） | 程式落地＋全鏈預檢閘（scores→pairs→pair-latents 三段 fail-fast）＋三 cache retry budget＋pairs_stats 剖析器；GPU 驗收待跑 |
+| P1b | AV 資料引擎（manifest builder → text/AV latent cache → joint loader → joint training runner） | 程式落地＋三 cache retry budget 對齊＋joint loader skipped 列明確報缺＋joint-cache 預檢閘 check_joint_latents（runbook §5.1 獨立 CPU 閘）；GPU 驗收待跑（issue #4） |
+| M2 | **theama-audio-dit v1**（並聯音訊 DiT + 雙向 CrossModalBridge） | CPU trainer + DAC contract + 外部 Wan adapter + CFG 文字條件 dropout 落地，真實權重 GPU smoke 已通過（2026-11-24，RTX 4090，見 docs/status.md） |
+| M4b（前置） | HEVC / AV1 + HDR10 / HLG 10-bit 封裝 | mux 落地＋**HLS fMP4/CMAF packager＋DASH manifest 兼出皆落地（11-26，零重編碼、逐 rung ffprobe 閘）**；**2026-11-26 拍板提前至 M4 交付（獨立賣點）**；8K regenerate 本體待 M4 穩定 |
+| M7a（前置） | CJK T2I eval seed v1.2（100 條文字渲染 prompt + expected_text，v1.1 48 條再擴一倍；**簡中 zh-Hans 優先**，簡繁對照成對、分開統計） | 已落地、達驗收閘規模；scorer 簡繁分軌（zh-Hans 閘／zh-Hant 並行統計）＋Ming-Image-0.1-Design 第三路徑 diagnostic-only 落地；Qwen-Image-2512 / Z-Image Turbo 推理重現待跑 |
 
 ## 近期（下一季）
 
