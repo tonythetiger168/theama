@@ -2,10 +2,10 @@
 # Theama session checkpoint — hourly agent runs save/restore THIS file.
 # 設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
 schema: 1
-updated_at: "2026-11-25T09:22:00Z"
-head: 3f3fa0ac04fa7316e73cd5f9d56b3ddc8c4e3fa4
+updated_at: "2026-11-25T10:25:00Z"
+head: 1e64d0c18784af9249155f0742d82bda665abe75
 head_verified: true
-last_increment: "watchlist 第十二輪：依使用者拍板『超過 Seedance 2.5 和 Wan 3.0』，AA with-audio 三榜榜首（T2V Wan 3.0 1175／I2V Seedance 2.5 1153／editing Wan 3.0 1196）由對標板升格為 M5 終局超越對象——保底閘照舊、登頂列 stretch 層，差距盤點 T2V −14 Elo／I2V −25／editing 開放最高僅第三；roadmap commits 918001c0+3f3fa0ac，SAVE incident #9（手抄漂移一字）已修復並 byte-cmp 驗證"
+last_increment: "③ P1b pair/AV latent cache 對齊 text_cache 同款 retry budget（pair_failures.json／av_failures.json opt-in ledger、--max-retries/--reset-failures、skipped 列不計 encoded/reused/failed、預設行為逐字節不變）；tests +12（test_p1a／test_m2_av_latent_cache 各 6），CPU 253 passed；commit 1e64d0c1 六檔 blob SHA 驗證一致"
 ci_yml: content_ready_pending_user_upload   # MCP token 推 .github/workflows 被 403（insufficient scopes）；內容已交付使用者
 issues: 0
 gpu_outputs: m2_external_smoke_passed_reviewed   # PR #3 雙跑通過已判讀（pass 18）；M1/P1a/M2 internal 仍待 Claude 跑
@@ -15,9 +15,9 @@ division_of_labor:
   claude: "GPU 驗收執行（runbook 第 1–5 節＋status.md next steps）、CI.yml 上傳（人工作業）、結果回報/落盤、git tag v0.2.0（人工作業）；2026-11-25 使用者擴權：可做其他底模＋HDL on RunPod（紅線不變：H3/LTX/Qwen2.1/FLUX3-Klein/Krea2 不碰）"
 next_hour:
   - "RESTORE：核對 HEAD 與本檔 head；Claude 若已 push M1/P1a/internal-wan_blocks GPU 結果或 v0.2.0 tag，先消化再增量"
-  - "pass 16–20 增量皆已落地請勿重做：Ming gen 第三路徑（4e1d202f）／score provenance（a3067d9b）／runbook §4.1（a7cb7697）／PR #3 判讀＋同步（0a2a3cd7）／watchlist 第十＋十一輪（4fad1f38）／encode_texts retry budget（e1896295）／build_av_manifest（3f94b385）；agent 入口改為 docs/status.md＋AGENTS.md"
+  - "pass 16–22 增量皆已落地請勿重做：Ming gen 第三路徑（4e1d202f）／score provenance（a3067d9b）／runbook §4.1（a7cb7697）／PR #3 判讀＋同步（0a2a3cd7）／watchlist 第十～十二輪（4fad1f38、918001c0+3f3fa0ac）／encode_texts retry budget（e1896295）／build_av_manifest（3f94b385）／pair+AV latent cache retry budget（1e64d0c1）；agent 入口改為 docs/status.md＋AGENTS.md"
   - "使用者上傳 CI.yml 後：Actions 即為驗證引擎（CI image 需 ffmpeg + tesseract chi-tra，否則 decode/M7a 測試 skip）"
-  - "③ 候選：AV/pair latent cache 對齊同款 retry budget（encode_pairs/encode_av_latents 共用 latent_cache，設計可照搬 text_cache）；阿里 11 月窗口 11-30 關閉前續盯下一代影片模型"
+  - "③ 候選：下游消費者對 skipped 列的行為核查＋補強（joint_latent_loader／loader 遇到 skipped: true 列應略過或明確報缺，現無測試覆蓋）；或阿里 11 月窗口 11-30 關閉前最後 watchlist 覆核"
   - "model-roadmap.md 已推至 3f3fa0ac（watchlist 第十二輪：M5 終局目標＝超越 Seedance 2.5／Wan 3.0 登頂 AA with-audio 三榜），後續可正常從本地推送此檔"
   - "GPU 下一棒（Claude，依 status.md）：M1 runpod_m1_eval.sh 5→50 prompts→VBench ±0.02 → P1a（先驗 reward/score.py::_invoke 對真實 VideoReward）→ M2 internal wan_blocks＋LoRA smoke → 正式訓練前換 stable-torch image"
 ---
@@ -29,11 +29,40 @@ next_hour:
 版本 0.2.0；**M2 外部 latent-bridge 真實權重 GPU smoke 已通過**（PR #3：
 11-24 RTX 4090＋11-25 A40 全 runbook 復跑，詳 docs/status.md）；M1 RunPod
 runner 落地待跑（runpod_m1_eval.sh）；P1b 鏈路補齊（manifest builder →
-雙 cache → joint loader → runner → runbook 第 5 節），241 CPU tests
+雙 cache → joint loader → runner → runbook 第 5 節），三 cache（text／
+pair／AV）retry budget 全數對齊，253 CPU tests
 全綠；GPU 驗收由 Claude 執行（使用者 11-25 擴權：其他底模＋HDL on
 RunPod 亦可）；CI.yml 內容備妥待上傳；紅線不變。
 
 ## 本輪記錄（新輪加在最上面，保留最近 10 輪）
+
+- 2026-11-25 pass 22 @ 1e64d0c1 — ③ P1b pair/AV latent cache 對齊 retry
+  budget（本 session 增量，對岸 pass-20 next_hour 明列候選）：把
+  text_cache（e1896295）的 opt-in failure ledger 移植到兩個 media
+  cache——latent_cache.py 新增通用 ledger 核心（_ledger_load/_record/
+  _clear/_reset：tmp+replace 原子寫、毀損降級 {}）＋pair_failures.json
+  綁定 wrappers（key＝pair{index:04d} 檔名 stem，可 grep cache 目錄）；
+  av_latent_cache.py 共用同一核心（av_failures.json，key＝
+  sample{index:04d}）。EncodePlan/AVEncodePlan 加 skipped 欄、plan/run
+  加 max_retries 參數（驗證正整數）；skipped 列寫入 manifest（skipped:
+  true／retries／last_error）但不計 encoded/reused/failed（summary 另記
+  skipped 數）；成功即清（暫態失誤不累積）；strict 先記錄再 raise；
+  ledger 維護 best-effort（OSError 不得搞砸一次好 encode）；預設 None
+  行為**逐字節不變**（無限重試、零 ledger I/O）。CLI 雙腳本
+  （encode_pairs／encode_av_latents）加 --max-retries/--reset-failures
+  （reset 於 planning 前），plan 輸出含 skipped 數、stderr 提示對應
+  調整。測試 +12（test_p1a＋test_m2_av_latent_cache 各 6，鏡像
+  text_cache 套件：ledger roundtrip 含毀損容忍／三 run 預算耗盡跳過／
+  成功清除／無旗標零 ledger／strict 記錄後 reraise／非法 max_retries
+  拒絕）。RESTORE 對帳乾淨（HEAD ba7ed628、無 Claude GPU commit、
+  tags 空、issues 0、temp 無新上傳）；開工前 mtime 掃描無對岸活動中
+  檔案。push_files 六檔一次 commit HEAD 1e64d0c1；**六檔 blob SHA
+  全數驗證一致**（latent_cache dc359e64／av_latent_cache fb6cc7ff／
+  encode_pairs 8320e3d6／encode_av_latents f8993dc6／test_p1a
+  d2429e8a／test_m2_av_latent_cache 8ae8cfa6，本地 git blob 重算
+  相同）——首次即 byte-exact。CPU 全套 **253 passed**（241+12）；
+  雙 CLI --help smoke 通過；pytest 沙箱重置洗掉已重裝。下一個③候選：
+  下游消費者（joint_latent_loader 等）對 skipped 列的行為核查。
 
 - 2026-11-25 pass 21 @ 3f3fa0ac — watchlist 第十二輪（本 session 增量，
   依使用者拍板「**超過 Seedance 2.5 和 Wan 3.0**」）：AA with-audio 三榜
@@ -248,54 +277,6 @@ RunPod 亦可）；CI.yml 內容備妥待上傳；紅線不變。
   （git blob sha 3b607a49 本地重算一致），blocker 移除。推送前後各
   對帳一次（對岸 checkpoint 16ac8e7 於本 session roadmap 推送前
   17 秒落地，內容已消化）。blob SHA 驗證一致（roadmap 3b607a49）。
-
-- 2026-11-25 pass 15 @ b9c4bb4 — runbook 第 5 節（P1b joint training
-  驗收段）落地＋競態實例三結案：新檔 `configs/m2_joint_av_dev.yaml`
-  （TI2V-5B dev 24GB 版 joint config：video.adapter=ti2v-5b、
-  audio.video_dim=48，training/acceptance 與 prod 相同）、
-  test_m2_joint_av_runner.py +1 yaml contract 測試（dev↔prod 一致性：
-  adapter==dev_adapter、video_dim==48==dev_latent_channels、
-  trainer_config/text_dim 相同）、runbook 新增第 5 節（5.0 免權重自檢
-  TRAIN_JOINT_AV_SMOKE_OK → 5.1 小 cache E2E dev 路徑：manifest 靜檢→
-  decode 探針→雙 cache limit 8→20 步 bridge→full@10→--resume auto 到 30
-  → 5.2 正式 A14B run 20k/2k/bf16）。**競態實例三**：本 session 推送
-  58b2bdc 後發現對岸把自版第 5 節（5a/5b/5c）append 到本地 runbook
-  （未推送）；逐項比對→採納其兩項獨有改進（text cache 以 --encoder
-  固定 Wan2.2-T2V-A14B-Diffusers 跨 dev/prod 共用、prod 免重燒 UMT5；
-  ckpt_latest 恆於最終步落盤不受 --save-every 影響）以 b9c4bb4 合併
-  推送；其餘項（decode 探針、dropped=0 閘、peak memory、AV sync 目檢）
-  本版已有。期間本地 runbook 一度被還原成 pass-14 舊版（14:19），
-  已從遠端 blob 拉回並驗證一致。watchlist 覆核：Wan 3.x 仍 API-only
-  （11-13 多方榜 Wan 3.0 T2V 第一但 closed）；「Wan 2.7 開源
-  Apache-2.0」說法經三來源交叉核駁（10-25/11-01/11-10 皆指
-  2.5/2.6/2.7 未開權重，最後開權重仍 Wan 2.2 系）——骨幹不變；
-  阿里下一代 11 月窗口剩 5 天仍無發布；Qwen-Image 紅線不變。
-  RESTORE 對帳無 Claude GPU commit／tags 空／issues 0。CPU 全套
-  215 passed（214+1）；CLI smoke 重驗 TRAIN_JOINT_AV_SMOKE_OK。
-  blob SHA 驗證一致（dev config a17cfd09／test ff576759／runbook
-  合併版 50f79eb7）。
-
-- 2026-11-25 pass 14 @ 8042bff — P1b joint training runner＋薄殼：新檔
-  `src/theama/train/joint_av_runner.py`（RunnerConfig＋JointAVRunner：
-  dataloader 無限循環、device/dtype 搬運、cond 改為 on-device 由
-  audio.cond_pooler（掛 AudioDiT 子模組，bridge phase 凍結/full phase
-  訓練、隨 audio state_dict 入 ckpt）對 masked-mean pool 的 video_cond
-  投影——pooling 移出 DataLoader collation 保梯度在訓練裝置；
-  --bridge-steps 排程切 bridge→full；metrics.jsonl；checkpoint
-  精確 resume——先 set_phase（bridge ckpt 重注 LoRA 補齊 strict load
-  keys、full ckpt 先 merge 新 LoRA）再載 state、optimizer state 搬
-  param device、torch/CUDA RNG 還原；NaN metrics fail-closed 留
-  ckpt_nonfinite 緊急檔）、`scripts/train_joint_av.py`（--smoke 合成
-  5-D Wan latent 路徑 4 步＋phase 切換＋+2 步 auto-resume，印
-  TRAIN_JOINT_AV_SMOKE_OK；real run 接 WanVideoAdapter＋雙 cache）、
-  `tests/test_m2_joint_av_runner.py` 15 例（yaml contract、pooler
-  phase 行為、loop/log/ckpt、phase 排程、LoRA bridge 與 merged-full
-  resume roundtrip、NaN 緊急中止、production planner cache→DataLoader
-  →runner E2E、CLI smoke）。watchlist 覆核無變化（Wan 3.0 仍
-  API-only、阿里下一代 11 月窗口最後一週仍無發布、Qwen-Image 紅線不變、
-  VA-Judger 仍首選）；RESTORE 對帳無新 commit／無 tag／issues 0。
-  CPU 全套 214 passed（199+15）。三檔 blob SHA 驗證一致
-  （e270e982／72c69105／bd5022d5）。
 
 ## RESTORE 協議（每輪第 0 步，依序執行）
 
