@@ -6,6 +6,12 @@ side-effect free so CI can validate the jsonl without importing diffusers or
 touching model weights. Rows use the same jsonl convention as eval/t2v_v1.jsonl
 plus ``expected_text`` — the exact string a renderer must get right for the
 sample to count as a text-accuracy pass.
+
+Rows may carry an optional ``script`` tag (``"hans"`` / ``"hant"``) marking
+simplified vs traditional Chinese — the 2026-11-26 M7a gate decision makes
+the seed set zh-Hans-first with paired simplified/traditional prompts, and
+the scorer splits its headline rates on this tag. Untagged rows stay valid
+(v1.2 seeds); a present-but-invalid tag fails loudly, never silently drops.
 """
 
 from __future__ import annotations
@@ -15,6 +21,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 REQUIRED_KEYS = ("id", "category", "prompt", "expected_text")
+SCRIPT_VALUES = ("hans", "hant")
 
 
 @dataclass(frozen=True)
@@ -25,6 +32,7 @@ class T2IEvalPrompt:
     category: str
     prompt: str
     expected_text: str
+    script: str | None = None
 
 
 def _parse_row(obj: object, *, lineno: int) -> T2IEvalPrompt:
@@ -39,11 +47,19 @@ def _parse_row(obj: object, *, lineno: int) -> T2IEvalPrompt:
         if not isinstance(value, str) or not value.strip():
             raise ValueError(f"line {lineno}: key {key!r} must be a non-empty string")
         values[key] = value.strip()
+    script = obj.get("script")
+    if script is not None:
+        if not isinstance(script, str) or script.strip() not in SCRIPT_VALUES:
+            raise ValueError(
+                f"line {lineno}: key 'script' must be one of {list(SCRIPT_VALUES)}"
+            )
+        script = script.strip()
     return T2IEvalPrompt(
         id=values["id"],
         category=values["category"],
         prompt=values["prompt"],
         expected_text=values["expected_text"],
+        script=script,
     )
 
 

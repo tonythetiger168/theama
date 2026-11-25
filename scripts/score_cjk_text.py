@@ -3,16 +3,26 @@
 """M7a CPU scorer: CJK text accuracy of generated eval images via OCR.
 
 Scores the PNGs produced by gen_cjk_images.py against the eval seed's
-``expected_text`` — the M7a gate is "繁中文字準確率達官方報告同量級", so the
+``expected_text`` — the M7a gate is "zh-Hans 文字準確率達 Qwen-Image 官方
+報告同量級"（2026-11-26 拍板：簡中優先、zh-Hant 並行統計不擋放行）, so the
 metric must be a reproducible number, not eyeballing. Uses the tesseract CLI
-(system package; ``apt install tesseract-ocr tesseract-ocr-chi-tra``) to
-avoid adding a Python OCR dependency.
+(system package; ``apt install tesseract-ocr tesseract-ocr-chi-tra
+tesseract-ocr-chi-sim``) to avoid adding a Python OCR dependency.
 
     python scripts/score_cjk_text.py --images eval_out/m7a/qwen
 
 Metrics per row (after NFKC + whitespace/punctuation normalization):
   - exact_hit:    expected_text appears verbatim in the OCR text
   - char_recall:  fraction of expected characters present in the OCR text
+
+Script split (簡繁對照 seeds): seed rows tagged ``script: "hans"|"hant"``
+are OCR'd with the matching tesseract pack (chi_sim / chi_tra) instead of
+the run-level default, and the summary gains a ``per_script`` block with
+per-script scored counts, exact-hit rates and mean char recall. Missing
+language packs abort the run before any scoring (fail-fast); tagged rows
+whose prior scores used the wrong pack are re-scored on resume. Untagged
+(v1.2) seeds behave exactly as before — one run-level language, no
+``per_script`` key in the summary.
 
 Resume is on by default: rows already scored with the same SCORER_VERSION
 are kept, missing/failed ones are (re)scored, and the file is compacted.
@@ -47,6 +57,9 @@ sys.path.insert(0, str(ROOT / "src"))
 from theama.image import load_t2i_eval  # noqa: E402
 
 SCORER_VERSION = "cjk-text-1"
+
+# Seed-row script tag -> required tesseract pack (zh-Hans-first gate, 2026-11-26).
+LANG_FOR_SCRIPT = {"hans": "chi_sim", "hant": "chi_tra"}
 
 
 def normalize(text: str) -> str:
@@ -88,6 +101,58 @@ def ocr_image(path: Path, langs: str, psm: int) -> str:
     if proc.returncode != 0:
         raise RuntimeError(f"tesseract exited {proc.returncode}: {proc.stderr.strip()}")
     return proc.stdout
+
+
+def missing_script_packs(rows, available: set[str]) -> set[str]:
+    """Tesseract packs required by the seed's script tags but not installed."""
+    needed = {LANG_FOR_SCRIPT[row.script] for row in rows
+              if getattr(row, "script", None) in LANG_FOR_SCRIPT}
+    return {pack for pack in sorted(needed) if pack not in available}
+
+
+def row_ocr_langs(script: str | None, default_langs: str) -> str:
+    """OCR language spec for one seed row (tagged rows get their own pack)."""
+    if script in LANG_FOR_SCRIPT:
+        return LANG_FOR_SCRIPT[script] + "+eng"
+    return default_langs
+
+
+def keep_scored_row(prior: dict, script: str | None) -> bool:
+    """Resume filter: a tagged row is re-scored when its prior score used a
+    different OCR language than the tag requires; untagged rows always keep."""
+    if script not in LANG_FOR_SCRIPT:
+        return True
+    return prior.get("ocr_langs") == row_ocr_langs(script, "")
+
+
+def per_script_stats(rows, hits: list[dict]) -> dict | None:
+    """zh-Hans / zh-Hant split of the headline rates (2026-11-26 gate decision).
+
+    Returns None when no scored row carries a script tag, so summaries of
+    untagged (v1.2) seeds stay byte-identical to before. Both script keys are
+    always present (zero-filled) for determinism; ``untagged`` appears only
+    when a partially tagged seed left some hits without a tag.
+    """
+    script_by_id = {row.id: getattr(row, "script", None) for row in rows}
+    tagged = [r for r in hits if script_by_id.get(r["id"]) in LANG_FOR_SCRIPT]
+    if not tagged:
+        return None
+    stats: dict[str, object] = {}
+    for tag in ("hans", "hant"):
+        group = [r for r in tagged if script_by_id[r["id"]] == tag]
+        stats[tag] = {
+            "scored": len(group),
+            "exact_hit_rate": round(
+                sum(1 for r in group if r["exact_hit"]) / len(group), 4
+            ) if group else 0.0,
+            "mean_char_recall": round(
+                sum(r["char_recall"] for r in group) / len(group), 4
+            ) if group else 0.0,
+        }
+    untagged = len(hits) - len(tagged)
+    if untagged:
+        stats["untagged"] = untagged
+    return stats
 
 
 def load_gen_manifest(images_dir: Path) -> dict[str, dict] | None:
@@ -137,6 +202,9 @@ def build_summary(rows, scored: dict[str, dict], langs: str, psm: int,
             cat: round(sum(v) / len(v), 4) for cat, v in sorted(by_category.items())
         },
     }
+    per_script = per_script_stats(rows, hits)
+    if per_script is not None:
+        summary["per_script"] = per_script
     if manifest is not None:
         models = sorted({m["model"] for m in manifest.values() if m.get("model")})
         summary["models"] = models
@@ -177,6 +245,12 @@ def main() -> int:
         return 1
 
     rows = load_t2i_eval(args.eval_set)
+    missing = missing_script_packs(rows, available)
+    if missing:
+        print(f"seed rows carry script tags needing tesseract packs "
+              f"{sorted(missing)} (have: {sorted(available)}) — install "
+              f"tesseract-ocr-chi-sim / tesseract-ocr-chi-tra", file=sys.stderr)
+        return 1
     images_dir = Path(args.images)
     out_path = Path(args.out) if args.out else images_dir / "text_scores.jsonl"
     manifest = load_gen_manifest(images_dir)
@@ -188,13 +262,16 @@ def main() -> int:
                   file=sys.stderr)
 
     # Resume: keep prior rows from this scorer version keyed by prompt id.
+    # Tagged rows whose prior score used the wrong OCR pack are re-scored.
+    script_by_id = {row.id: row.script for row in rows}
     kept: dict[str, dict] = {}
     if out_path.exists():
         for line in out_path.read_text(encoding="utf-8").splitlines():
             if not line.strip():
                 continue
             row = json.loads(line)
-            if row.get("scorer") == SCORER_VERSION and "error" not in row:
+            if (row.get("scorer") == SCORER_VERSION and "error" not in row
+                    and keep_scored_row(row, script_by_id.get(row["id"]))):
                 if manifest is not None and row["id"] in manifest:
                     # Backfill provenance on rows scored before it existed.
                     row.setdefault("model", manifest[row["id"]].get("model"))
@@ -213,14 +290,15 @@ def main() -> int:
             try:
                 if not image.is_file():
                     raise FileNotFoundError(f"missing {image.name}")
-                ocr_text = ocr_image(image, langs, args.psm)
+                row_langs = row_ocr_langs(row.script, langs)
+                ocr_text = ocr_image(image, row_langs, args.psm)
                 norm_expected = normalize(row.expected_text)
                 rec = {
                     "id": row.id,
                     "category": row.category,
                     "image": str(image),
                     "scorer": SCORER_VERSION,
-                    "ocr_langs": langs,
+                    "ocr_langs": row_langs,
                     "psm": args.psm,
                     "expected_text": row.expected_text,
                     "ocr_text": ocr_text.strip(),
