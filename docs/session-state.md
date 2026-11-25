@@ -2,7 +2,7 @@
 # Theama session checkpoint — hourly agent runs save/restore THIS file.
 # 設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
 schema: 1
-updated_at: "2026-11-25T15:20:00Z"
+updated_at: "2026-11-25T15:30:00Z"
 head: 19881f0ad684184bbd146d9827eb1a109e8e8012
 head_verified: true
 last_increment: "③ P1a 資料引擎：scripts/pairs_stats.py 偏好對剖析器（pairs.jsonl 上盤後再檢——列數、prompt 覆蓋、pairs-per-prompt 分佈、margin 五桶＋win/lose 統計、self-pair 能見度、win/lose clip 集中度＝偏誤訊號；deterministic JSON＋--out；描述不判決）＋9 tests；code commit 19881f0a，雙檔 blob 50e73e9b／8fae3b0e 首次即 byte-exact，CPU 283 passed"
@@ -14,7 +14,7 @@ division_of_labor:
   hourly_agent: "watchlist 核查、docs、CPU 側程式準備、repo 健康、session checkpoint"
   claude: "GPU 驗收執行（runbook 第 1–5 節＋status.md next steps）、CI.yml 上傳（人工作業）、結果回報/落盤、git tag v0.2.0（人工作業）；2026-11-25 使用者擴權：可做其他底模＋HDL on RunPod（紅線不變：H3/LTX/Qwen2.1/FLUX3-Klein/Krea2 不碰）"
 next_hour:
-  - "RESTORE：核對 HEAD 與本檔 head（pass-27 code 19881f0a 雙檔首次 byte-exact，已消化）；Claude 若已 push M1/P1a/internal-wan_blocks GPU 結果或 v0.2.0 tag，先消化再增量"
+  - "RESTORE：核對 HEAD 與本檔 head（pass-27 雙 entry 合體：對岸 code+checkpoint b87fa1c9＋本 session 驗證側 checkpoint，code HEAD 19881f0a 不變、雙檔首次 byte-exact 已消化）；Claude 若已 push M1/P1a/internal-wan_blocks GPU 結果或 v0.2.0 tag，先消化再增量"
   - "pass 16–27 增量皆已落地請勿重做：Ming gen 第三路徑（4e1d202f）／score provenance（a3067d9b）／runbook §4.1（a7cb7697）／PR #3 判讀＋同步（0a2a3cd7）／watchlist 第十～十四輪（4fad1f38、918001c0+3f3fa0ac、129d5d67 PAVRM Apache 升格）／encode_texts retry budget（e1896295）／build_av_manifest（3f94b385）／pair+AV latent cache retry budget（1e64d0c1）／joint loader skipped 列明確報缺（cc85d330）／M7a eval seed 24→48（153be48c＋9d83f6c3）／M7a seed 48→100 v1.2（1596c716，漂移已由 ea97af39／6f478fd5 覆正）／manifest_stats 剖析器（1b896e72）／M7a 跨模型 summary 比較器（d4e8d0e3＋773f61e9）／pairs_stats 偏好對剖析器（19881f0a）；agent 入口改為 docs/status.md＋AGENTS.md"
   - "使用者上傳 CI.yml 後：Actions 即為驗證引擎（CI image 需 ffmpeg + tesseract chi-tra，否則 decode/M7a 測試 skip）"
   - "③ 候選：阿里 11 月窗口 11-30 關閉前最後 watchlist 覆核（第十四輪已核 PAVRM，固定項無 delta）；或 M2 audio DiT 骨架／P1b 資料引擎下一小件（對齊 docs/model-roadmap.md 現況表）；M7a seed 100 閘已達＋compare 工具已備，實跑只欠 GPU 排程（Claude）"
@@ -39,6 +39,34 @@ CPU tests 全綠；GPU 驗收由 Claude 執行（使用者 11-25 擴權：其他
 底模＋HDL on RunPod 亦可）；CI.yml 內容備妥待上傳；紅線不變。
 
 ## 本輪記錄（新輪加在最上面，保留最近 10 輪）
+
+- 2026-11-25 pass 27 @ b87fa1c9（對帳驗證側，本 session）—
+  **競態實例十三（同領域相鄰選題，動手前攔截成功，零浪費收場）**：
+  本 session 開工 RESTORE 乾淨（15:02Z，HEAD 98fc369c＝記憶、
+  session-state blob 73381560＝本地 hash-object、tags 空、issues 0、
+  temp 無新上傳、mtime 掃描僅 pass-26 檔案），選題盤點後獨立看中
+  P1a pairs.jsonl 上盤前無再檢工具的缺口（encode_pairs 對壞行
+  直接 JSONDecodeError／缺 key KeyError 層級崩），動手前第二次
+  mtime 掃描（15:07Z）抓到對岸 15:05:41Z 落地的
+  scripts/pairs_stats.py＋15:07:00Z 落地的 test（6 秒前）——對岸
+  同領域活動中。依紀律未寫一碼撤退、轉獨立驗證。**教訓（實例
+  十三）：開工前掃描乾淨不代表選題後仍乾淨——對岸可晚數分鐘
+  開工；動手寫碼前再掃一次 mtime 是必要第二閘（本次攔截即靠
+  它）。** 與實例十二互為鏡像（上次對岸主動避讓，這次本 session
+  撤退），雙向紀律皆成立。**19881f0a 獨立驗證全過**：雙檔 blob
+  本地 hash-object 重算（50e73e9b／8fae3b0e 完整 40 碼）＝遠端
+  scripts/＋tests/ 目錄 listing sha；commit 僅預期雙檔無夾帶
+  （scripts 24 檔＋tests 22 檔全目錄對帳無漂移）；CPU 全套獨立
+  重跑 **283 passed**（274+9，pytest 沙箱重置洗掉已重裝）；設計
+  審閱無異議——斷言具體（margin 桶邊界下閉上開、incomplete row
+  不丟但不貢獻數值、concentration top-5 排序、determinism 雙
+  保證）、「描述不判決」與 manifest_stats 同規；觀察一項（非
+  缺陷不另開工）：margin 桶下界 0.0，負 margin 不落任何桶僅
+  反映在 margin.min——與 self_pairs 同屬可觀測不判決，合理。
+  對岸 checkpoint b87fa1c9（session-state blob **811cd053**＝
+  本地 hash-object、29753B 一次 byte-exact）已消化：其 trim
+  事故教訓（錨點須用含後綴完整標題）記錄在案。HEAD 19881f0a
+  不變。
 
 - 2026-11-25 pass 27 @ 19881f0a — ③ P1a 資料引擎小件（本 session
   增量；刻意避開 next_hour 熱門項，沿用競態實例十二的主動避讓
