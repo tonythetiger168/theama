@@ -106,6 +106,22 @@ def test_yaml_config_maps_to_runner_builders():
     assert text_dim_from_config(cfg) == 4096
 
 
+def test_yaml_dev_config_maps_to_runner_builders():
+    dev = yaml.safe_load((ROOT / "configs" / "m2_joint_av_dev.yaml").read_text())
+    prod = yaml.safe_load((ROOT / "configs" / "m2_joint_av.yaml").read_text())
+    # dev path = TI2V-5B: adapter key is the registered dev adapter and
+    # audio.video_dim matches the dev VAE latent channel count
+    assert dev["model"]["video"]["adapter"] == "ti2v-5b"
+    assert dev["model"]["video"]["adapter"] == prod["model"]["video"]["dev_adapter"]
+    assert dev["model"]["audio"]["video_dim"] == 48
+    assert dev["model"]["audio"]["video_dim"] == dev["model"]["video"]["dev_latent_channels"]
+    kwargs = audio_dit_kwargs(dev["model"]["audio"])
+    assert kwargs["video_dim"] == 48 and kwargs["latent_dim"] == 2048
+    # training hyper-params and text contract stay identical to the prod config
+    assert trainer_config(dev) == trainer_config(prod)
+    assert text_dim_from_config(dev) == text_dim_from_config(prod) == 4096
+
+
 # ---- cond pooler ---------------------------------------------------------------
 
 

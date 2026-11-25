@@ -1,0 +1,40 @@
+# SPDX-License-Identifier: Apache-2.0
+# M2 joint A/V training — TI2V-5B dev path (24 GB cards, e.g. RTX 4090).
+# Mirrors m2_joint_av.yaml except: video.adapter = ti2v-5b (dev backbone) and
+# audio.video_dim = 48 (dev VAE latent channels). Acceptance gates unchanged.
+model:
+  audio:
+    codec: dac_44k  # MIT, hop 512, 1024-dim continuous latents, mid/side stereo
+    dim: 1024
+    layers: 12
+    heads: 16
+    video_dim: 48  # TI2V-5B dev VAE latent channels (A14B prod path: 16)
+    bridge_every: 3
+    latent_dim: 2048  # direct mid+side DAC tokens (2 * 1024), no learned compressor
+  video:
+    adapter: ti2v-5b  # dev backbone; prod run uses t2v-a14b (80 GB)
+    dev_adapter: ti2v-5b
+    repo_id: Wan-AI/Wan2.2-T2V-A14B-Diffusers
+    dev_repo: Wan-AI/Wan2.2-TI2V-5B-Diffusers
+    latent_channels: 16
+    dev_latent_channels: 48
+    text_dim: 4096
+    timestep_scale: 1000
+    bridge_location: latent_pre_backbone  # wan_blocks = internal path; set audio.video_dim to Wan inner dim
+    frozen: true
+training:
+  phase: bridge  # bridge warmup first; set_phase("full") for full-audio FT
+  bridge_lora_rank: 8  # bridge warmup trains low-rank residuals only; 0 = dense warmup
+  bridge_lora_alpha: 16
+  lr: 0.0001
+  weight_decay: 0.01
+  audio_loss_weight: 1.0
+  video_loss_weight: 1.0
+  max_grad_norm: 1.0
+  mu: 0.0
+  sigma: 1.0
+  time_scale: 1000.0
+acceptance:
+  av_sync_offset_ms_max: 40
+  human_belonging_score_min: 7
+  clip_seconds: 5
