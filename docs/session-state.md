@@ -2,15 +2,14 @@
 # Theama session checkpoint — hourly agent runs save/restore THIS file.
 # 設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
 schema: 1
-updated_at: "2026-11-25T06:30:00Z"
-head: b9c4bb44f46f7f394aeab0a01129d910045f9e07
+updated_at: "2026-11-25T06:35:00Z"
+head: 5455691ec09174196ac6088374e41fdece614bd1
 head_verified: true
-last_increment: "runbook 第 5 節 P1b joint training 驗收段落地（5.0 免權重自檢 → 5.1 小 cache E2E dev 路徑 → 5.2 正式 A14B run）＋configs/m2_joint_av_dev.yaml（TI2V-5B dev 24GB 版 joint config，video_dim=48）＋1 yaml contract test（215 passed）；對岸同題草稿兩項獨有改進（共享 text cache --encoder 固定、ckpt_latest 恆落盤）已比對後合併"
+last_increment: "watchlist 第九輪：GenRM-Flow（arXiv 2611.11421，偏好微調生成器即 process-aware latent RM）＋PAVRM（2511.21541v3）入 model-roadmap 觀察（授權未核實，不改 P1a/M2 配方）；本地 model-roadmap 33-byte 漂移癒合（byte-exact 回寫，blob 3b607a49，blocker 移除）；runbook 第 5 節為對岸 pass-15 增量（58b2bdc＋b9c4bb4 合併本 session 草稿），詳其 checkpoint 16ac8e7"
 ci_yml: content_ready_pending_user_upload   # MCP token 推 .github/workflows 被 403（insufficient scopes）；內容已交付使用者
 issues: 0
 gpu_outputs: none_pending_review            # Claude 接手 GPU 驗收；若其 push 結果，下輪 RESTORE 對帳
-blockers:
-  - "本地 docs/model-roadmap.md 為 echo 逐字轉錄版，與遠端 blob 83cd3626 差 33 bytes（疑為 echo 層不可見字元 artefact）；以遠端為準，本地勿推送此檔"
+blockers: []
 division_of_labor:
   hourly_agent: "watchlist 核查、docs、CPU 側程式準備、repo 健康、session checkpoint"
   claude: "GPU 驗收執行（runbook 第 1–5 節）、CI.yml 上傳（人工作業）、結果回報/落盤、git tag v0.2.0（人工作業）"
@@ -19,6 +18,7 @@ next_hour:
   - "runbook 第 5 節已於 pass 15 落地並合併對岸草稿（b9c4bb4）——RESTORE 到本檔者請勿重複做同題"
   - "使用者上傳 CI.yml 後：Actions 即為驗證引擎（CI image 需 ffmpeg + tesseract chi-tra，否則 decode/M7a 測試 skip）"
   - "③ 候選：M7a 第三路徑 Ming-Image-0.1-Design（MIT）gen/score plumbing 預備（CJK 實測前不入正式 eval）；watchlist 固定四項覆核（阿里下一代 11 月窗口剩 5 天，仍無發布）"
+  - "model-roadmap.md 本地已與遠端 byte-exact（pass 15 癒合），後續可正常從本地推送此檔"
 ---
 
 # Session State（每小時 checkpoint）
@@ -31,6 +31,22 @@ config），215 CPU tests 全綠；GPU 驗收由 Claude 依
 docs/gpu-acceptance-runbook.md 執行；CI.yml 內容備妥待上傳；紅線不變。
 
 ## 本輪記錄（新輪加在最上面，保留最近 10 輪）
+
+- 2026-11-25 pass 15 @ 5455691 — watchlist 第九輪（本 session 增量）：
+  model-roadmap.md 新增 **GenRM-Flow**（arXiv 2611.11421，2026-11-08——
+  偏好微調後的生成器即 process-aware RM，在含噪 latent 空間以
+  velocity-prediction 誤差相對差打分、免外部 reward 網路；DPO/IPO/RWR
+  證為通往同一最優 policy 的等價路徑；對 P1a LoRA-DPO 的 BoN／資料
+  過濾與 M2 flow 後訓練直接相關）與 **PAVRM**（arXiv 2511.21541v3，
+  CVPR 2026 Findings，latent 空間打分免 decode）觀察條目，授權皆未
+  核實、不改 P1a／M2 配方；四固定項覆核無變化（阿里下一代 11 月
+  窗口倒數仍無發布）。競態實例三視角補記：本 session 的 runbook
+  第 5 節草稿（5a/5b/5c）於對岸推送 58b2bdc 後主動擱置、本地還原，
+  兩項獨有改進經對岸 b9c4bb4 採納合併——結案。順帶癒合本地
+  model-roadmap.md 的 33-byte echo 漂移：以遠端版 byte-exact 回寫
+  （git blob sha 3b607a49 本地重算一致），blocker 移除。推送前後各
+  對帳一次（對岸 checkpoint 16ac8e7 於本 session roadmap 推送前
+  17 秒落地，內容已消化）。blob SHA 驗證一致（roadmap 3b607a49）。
 
 - 2026-11-25 pass 15 @ b9c4bb4 — runbook 第 5 節（P1b joint training
   驗收段）落地＋競態實例三結案：新檔 `configs/m2_joint_av_dev.yaml`
@@ -140,21 +156,6 @@ docs/gpu-acceptance-runbook.md 執行；CI.yml 內容備妥待上傳；紅線不
   維持觀察）；Wan-Animate-2 repo id／Wan 3.x API-only／阿里下一代
   未發布／Qwen-Image 紅線覆核無變化；CI.yml 未上傳、issues 0；
   沙箱仍掛，docs-only。
-- 2026-11-25 pass 7 @ 3738703 — watchlist 第七輪：Omni-RRM（arXiv
-  2602.00846，四模態統一 RM，P1a＋M2 reward 單一 judge 候選）、
-  LongCat-Video-Avatar 1.6（arXiv 2611.18822v2，frozen 底座雙 LoRA
-  分支 GRPO＋OPSD，M6a/M6b 方法參考）、FlowPortrait hard id 補齊
-  （arXiv 2603.00159，複合 reward＋防 hacking ablation，M6a 參考）；
-  Omni-RL Judge 仍無 arXiv id；四大固定項覆核無變化；CI.yml 未上傳、
-  issues 0；沙箱仍掛，docs-only。
-- 2026-11-25 pass 6 @ 4c2d828 — watchlist 第六輪：Omni-RL Judge（Adobe，
-  verifiable-reward omni A/V judge，僅 ResearchGate 條目）＋
-  Ming-Image-0.1-Design（MIT 設計 T2I，M7a 第三路徑觀察候選）入觀察；
-  docs-only。（本輪原未回寫本檔，pass 7 補記。）
-- 2026-11-25 pass 5 @ 07b0a2e — session save/restore 落地：建立
-  docs/session-state.md（front matter 狀態 + RESTORE/SAVE 協議 + 滾動
-  記錄）；README 加入口；緣由：專案記憶 mount 與沙箱執行環境同時失效，
-  repo 成為唯一可靠 checkpoint；docs-only。
 
 ## RESTORE 協議（每輪第 0 步，依序執行）
 
