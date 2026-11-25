@@ -43,7 +43,7 @@
 
 ## Watchlist（上游釋出追蹤）
 
-最近核查：**2026-11-25**（當日第九輪）。
+最近核查：**2026-11-25**（當日第十輪）。
 
 - **Wan-Animate-2-14B**（Apache-2.0）— M6a 底座候選，已寫入
   `configs/theama_base.yaml`。repo id 已核對：`Wan-AI/Wan2.2-Animate-2-14B`
@@ -79,6 +79,15 @@
   或權重；Wan 3.x API-only 維持（2026-11-05 逐 repo 核查：Wan-AI HF
   27 個 repo、Wan-Video GitHub 6 個 repo 均無 2.5 以上權重，最新開放
   權重仍為 Wan2.2-Animate-2 系）。Wan-Animate-2 repo id 本輪覆核無變化。
+  2026-11-25 第十輪覆核：11 月窗口剩五天（11-30 關閉），Model Studio
+  新模型列表（qwen3.8-flash／wan3.0-video-prime／wan2.6・2.7 flash
+  變體／qwen-image-edit-max／kimi-k3）與第三方 11-09／11-11 逐項核查
+  仍無下一代影片模型；Wan 3.x API-only 維持，最後開放權重仍 Wan 2.2。
+  另駁一筆低權威來源誤報：youart.ai（2026-08-06）稱「Wan 2.7 已開權重、
+  權重掛於 Tongyi Wanxiang HF」——與 usefastlane（11-01）、renoise
+  （11-11）逐 repo 核查（2.5／2.6／2.7／3.0 皆未開權重）矛盾，歸類
+  同 miraflow「2.7 開源 Apache-2.0」誤報，不採信。Wan-Animate-2
+  repo id 本輪覆核無變化。
 - **Qwen-Image 新版** — **Qwen-Image-2.1（7B，2026-09-20）統一 T2I+編輯+原生 RGBA，
   但為 Qwen Research License（非商用）→ 紅線確認，不碰**；2.1-Turbo（2026-10-09，8-step）
   同授權。Qwen-Image-3.0 為 hosted-only。Apache-2.0 線最新仍是
@@ -107,6 +116,13 @@
   3.0／3.1 hosted-only，本輪覆核均無變化。
   2026-11-25 第八輪：同上四項（2.1 研究授權／2512 Apache 線／3.0・3.1
   hosted-only／Ming-Image 觀察）覆核均無變化。
+  2026-11-25 第十輪：四項覆核無變化（2.1／2.1-Turbo 研究授權、
+  2512／Edit-2511 Apache 線、3.0／3.1 hosted-only）；HF 社群討論 #39
+  （09-23）請願 2.1 回歸 Apache 2.0，迄今無官方回應。補一筆第三方
+  授權榜資料（efsora 2026-10-19）：**Ming-Image-0.1-Design 為「排名
+  最高的完全寬鬆授權（fully permissive）影像模型」**，與 Qwen-Image-2.1
+  差 42 分——支持其作為 M7a 第三條合法路徑的 diagnostic 定位，
+  24 seed 實測結論前不升格。
 - **開源 video reward 新模型** — awesome-rm-for-video-generation（2026-10 更新）新增
   AesRM（專家標註美學 RM，base + CoT 變體）、UnifiedReward-Flex、GT-SVJ（self-supervised
   judge）等；授權與權重可得性未逐一核實，VideoReward 仍為首選，暫不加第二把尺。
@@ -127,7 +143,7 @@
   2026-11-25 第三輪覆核：補 **VA-Judger** hard id——arXiv 2608.18607（2026-08）；
   VAPref-10K 約 9K prompts／10.3K 精細偏好對，五維 rubric（prompt alignment／
   video-audio consistency／audio quality／video quality／completeness & coherence），
-  附 VA-Judger-Bench（含 closed-source 模型輸出的 out-of-domain split）；論文以
+  附 VA-Judger-Bench（含 closed-source 模型輸出的 out-domain split）；論文以
   LoRA 後訓練驗證其 reward 可提升生成品質，惟 policy 實驗用 LTX-2（紅線模型）——
   僅取 reward 方法論參考，不碰其權重與輸出。同清單再補 **Omni-Judge**（2026，
   以 omni-modal LLM 做 text-conditioned A/V 生成的 CoT judge，覆蓋感知品質與
@@ -218,9 +234,16 @@
   P1a／M2 配方。同輪補方法參考 **PAVRM**（arXiv 2511.21541v3，
   CVPR 2026 Findings）：video generation model 直接當 latent reward
   model（對部分去噪樣本於 latent 空間打分、免 decode，stratified
-  timestep 評估），與 P1a pair latent cache 形態相容；授權未核實。
+  timestep 評估），與 P1a pair latent cache 形狀相容；授權未核實。
   Wan-Animate-2 repo id／Wan 3.x API-only／阿里下一代模型 11 月窗口
   倒數仍無發布／Qwen-Image 紅線，本輪覆核無變化。
+  2026-11-25 第十輪：**VA-Judger checkpoint 授權二次核查失敗**——
+  HF 頁面（ShareLab-SII/VA-Judger）經沙箱 fetch 僅得空 README、無
+  license metadata 可讀；GitHub 下載流程需 hf auth 並接受 gated terms。
+  **checkpoint 授權仍無法由沙箱核實，維持「使用者代查 model card
+  license tag」待辦**；repo 自 08-20 已釋出 checkpoints＋Bench（SFT
+  程式碼與 VAPref-10K 仍 to-do）。其餘觀察條目（GenRM-Flow／PAVRM／
+  Omni-RRM 等）本輪無新增。
 
 ## 發布策略
 
