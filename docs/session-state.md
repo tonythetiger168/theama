@@ -2,10 +2,10 @@
 # Theama session checkpoint — hourly agent runs save/restore THIS file.
 # 設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
 schema: 1
-updated_at: "2026-11-25T04:35:00Z"
-head: 8042bff6fd6dd5e627777db34b6b388b16720422
+updated_at: "2026-11-25T06:30:00Z"
+head: b9c4bb44f46f7f394aeab0a01129d910045f9e07
 head_verified: true
-last_increment: "P1b joint training runner＋GPU 薄殼：joint_av_runner.py（cond_pooler 掛 audio 隨 phase 凍結/訓練、on-device pooling、bridge→full 排程切換、metrics.jsonl、checkpoint 精確 resume——phase 先還原再 strict load、optimizer state 搬 device、RNG 還原、NaN fail-closed 留緊急 ckpt）＋scripts/train_joint_av.py（--smoke 印 TRAIN_JOINT_AV_SMOKE_OK；real run 接雙 cache＋WanVideoAdapter）＋15 tests（214 passed）"
+last_increment: "runbook 第 5 節 P1b joint training 驗收段落地（5.0 免權重自檢 → 5.1 小 cache E2E dev 路徑 → 5.2 正式 A14B run）＋configs/m2_joint_av_dev.yaml（TI2V-5B dev 24GB 版 joint config，video_dim=48）＋1 yaml contract test（215 passed）；對岸同題草稿兩項獨有改進（共享 text cache --encoder 固定、ckpt_latest 恆落盤）已比對後合併"
 ci_yml: content_ready_pending_user_upload   # MCP token 推 .github/workflows 被 403（insufficient scopes）；內容已交付使用者
 issues: 0
 gpu_outputs: none_pending_review            # Claude 接手 GPU 驗收；若其 push 結果，下輪 RESTORE 對帳
@@ -13,25 +13,50 @@ blockers:
   - "本地 docs/model-roadmap.md 為 echo 逐字轉錄版，與遠端 blob 83cd3626 差 33 bytes（疑為 echo 層不可見字元 artefact）；以遠端為準，本地勿推送此檔"
 division_of_labor:
   hourly_agent: "watchlist 核查、docs、CPU 側程式準備、repo 健康、session checkpoint"
-  claude: "GPU 驗收執行（runbook 第 1–4 節）、CI.yml 上傳（人工作業）、結果回報/落盤、git tag v0.2.0（人工作業）"
+  claude: "GPU 驗收執行（runbook 第 1–5 節）、CI.yml 上傳（人工作業）、結果回報/落盤、git tag v0.2.0（人工作業）"
 next_hour:
   - "RESTORE：核對 HEAD 與本檔 head；Claude 若已 push GPU 結果或 v0.2.0 tag，先消化再增量"
-  - "GPU 側新增可跑項：scripts/train_joint_av.py --smoke（本輪落地，無 cache/無 Wan 權重即可驗 runner 全路徑＋resume）；cache 建好後正式 joint training 直接用同腳本 --av-cache/--text-cache"
+  - "runbook 第 5 節已於 pass 15 落地並合併對岸草稿（b9c4bb4）——RESTORE 到本檔者請勿重複做同題"
   - "使用者上傳 CI.yml 後：Actions 即為驗證引擎（CI image 需 ffmpeg + tesseract chi-tra，否則 decode/M7a 測試 skip）"
-  - "續做 ③ 候選：runbook 增補第 5 節 joint training 驗收段（train_joint_av.py --smoke → 小 cache E2E）；watchlist 固定四項覆核（阿里下一代 11 月窗口最後一週，仍無發布）"
+  - "③ 候選：M7a 第三路徑 Ming-Image-0.1-Design（MIT）gen/score plumbing 預備（CJK 實測前不入正式 eval）；watchlist 固定四項覆核（阿里下一代 11 月窗口剩 5 天，仍無發布）"
 ---
 
 # Session State（每小時 checkpoint）
 
 ## 現況一句話
 
-版本 0.2.0（CPU 側程式全落地、GPU 驗收待跑）；本輪新增 P1b joint
-training runner＋GPU 薄殼 scripts/train_joint_av.py（雙 cache →
-JointAVTrainer 訓練迴路、checkpoint resume、--smoke 自檢，214 CPU
-tests 全綠）；GPU 驗收由 Claude 依 docs/gpu-acceptance-runbook.md
-執行；CI.yml 內容備妥待上傳；紅線不變。
+版本 0.2.0（CPU 側程式全落地、GPU 驗收待跑）；P1b 鏈路補齊：雙 cache →
+joint loader → runner＋薄殼 → runbook 第 5 節驗收段（含 dev/prod 雙路徑
+config），215 CPU tests 全綠；GPU 驗收由 Claude 依
+docs/gpu-acceptance-runbook.md 執行；CI.yml 內容備妥待上傳；紅線不變。
 
 ## 本輪記錄（新輪加在最上面，保留最近 10 輪）
+
+- 2026-11-25 pass 15 @ b9c4bb4 — runbook 第 5 節（P1b joint training
+  驗收段）落地＋競態實例三結案：新檔 `configs/m2_joint_av_dev.yaml`
+  （TI2V-5B dev 24GB 版 joint config：video.adapter=ti2v-5b、
+  audio.video_dim=48，training/acceptance 與 prod 相同）、
+  test_m2_joint_av_runner.py +1 yaml contract 測試（dev↔prod 一致性：
+  adapter==dev_adapter、video_dim==48==dev_latent_channels、
+  trainer_config/text_dim 相同）、runbook 新增第 5 節（5.0 免權重自檢
+  TRAIN_JOINT_AV_SMOKE_OK → 5.1 小 cache E2E dev 路徑：manifest 靜檢→
+  decode 探針→雙 cache limit 8→20 步 bridge→full@10→--resume auto 到 30
+  → 5.2 正式 A14B run 20k/2k/bf16）。**競態實例三**：本 session 推送
+  58b2bdc 後發現對岸把自版第 5 節（5a/5b/5c）append 到本地 runbook
+  （未推送）；逐項比對→採納其兩項獨有改進（text cache 以 --encoder
+  固定 Wan2.2-T2V-A14B-Diffusers 跨 dev/prod 共用、prod 免重燒 UMT5；
+  ckpt_latest 恆於最終步落盤不受 --save-every 影響）以 b9c4bb4 合併
+  推送；其餘項（decode 探針、dropped=0 閘、peak memory、AV sync 目檢）
+  本版已有。期間本地 runbook 一度被還原成 pass-14 舊版（14:19），
+  已從遠端 blob 拉回並驗證一致。watchlist 覆核：Wan 3.x 仍 API-only
+  （11-13 多方榜 Wan 3.0 T2V 第一但 closed）；「Wan 2.7 開源
+  Apache-2.0」說法經三來源交叉核駁（10-25/11-01/11-10 皆指
+  2.5/2.6/2.7 未開權重，最後開權重仍 Wan 2.2 系）——骨幹不變；
+  阿里下一代 11 月窗口剩 5 天仍無發布；Qwen-Image 紅線不變。
+  RESTORE 對帳無 Claude GPU commit／tags 空／issues 0。CPU 全套
+  215 passed（214+1）；CLI smoke 重驗 TRAIN_JOINT_AV_SMOKE_OK。
+  blob SHA 驗證一致（dev config a17cfd09／test ff576759／runbook
+  合併版 50f79eb7）。
 
 - 2026-11-25 pass 14 @ 8042bff — P1b joint training runner＋薄殼：新檔
   `src/theama/train/joint_av_runner.py`（RunnerConfig＋JointAVRunner：
@@ -130,10 +155,6 @@ tests 全綠）；GPU 驗收由 Claude 依 docs/gpu-acceptance-runbook.md
   docs/session-state.md（front matter 狀態 + RESTORE/SAVE 協議 + 滾動
   記錄）；README 加入口；緣由：專案記憶 mount 與沙箱執行環境同時失效，
   repo 成為唯一可靠 checkpoint；docs-only。
-- 2026-11-25 pass 5 @ c592a60 — watchlist 第五輪：WeMM-Video 入觀察
-  （Apache-2.0 程式碼、逐卡 model card 待核）、Kandinsky 6.0 OmniNFT
-  八 reward 配方 sync 分支方法參考、阿里下一代影片模型 11 月窗口仍無
-  發布；docs-only。
 
 ## RESTORE 協議（每輪第 0 步，依序執行）
 
