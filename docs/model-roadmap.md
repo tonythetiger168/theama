@@ -246,7 +246,7 @@
   仍綁 LTX-2（紅線），本專案僅取 reward 方法論參考，維持觀察、不改
   P1a／M2 配方。Omni-RL Judge 仍僅 ResearchGate 條目。Wan-Animate-2
   repo id／Wan 3.x API-only／阿里下一代模型未發布／Qwen-Image 紅線，
-  本輪覆核無變化。repo 健康：CI.yml 仍未上傳（無 `.github/` 目號錄）、
+  本輪覆核無變化。repo 健康：CI.yml 仍未上傳（無 `.github/` 目錄）、
   issues 0；沙箱執行環境與專案記憶 mount 本輪仍不可用，維持 docs-only。
   2026-11-25 第九輪覆核：新增 **GenRM-Flow**（arXiv 2611.11421，
   2026-11-08，Siming Fu 等）——偏好微調後的影片生成器本身就是
@@ -374,7 +374,7 @@
   授權差異化。
   2026-11-26 第二筆補記（交付格式拍板）：**HDR＋AV1 提前至 M4 交付**
   並列為獨立賣點——現無任何生成模型交付 10-bit HDR10/HLG＋AV1
-  （Wan 3.0 鎖 1080P 8-bit、H3 鎖 2K 8-bit、Seedance 2.5 8-bit SDR）;
+  （Wan 3.0 鎖 1080P 8-bit、H3 鎖 2K 8-bit、Seedance 2.5 8-bit SDR）；
   新增 **HLS 分發層**——fMP4/CMAF segment＋master .m3u8 自適應階梯
   （4K HDR AV1 → 1080p HEVC → 720p/480p H.264，HEVC 層為 Safari
   fallback 屬必需，同批 segment 兼出 DASH）；Avatar 實時線（M6b）
