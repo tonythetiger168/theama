@@ -2,10 +2,10 @@
 # Theama session checkpoint — hourly agent runs save/restore THIS file.
 # 設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
 schema: 1
-updated_at: "2026-11-25T16:15:00Z"
-head: afde66af442de9002f8fac81466cc8f1cd5ee638
+updated_at: "2026-11-25T16:26:00Z"
+head: 59163737e2e4f85e847aac3e0a1c508c1922c4d2
 head_verified: true
-last_increment: "③ P1a 資料引擎：pair-latent 預檢閘（train_dpo 上 GPU 前 fail-fast）——src/theama/data/pair_latent_check.py 純驗證器（root-cause-first drop reason：encode_failed／skipped_budget_exhausted／missing_keys／missing_latent_file，joint loader 同款 fail-closed 契約）＋scripts/check_pair_latents.py（check_av_manifest 的 P1a 對應閘，--show-errors／--no-files）＋train_dpo.py 載入 backbone 前接線（全可用 manifest 行為不變）＋12 tests；code commit afde66af，四檔 blob c559d826／ba3f0f4a／755232b3／7ae3d4ee 首次即 byte-exact，CPU 295 passed"
+last_increment: "③ P1a score 腳本強化：score_eval_set.collect() CPU 測試 +8（P1a 評分鏈唯一未測 CPU 邏輯——GPU pod 打分前的 clip→prompt 配對：per-prompt dir／flat stem／nested fallback／unmatched＋deep skip／duplicate stem 父目錄優先／deterministic 排序／CLI 無匹配 exit 1）；code commit 59163737，blob a37ed40c byte-exact，CPU 303 passed。對岸同小時 pair-latent 預檢閘 afde66af（12 tests）已獨立驗證消化"
 ci_yml: content_ready_pending_user_upload   # MCP token 推 .github/workflows 被 403（insufficient scopes）；內容已交付使用者
 issues: 0
 gpu_outputs: m2_external_smoke_passed_reviewed   # PR #3 雙跑通過已判讀（pass 18）；M1/P1a/M2 internal 仍待 Claude 跑
@@ -14,8 +14,8 @@ division_of_labor:
   hourly_agent: "watchlist 核查、docs、CPU 側程式準備、repo 健康、session checkpoint"
   claude: "GPU 驗收執行（runbook 第 1–5 節＋status.md next steps）、CI.yml 上傳（人工作業）、結果回報/落盤、git tag v0.2.0（人工作業）；2026-11-25 使用者擴權：可做其他底模＋HDL on RunPod（紅線不變：H3/LTX/Qwen2.1/FLUX3-Klein/Krea2 不碰）"
 next_hour:
-  - "RESTORE：核對 HEAD 與本檔 head（pass-28 code+checkpoint afde66af 已落地；其下 pass-27 雙 entry 合體 b87fa1c9／驗證側 checkpoint 皆已消化）；Claude 若已 push M1/P1a/internal-wan_blocks GPU 結果或 v0.2.0 tag，先消化再增量"
-  - "pass 16–28 增量皆已落地請勿重做：Ming gen 第三路徑（4e1d202f）／score provenance（a3067d9b）／runbook §4.1（a7cb7697）／PR #3 判讀＋同步（0a2a3cd7）／watchlist 第十～十四輪（4fad1f38、918001c0+3f3fa0ac、129d5d67 PAVRM Apache 升格）／encode_texts retry budget（e1896295）／build_av_manifest（3f94b385）／pair+AV latent cache retry budget（1e64d0c1）／joint loader skipped 列明確報缺（cc85d330）／M7a eval seed 24→48（153be48c＋9d83f6c3）／M7a seed 48→100 v1.2（1596c716，漂移已由 ea97af39／6f478fd5 覆正）／manifest_stats 剖析器（1b896e72）／M7a 跨模型 summary 比較器（d4e8d0e3＋773f61e9）／pairs_stats 偏好對剖析器（19881f0a）／pair-latent 預檢閘＋train_dpo fail-fast（afde66af）；agent 入口改為 docs/status.md＋AGENTS.md"
+  - "RESTORE：核對 HEAD 與本檔 head（pass-28 雙 entry 合體：對岸 pair-latent 預檢閘 afde66af＋checkpoint 379433a4、本 session score collect 測試 59163737——皆已消化，CPU 303）；Claude 若已 push M1/P1a/internal-wan_blocks GPU 結果或 v0.2.0 tag，先消化再增量"
+  - "pass 16–28 增量皆已落地請勿重做：Ming gen 第三路徑（4e1d202f）／score provenance（a3067d9b）／runbook §4.1（a7cb7697）／PR #3 判讀＋同步（0a2a3cd7）／watchlist 第十～十四輪（4fad1f38、918001c0+3f3fa0ac、129d5d67 PAVRM Apache 升格）／encode_texts retry budget（e1896295）／build_av_manifest（3f94b385）／pair+AV latent cache retry budget（1e64d0c1）／joint loader skipped 列明確報缺（cc85d330）／M7a eval seed 24→48（153be48c＋9d83f6c3）／M7a seed 48→100 v1.2（1596c716，漂移已由 ea97af39／6f478fd5 覆正）／manifest_stats 剖析器（1b896e72）／M7a 跨模型 summary 比較器（d4e8d0e3＋773f61e9）／pairs_stats 偏好對剖析器（19881f0a）／pair-latent 預檢閘＋train_dpo fail-fast（afde66af）／score_eval_set.collect() 測試（59163737）；agent 入口改為 docs/status.md＋AGENTS.md"
   - "使用者上傳 CI.yml 後：Actions 即為驗證引擎（CI image 需 ffmpeg + tesseract chi-tra，否則 decode/M7a 測試 skip）"
   - "③ 候選：阿里 11 月窗口 11-30 關閉前最後 watchlist 覆核（第十四輪已核 PAVRM，固定項無 delta）；或 M2 audio DiT 骨架／P1b 資料引擎下一小件（對齊 docs/model-roadmap.md 現況表）；M7a seed 100 閘已達＋compare 工具已備，實跑只欠 GPU 排程（Claude）"
   - "GPU 下一棒（Claude，依 status.md）：M1 runpod_m1_eval.sh 5→50 prompts→VBench ±0.02 → P1a（先驗 reward/score.py::_invoke 對真實 VideoReward）→ M2 internal wan_blocks＋LoRA smoke → 正式訓練前換 stable-torch image"
@@ -32,15 +32,57 @@ runner 落地待跑（runpod_m1_eval.sh）；P1b 鏈路補齊（manifest builder
 剖析器（pass 25），三 cache（text／pair／AV）retry budget 全數對齊＋
 下游 joint loader 對 skipped 列明確報缺；P1a 側 pairs_stats 剖析器
 （pass 27）＋ pair-latent 預檢閘 check_pair_latents＋train_dpo
-fail-fast 接線（pass 28）；**M7a CJK eval seed 已達 100 條
+fail-fast 接線（pass 28）＋ score_eval_set.collect() 測試八項
+（pass 28）；**M7a CJK eval seed 已達 100 條
 驗收閘**（v1.2，對岸 pass-25 `1596c716`；對岸首推／自修兩連漂，
 由本 session 以本地驗證版覆正——eval `ea97af39`／roadmap
 `6f478fd5` 皆一次 byte-exact，詳 pass-25 記錄；對岸同日 watchlist
-第十四輪將 PAVRM 官方碼核實 Apache-2.0 升格紅線內可參考），295
+第十四輪將 PAVRM 官方碼核實 Apache-2.0 升格紅線內可參考），303
 CPU tests 全綠；GPU 驗收由 Claude 執行（使用者 11-25 擴權：其他
 底模＋HDL on RunPod 亦可）；CI.yml 內容備妥待上傳；紅線不變。
 
 ## 本輪記錄（新輪加在最上面，保留最近 10 輪）
+
+- 2026-11-25 pass 28 @ 59163737（對帳驗證側，本 session）—
+  **競態實例十四（同領域相鄰選題，工作中途對岸落地，零交集各自
+  推送）＋本 session 增量＋afde66af 獨立驗證全過**：開工 RESTORE
+  乾淨（16:03Z，HEAD f0e16afd＝記憶、session-state blob
+  079e998b＝本地 hash-object、tags 空、issues 0、temp 無新
+  上傳、mtime 掃描僅 pass-27 檔案無對岸活動）；刻意避開
+  next_hour 熱門項（阿里覆核／M2 audio DiT 骨架／P1b 小件），
+  選中未列名缺口 score_eval_set.collect()——P1a 評分鏈唯一
+  未測的 CPU 邏輯（GPU pod 打分前的 clip→prompt 配對，
+  gen_candidates 的 <out>/<prompt_id>/cand_<k>.mp4 佈局＋
+  flat stem fallback）。動手前第二閘 mtime 掃描（16:09Z）
+  乾乾淨；寫碼＋測試期間對岸於 16:06Z 落地 pair_latent_check
+  四檔（同 P1a 領域相鄰題：train_dpo 上 GPU 前 fail-fast
+  預檢閘）——全套跑出 303 passed（預期 295+8）時 +12 差額
+  才偵測到對岸新 test 檔。檔案零交集（本 session 僅
+  tests/test_p1a.py；對岸 module／script／train_dpo／新 test
+  四檔），依實例十二先例各自推送：對岸 code `afde66af`
+  （16:09Z）＋checkpoint `379433a4`（16:13Z）、本 session
+  code `59163737`（16:19Z）。**教訓（實例十四）：mtime 雙閘
+  之外的第三偵測網——全套測試數與預期基線的差額本身即是
+  對岸落地訊號（283→303 中 +12 非己出）；零交集時不必撤退，
+  比照實例十二接龍推送、checkpoint 由後到者合體。**
+  afde66af 獨立驗證全過：四檔 blob 本地 hash-object 重算
+  （c559d826／ba3f0f4a／755232b3／7ae3d4ee）＝其 commit
+  message 記錄值；對岸 checkpoint 的 session-state blob
+  **45e75505**＝本地 hash-object（33125B）；CPU 全套獨立
+  重跑 **303 passed**（295+8）；設計審閱無異議——root-cause
+  -first drop reason 與 joint loader 同款 fail-closed 契約、
+  全可用 manifest 行為不變、--no-files schema-only 模式合
+  CI 場景。本 session 增量（③ score 腳本強化）：collect()
+  測試 +8——per-prompt dir 佈局／flat stem 佈局／nested
+  fallback／unmatched＋non-mp4＋deep skip／duplicate stem
+  父目錄優先／deterministic 排序連跑一致／empty dir／CLI
+  無匹配 exit 1（於 scorer import 前返回，CPU 可驗）。首推
+  payload 自查抓一處轉錄漂移（`"RuntimeError: boom"` 字串內
+  冒號誤植字串外，未送驗前修正——GitHub 500 同時退回該次，
+  重送即 byte-exact）：blob **a37ed40c**＝本地 hash-object、
+  27045B 首次成功即 byte-exact。HEAD 現為 59163737。trim：
+  pass-22 對帳驗證側一條移出（競態實例九＋1e64d0c1 驗證，
+  事實存專案記憶第二十二輪存存檔），維持 11 entries。
 
 - 2026-11-25 pass 28 @ afde66af — ③ P1a 資料引擎小件（本 session
   增量）：**pair-latent 預檢閘落地——train_dpo 上 GPU 前最後一塊
@@ -328,7 +370,7 @@ CPU tests 全綠；GPU 驗收由 Claude 執行（使用者 11-25 擴權：其他
   對岸檔、不在範圍不明時擴散至 dataset.py，轉獨立驗證。對岸
   11:15:17Z 推 code `cc85d330`（雙檔、parent c1d93362 乾淨、
   +15/−1 與 +74/−1 無夾帶）、11:20:49Z 推 pass-23 checkpoint
-  `00a90fdb` 後核驗：雙檔 blob 本地 hash-object 重算一致
+  `00a90fdb` 後核核驗：雙檔 blob 本地 hash-object 重算一致
   （loader 723a2506／test 91981524，14008／14416 bytes），
   checkpoint blob 64059201 一致（size 26445）；CPU 全套獨立
   重跑 **255 passed**；本地樹無其他 drift。設計審閱無異議：
@@ -371,35 +413,6 @@ CPU tests 全綠；GPU 驗收由 Claude 執行（使用者 11-25 擴權：其他
   相同）——首次即 byte-exact。CPU 全套 **253 passed**（241+12）；
   雙 CLI --help smoke 通過；pytest 沙箱重置洗掉已重裝。下一個③候選：
   下游消費者（joint_latent_loader 等）對 skipped 列的行為核查。
-
-- 2026-11-25 pass 22（對帳驗證側）@ 1e64d0c1 — **競態實例九（開工前
-  攔截成功，第四次）＋獨立驗證**：本 session 開工即選中同一個③候選
-  （pair/AV latent cache retry budget），動手寫碼前 mtime 掃描發現
-  latent_cache.py（10:07Z）／av_latent_cache.py（10:09Z）為數分鐘內
-  新檔——對岸正在實作同題，依紀律未寫一碼轉獨立驗證（競態實例
-  七／八同型，零浪費）。對岸 10:21Z 推 code `1e64d0c1`、10:28Z 推
-  checkpoint `23ce3e3b`（session-state blob ed14b929＝本地逐字一致）
-  後核驗：六檔 blob SHA 本地 git hash-object 重算全數一致
-  （latent_cache dc359e64／av_latent_cache fb6cc7ff／encode_pairs
-  8320e3d6／encode_av_latents f8993dc6／test_p1a d2429e8a／
-  test_m2_av_latent_cache 8ae8cfa6）；CPU 全套獨立重跑
-  **253 passed**（241+12；於對岸推送前以本地最終檔先跑、推送後
-  blob 對帳確認同一份內容）；scripts 全目錄對帳順帶確認
-  check_av_manifest.py（49ac389a）等無漂移。設計審閱：通用
-  _ledger_* 核心＋per-cache 綁定 wrappers、預設 None 零 ledger
-  I/O、tmp+replace 原子寫／毀損降級 {}／strict 先記後 raise 皆與
-  text_cache 對齊，無異議；觀察一項（非缺陷，不另開工）：skip
-  判定純 index-keyed（ledger entry 存 prompt_id/prompt 但未參與
-  比對）——pairs.jsonl reorder／編輯後同 index 換成不同 pair 會
-  沿用舊 entry 被跳過；recovery 路徑已足（--reset-failures，或
-  --no-resume 本就不讀 ledger），operator contract 本就要求
-  reorder 後 --no-resume，維持現狀僅記錄。watchlist 第十三輪覆核
-  （無 delta）：WeMM-Video 官方 GitHub 再確認程式碼 Apache-2.0、
-  權重逐卡以 HF model card 為準（與第五輪記錄一致）；Omni-RRM
-  仍僅 anonymous 4open 連結、授權未核實——兩觀察條目維持現狀
-  不改 roadmap；四固定項同日第十輪已覆核，本輪不重查。
-  RESTORE：HEAD ba7ed628→消化 1e64d0c1＋23ce3e3b；tags 空、
-  issues 0、temp 無新上傳、CI.yml 仍待使用者。
 
 ## RESTORE 協議（每輪第 0 步，依序執行）
 
