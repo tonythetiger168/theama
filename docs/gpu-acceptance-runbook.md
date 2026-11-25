@@ -4,9 +4,34 @@ GPU 執行面由 Claude 接手；本檔是唯一權威 runbook。每支腳本都
 resumable，中斷直接重跑同一條命令即可。回報格式見文末；只回報
 summary 與驗收數據，不貼 log 全文。
 
-## 0. 環境前置（一次）
+## 0. RunPod 開 pod SOP（每次 GPU 任務的入口）
+
+任務書看對應 GitHub issue（例如 M2 internal wan_blocks smoke = issue #4）；
+本節是「怎麼開 pod」的固定流程，所有 GPU 任務共用。
+
+1. RunPod console → **Secure Cloud** → 地區選 **CA-MTL-1**（network
+   volume 所在區）。
+2. GPU 過濾：**VRAM ≥ 24GB、時價 ≤ $1/hr**（RTX 4090 / A40 優先；
+   A14B prod 路徑或 Ming-Image diagnostic 才需要 80GB 卡，另行指定）。
+3. Template 沿用前次 smoke 的 PyTorch + CUDA 映像。
+4. **掛上既有 network volume `theama-m2`**（/workspace 指向它）——
+   權重、cache、smoke_out 都在上面，不重新下載。
+5. Deploy → 等 Running → SSH 或 web terminal 進去。
+6. 收尾鐵律：任務結束（成功或失敗皆同）→ 打包結果到 volume →
+   回報 → **Delete pod（不是 Stop）** → console 確認 pod 消失 →
+   **volume 保留不刪**。
+7. 費用紀律：開 pod 後立刻設手動提醒；閒置超過 30 分鐘未跑任務
+   就先 delete，要用再開。
+
+不得把 RunPod API key、SSH 密碼或任何 credential 寫進 repo、issue、
+PR 或聊天回報。
+
+## 0.1 環境前置（pod 內一次）
 
 ```bash
+cd /workspace
+git clone https://github.com/tonythetiger168/theama.git  # 或 git pull 至最新 main
+cd theama
 pip install -e ".[train]"          # torch + diffusers + DAC
 # 系統層：ffmpeg（decode/mux tests 與資料管線）、tesseract-ocr + chi-tra（M7a 評分）
 bash scripts/download_weights.sh   # 權重各自保留原授權，不入庫
