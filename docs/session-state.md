@@ -2,10 +2,10 @@
 # Theama session checkpoint — hourly agent runs save/restore THIS file.
 # 設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
 schema: 1
-updated_at: "2026-11-25T00:35:00Z"
-head: c592a60fa1a85794a8f9477419d071bb7e191312
+updated_at: "2026-11-25T00:15:35Z"
+head: 07b0a2eedb27c048c6bd4f9236215fb8a97782d6
 head_verified: true
-last_increment: "watchlist 第五輪：WeMM-Video 入觀察（聯合 A/V judge 底座候選）、Kandinsky OmniNFT sync 分支方法參考"
+last_increment: "session save/restore 機制落地（本檔建立）＋ watchlist 第五輪（WeMM-Video 入觀察、Kandinsky OmniNFT sync 分支方法參考）"
 ci_yml: not_uploaded            # 使用者尚未上傳 .github/workflows/CI.yml；repo 無 .github/ 目錄
 issues: 0
 gpu_outputs: none_pending_review
@@ -24,10 +24,15 @@ next_hour:
 
 M1 / P1a / M2 程式全部落地、GPU 驗收全部待跑；watchlist 已核查至
 2026-11-25 第五輪（WeMM-Video 列為聯合 A/V judge 觀察候選，不改 P1a/M2
-配方）；CI.yml 待使用者上傳；授權紅線不變。
+配方）；session save/restore 機制已落地（本檔）；CI.yml 待使用者上傳；
+授權紅線不變。
 
 ## 本輪記錄（新輪加在最上面，保留最近 10 輪）
 
+- 2026-11-25 pass 5 @ 07b0a2e — session save/restore 落地：建立
+  docs/session-state.md（front matter 狀態 + RESTORE/SAVE 協議 + 滾動
+  記錄）；README 加入口；緣由：專案記憶 mount 與沙箱執行環境同時失效，
+  repo 成為唯一可靠 checkpoint；docs-only。
 - 2026-11-25 pass 5 @ c592a60 — watchlist 第五輪：WeMM-Video 入觀察
   （Apache-2.0 程式碼、逐卡 model card 待核）、Kandinsky 6.0 OmniNFT
   八 reward 配方 sync 分支方法參考、阿里下一代影片模型 11 月窗口仍無
@@ -45,8 +50,9 @@ M1 / P1a / M2 程式全部落地、GPU 驗收全部待跑；watchlist 已核查�
 
 ## SAVE 協議（每輪最後一步；僅有進度時執行）
 
-1. 更新 front matter（`head`、`last_increment`、`blockers`、`next_hour`）
-   並在「本輪記錄」頂端加一行：`YYYY-MM-DD pass N @ <HEAD 短碼> — 摘要`。
+1. 更新 front matter（`updated_at`、`head`、`last_increment`、`blockers`、
+   `next_hour`）並在「本輪記錄」頂端加一行：
+   `YYYY-MM-DD pass N @ <HEAD 短碼> — 摘要`。
 2. 推送後做 blob SHA 驗證：`get_file_contents` 回傳 SHA 須與推送回傳
    一致；不一致立即回報，不得聲稱已存檔。
 3. 「本小時無進度」不回寫本檔——`updated_at` 因此恆等於最後有進度時刻。
