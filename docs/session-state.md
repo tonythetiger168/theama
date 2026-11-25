@@ -2,10 +2,10 @@
 # Theama session checkpoint — hourly agent runs save/restore THIS file.
 # 設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
 schema: 1
-updated_at: "2026-11-25T07:20:00Z"
-head: 4e1d202fa25efb7ae0bfc29aa0b0176d4ee72609
+updated_at: "2026-11-25T08:10:00Z"
+head: a3067d9b0f4c57c1e59e026c7898eebe434be82f
 head_verified: true
-last_increment: "M7a 第三路徑 plumbing：gen_cjk_images.py 新增 --model ming-image-design（inclusionAI/Ming-Image-0.1-Design，MIT，experimental/diagnostic-only 不入驗收閘；MODEL_DEFAULTS 卡片預設 12 steps/CFG 1.0；RESOLUTION_BUCKETS snap 1024/2048）＋ test_m7a.py +2 contract 測試；CPU 全套 217 passed；watchlist 覆核無變化（阿里下一代 11 月窗口剩 5 天仍無發布）"
+last_increment: "M7a score 腳本強化：score_cjk_text.py 讀 gen manifest.jsonl 做來源標註（summary 帶 models/model/repo_ids＋no_provenance 清單，混模型 stderr 警告，resume 舊列 setdefault 補 model；SCORER_VERSION 不變）＋ build_summary 抽成純函數；test_m7a +3；CPU 全套 220 passed"
 ci_yml: content_ready_pending_user_upload   # MCP token 推 .github/workflows 被 403（insufficient scopes）；內容已交付使用者
 issues: 0
 gpu_outputs: none_pending_review            # Claude 接手 GPU 驗收；若其 push 結果，下輪 RESTORE 對帳
@@ -15,9 +15,9 @@ division_of_labor:
   claude: "GPU 驗收執行（runbook 第 1–5 節）、CI.yml 上傳（人工作業）、結果回報/落盤、git tag v0.2.0（人工作業）"
 next_hour:
   - "RESTORE：核對 HEAD 與本檔 head；Claude 若已 push GPU 結果或 v0.2.0 tag，先消化再增量"
-  - "M7a 第三路徑 gen plumbing 已於 pass 16 落地（4e1d202f）——RESTORE 到本檔者請勿重複做同題；score 側本就 model-agnostic（吃一個 images dir）"
+  - "M7a score 側強化已於 pass 17 落地（a3067d9b：manifest provenance＋build_summary 純函數）——RESTORE 到本檔者請勿重複做同題；gen 側第三路徑亦已於 pass 16 落地（4e1d202f）"
   - "使用者上傳 CI.yml 後：Actions 即為驗證引擎（CI image 需 ffmpeg + tesseract chi-tra，否則 decode/M7a 測試 skip）"
-  - "③ 候選：encode/score 腳本強化（如 score_cjk_text summary 從 manifest.jsonl 帶 model 標籤）；watchlist 固定四項覆核（阿里下一代 11 月窗口 11-30 關閉，仍無發布）"
+  - "③ 候選：encode_texts / score 腳本進一步強化（如 encode_texts 的 error 重試配額上限）、或替對岸補 runbook §4 第三路徑段落（先對帳確認對岸未補再動手——runbook 是競態熱點，§4 加 Ming 需註明 80 GiB 卡需求）；watchlist 固定四項覆核（阿里下一代 11 月窗口 11-30 關閉，仍無發布）"
   - "model-roadmap.md 本地已與遠端 byte-exact（pass 15 癒合），後續可正常從本地推送此檔"
 ---
 
@@ -27,10 +27,30 @@ next_hour:
 
 版本 0.2.0（CPU 側程式全落地、GPU 驗收待跑）；P1b 鏈路補齊：雙 cache →
 joint loader → runner＋薄殼 → runbook 第 5 節驗收段（含 dev/prod 雙路徑
-config），217 CPU tests 全綠；GPU 驗收由 Claude 依
+config），220 CPU tests 全綠；GPU 驗收由 Claude 依
 docs/gpu-acceptance-runbook.md 執行；CI.yml 內容備妥待上傳；紅線不變。
 
 ## 本輪記錄（新輪加在最上面，保留最近 10 輪）
+
+- 2026-11-25 pass 17 @ a3067d9b — M7a score 腳本來源標註強化（本
+  session 增量，session-state next_hour 明列候選）：score_cjk_text.py
+  新增 load_gen_manifest()（讀 gen_cjk_images 寫的 <images>/
+  manifest.jsonl；缺檔→None、壞行/缺 id 行 warn-and-skip，provenance
+  屬 metadata 永不讓 scoring 失敗）、build_summary() 純函數化（免
+  tesseract 可測）。summary sidecar 新增 models/model/repo_ids＋
+  no_provenance（有分數但 manifest 無列的圖——同目錄混入他模型舊圖
+  的 drift 偵測）；manifest 混多模型時 stderr 警告（summary 會跨模型
+  聚合）；新列與 resume 保留列（setdefault 回填）都帶 model 標籤。
+  SCORER_VERSION 維持 cjk-text-1——打分語意未變，舊 resume 列全保留。
+  test_m7a.py +3：manifest loader（缺檔/壞行/空行）、summary 來源
+  標註（rate 不變＋單模型 headline＋無 manifest 不加鍵）、混模型＋
+  orphan 旗標。RESTORE 對帳：遠端 HEAD 仍 0e9bceda（pass-16
+  checkpoint 修正版），無 Claude GPU commit、tags 空、issues 0、
+  temp 無新上傳；開工前 mtime 掃描無對岸新檔。推送前再對帳一次無
+  競態；blob SHA 驗證一致（score 1142893e／test 02ec4c3a，本地 git
+  hash-object 重算相同）。CPU 全套 220 passed（217+3；沙箱重置又洗
+  掉 pytest，已重裝）。watchlist 本輪不重查（pass 15/16 已覆核，
+  阿里窗口 11-30 才關閉）。
 
 - 2026-11-25 pass 16 @ 4e1d202f — M7a 第三路徑 Ming-Image-0.1-Design
   （MIT）gen plumbing 預備落地：gen_cjk_images.py 新增
@@ -170,13 +190,6 @@ docs/gpu-acceptance-runbook.md 執行；CI.yml 內容備妥待上傳；紅線不
   內容交付使用者自行上傳；④ 兩腳本均為獨立 script 不被 tests import，
   沙箱掛機期間無法本地驗證，標記為待驗證。blob SHA 驗證一致
   （f0d8d613／c896a9bc）。
-- 2026-11-25 pass 8 @ 8657e36 — watchlist 第八輪：VA-Judger repo 狀態
-  更新（ShareLab-SII/VA-Judger 自 2026-08-20 釋出基礎程式碼、
-  checkpoints 與 VA-Judger-Bench；RM SFT 程式碼與 VAPref-10K 仍 to-do；
-  RM 本體為 Qwen3-Omni-30B-A3B 全參微調；checkpoint 授權未標示，
-  維持觀察）；Wan-Animate-2 repo id／Wan 3.x API-only／阿里下一代
-  未發布／Qwen-Image 紅線覆核無變化；CI.yml 未上傳、issues 0；
-  沙箱仍掛，docs-only。
 
 ## RESTORE 協議（每輪第 0 步，依序執行）
 
