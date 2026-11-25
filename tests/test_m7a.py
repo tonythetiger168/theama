@@ -112,3 +112,94 @@ def test_gen_script_resolution_snap():
     assert mod.snap_resolution("ming-image-design", 1200, 1200) == (1024, 1024)
     assert mod.snap_resolution("ming-image-design", 1800, 1800) == (2048, 2048)
     assert mod.snap_resolution("ming-image-design", 4096, 4096) == (2048, 2048)
+
+
+def _load_score_script():
+    """Import scripts/score_cjk_text.py without executing main (CPU-safe:
+    tesseract is only invoked inside main)."""
+    import importlib.util
+
+    path = ROOT / "scripts" / "score_cjk_text.py"
+    spec = importlib.util.spec_from_file_location("score_cjk_text", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_score_script_manifest_loader(tmp_path):
+    mod = _load_score_script()
+    # Absent sidecar -> None (older generator output stays scorable).
+    assert mod.load_gen_manifest(tmp_path) is None
+    lines = [
+        json.dumps({"id": "T2I-C-001", "model": "z-image-turbo",
+                    "repo_id": "Tongyi-MAI/Z-Image-Turbo"}),
+        "{not json",                       # malformed line: skipped, not fatal
+        json.dumps({"model": "no-id"}),    # no id: skipped
+        "",                                 # blank line: skipped
+        json.dumps({"id": "T2I-C-002", "model": "z-image-turbo",
+                    "repo_id": "Tongyi-MAI/Z-Image-Turbo"}),
+    ]
+    (tmp_path / "manifest.jsonl").write_text("\n".join(lines) + "\n",
+                                             encoding="utf-8")
+    manifest = mod.load_gen_manifest(tmp_path)
+    assert set(manifest) == {"T2I-C-001", "T2I-C-002"}
+    assert manifest["T2I-C-001"]["model"] == "z-image-turbo"
+
+
+class _Row:
+    """Minimal stand-in for the eval loader's row type."""
+
+    def __init__(self, id, category="poster"):
+        self.id = id
+        self.category = category
+
+
+def _scored_hit(id, category="poster", recall=1.0, hit=True):
+    return {"id": id, "category": category, "scorer": "cjk-text-1",
+            "exact_hit": hit, "char_recall": recall}
+
+
+def test_score_script_summary_carries_provenance():
+    mod = _load_score_script()
+    rows = [_Row("T2I-C-001"), _Row("T2I-C-002")]
+    scored = {
+        "T2I-C-001": _scored_hit("T2I-C-001", recall=1.0),
+        "T2I-C-002": _scored_hit("T2I-C-002", recall=0.5, hit=False),
+    }
+    manifest = {
+        "T2I-C-001": {"id": "T2I-C-001", "model": "qwen-image-2512",
+                      "repo_id": "Qwen/Qwen-Image-2512"},
+        "T2I-C-002": {"id": "T2I-C-002", "model": "qwen-image-2512",
+                      "repo_id": "Qwen/Qwen-Image-2512"},
+    }
+    summary = mod.build_summary(rows, scored, "chi_tra+eng", 11, manifest)
+    # Rates unchanged from the pre-provenance behaviour.
+    assert summary["scored"] == 2
+    assert summary["exact_hit_rate"] == 0.5
+    assert summary["mean_char_recall"] == 0.75
+    # Single-model manifest -> headline model + repo attribution.
+    assert summary["model"] == "qwen-image-2512"
+    assert summary["models"] == ["qwen-image-2512"]
+    assert summary["repo_ids"] == ["Qwen/Qwen-Image-2512"]
+    assert "no_provenance" not in summary
+    # No manifest -> no provenance keys at all (backwards compatible).
+    plain = mod.build_summary(rows, scored, "chi_tra+eng", 11, None)
+    assert "model" not in plain and "models" not in plain
+
+
+def test_score_script_summary_flags_mixed_models_and_orphans():
+    mod = _load_score_script()
+    rows = [_Row("T2I-C-001"), _Row("T2I-C-002"), _Row("T2I-C-003")]
+    scored = {r.id: _scored_hit(r.id) for r in rows}
+    manifest = {
+        "T2I-C-001": {"id": "T2I-C-001", "model": "qwen-image-2512",
+                      "repo_id": "Qwen/Qwen-Image-2512"},
+        "T2I-C-002": {"id": "T2I-C-002", "model": "z-image-turbo",
+                      "repo_id": "Tongyi-MAI/Z-Image-Turbo"},
+        # T2I-C-003 scored but absent from the manifest -> no provenance.
+    }
+    summary = mod.build_summary(rows, scored, "chi_tra+eng", 11, manifest)
+    # Mixed models: no single headline model, both listed.
+    assert summary["model"] is None
+    assert summary["models"] == ["qwen-image-2512", "z-image-turbo"]
+    assert summary["no_provenance"] == ["T2I-C-003"]

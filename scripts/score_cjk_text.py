@@ -19,6 +19,13 @@ are kept, missing/failed ones are (re)scored, and the file is compacted.
 A <out_stem>.summary.json sidecar (headline rates + per-category means) is
 written on every run. Exit code is nonzero unless every prompt has a score.
 
+Provenance: when the images dir contains a manifest.jsonl written by
+gen_cjk_images.py, the summary and per-row records carry the generator's
+model/repo_id so parallel runs (qwen/zimage/ming) stay attributable, scored
+images with no manifest row are listed as no_provenance, and a manifest
+mixing multiple models triggers a stderr warning. Provenance is metadata —
+a missing or malformed manifest never fails scoring.
+
 OCR of stylized posters/signs is noisy — treat exact_hit as the headline
 gate and char_recall as the diagnostic, and re-run with --psm 6 if sparse
 text mode under-reads a layout-heavy batch.
@@ -83,6 +90,66 @@ def ocr_image(path: Path, langs: str, psm: int) -> str:
     return proc.stdout
 
 
+def load_gen_manifest(images_dir: Path) -> dict[str, dict] | None:
+    """Provenance sidecar written by gen_cjk_images.py (<out>/manifest.jsonl).
+
+    Returns {prompt_id: row}, or None when the sidecar is absent (images
+    produced by an older generator or by hand). Malformed lines are skipped
+    with a warning — provenance is metadata, scoring must not fail on it.
+    """
+    path = images_dir / "manifest.jsonl"
+    if not path.exists():
+        return None
+    rows: dict[str, dict] = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        try:
+            rec = json.loads(line)
+        except json.JSONDecodeError:
+            print(f"[warn] skipping malformed manifest line in {path.name}",
+                  file=sys.stderr)
+            continue
+        if isinstance(rec, dict) and rec.get("id"):
+            rows[rec["id"]] = rec
+    return rows
+
+
+def build_summary(rows, scored: dict[str, dict], langs: str, psm: int,
+                  manifest: dict[str, dict] | None) -> dict:
+    """Assemble the summary sidecar; pure so tests need no tesseract."""
+    hits = [r for r in scored.values() if "error" not in r]
+    by_category: dict[str, list[float]] = {}
+    for rec in hits:
+        by_category.setdefault(rec["category"], []).append(rec["char_recall"])
+    summary = {
+        "scorer": SCORER_VERSION,
+        "ocr_langs": langs,
+        "psm": psm,
+        "total": len(rows),
+        "scored": len(hits),
+        "failed": [r["id"] for r in scored.values() if "error" in r],
+        "exact_hit_rate": round(sum(1 for r in hits if r["exact_hit"]) / len(hits), 4)
+        if hits else 0.0,
+        "mean_char_recall": round(sum(r["char_recall"] for r in hits) / len(hits), 4)
+        if hits else 0.0,
+        "per_category_char_recall": {
+            cat: round(sum(v) / len(v), 4) for cat, v in sorted(by_category.items())
+        },
+    }
+    if manifest is not None:
+        models = sorted({m["model"] for m in manifest.values() if m.get("model")})
+        summary["models"] = models
+        summary["model"] = models[0] if len(models) == 1 else None
+        summary["repo_ids"] = sorted(
+            {m["repo_id"] for m in manifest.values() if m.get("repo_id")}
+        )
+        no_provenance = sorted(r["id"] for r in hits if r["id"] not in manifest)
+        if no_provenance:
+            summary["no_provenance"] = no_provenance
+    return summary
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--images", required=True, help="dir of <prompt_id>.png files")
@@ -112,6 +179,13 @@ def main() -> int:
     rows = load_t2i_eval(args.eval_set)
     images_dir = Path(args.images)
     out_path = Path(args.out) if args.out else images_dir / "text_scores.jsonl"
+    manifest = load_gen_manifest(images_dir)
+    if manifest is not None:
+        models = {m.get("model") for m in manifest.values()}
+        if len(models) > 1:
+            print(f"[warn] manifest mixes models {sorted(models)} — this "
+                  f"summary aggregates them; score each model in its own dir",
+                  file=sys.stderr)
 
     # Resume: keep prior rows from this scorer version keyed by prompt id.
     kept: dict[str, dict] = {}
@@ -121,6 +195,9 @@ def main() -> int:
                 continue
             row = json.loads(line)
             if row.get("scorer") == SCORER_VERSION and "error" not in row:
+                if manifest is not None and row["id"] in manifest:
+                    # Backfill provenance on rows scored before it existed.
+                    row.setdefault("model", manifest[row["id"]].get("model"))
                 kept[row["id"]] = row
         with out_path.open("w", encoding="utf-8") as fh:
             for row in kept.values():
@@ -150,6 +227,8 @@ def main() -> int:
                     "exact_hit": norm_expected in normalize(ocr_text),
                     "char_recall": round(char_recall(row.expected_text, ocr_text), 4),
                 }
+                if manifest is not None and row.id in manifest:
+                    rec["model"] = manifest[row.id].get("model")
                 print(f"{row.id}: hit={rec['exact_hit']} "
                       f"recall={rec['char_recall']:.2f}", flush=True)
             except Exception as exc:
@@ -168,32 +247,14 @@ def main() -> int:
             fh.flush()
             scored[row.id] = rec
 
-    hits = [r for r in scored.values() if "error" not in r]
-    by_category: dict[str, list[float]] = {}
-    for rec in hits:
-        by_category.setdefault(rec["category"], []).append(rec["char_recall"])
-    summary = {
-        "scorer": SCORER_VERSION,
-        "ocr_langs": langs,
-        "psm": args.psm,
-        "total": len(rows),
-        "scored": len(hits),
-        "failed": [r["id"] for r in scored.values() if "error" in r],
-        "exact_hit_rate": round(sum(1 for r in hits if r["exact_hit"]) / len(hits), 4)
-        if hits else 0.0,
-        "mean_char_recall": round(sum(r["char_recall"] for r in hits) / len(hits), 4)
-        if hits else 0.0,
-        "per_category_char_recall": {
-            cat: round(sum(v) / len(v), 4) for cat, v in sorted(by_category.items())
-        },
-    }
+    summary = build_summary(rows, scored, langs, args.psm, manifest)
     summary_path = out_path.with_name(out_path.stem + ".summary.json")
     summary_path.write_text(
         json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8"
     )
     print(f"wrote {len(scored)} rows -> {out_path}")
     print(json.dumps(summary, ensure_ascii=False))
-    return 1 if (failures or len(hits) < len(rows)) else 0
+    return 1 if (failures or summary["scored"] < len(rows)) else 0
 
 
 if __name__ == "__main__":
