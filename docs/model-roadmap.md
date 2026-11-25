@@ -43,7 +43,7 @@
 
 ## Watchlist（上游釋出追蹤）
 
-最近核查：**2026-11-25**（當日第十四輪）。
+最近核查：**2026-11-26**（第十五輪）。
 
 - **Wan-Animate-2-14B**（Apache-2.0）— M6a 底座候選，已寫入
   `configs/theama_base.yaml`。repo id 已核對：`Wan-AI/Wan2.2-Animate-2-14B`
@@ -88,6 +88,13 @@
   （11-11）逐 repo 核查（2.5／2.6／2.7／3.0 皆未開權重）矛盾，歸類
   同 miraflow「2.7 開源 Apache-2.0」誤報，不採信。Wan-Animate-2
   repo id 本輪覆核無變化。
+  2026-11-26 第十五輪覆核：11 月窗口 T-4（11-30 關閉），中英文
+  檢索仍無阿里下一代影片模型發布公告或權重；Wan 3.x API-only
+  維持（atlascloud 2026-08-26 逐 33 repo 核查、evolink 2026-08
+  供應路由核查、11-15 第三方榜單快照三方一致——Wan 3.0 無 HF
+  checkpoint／GitHub repo／license 文本，最新開放權重仍 Wan 2.2
+  系）。Wan-Animate-2 repo id 覆核無變化（base＋distilled 雙
+  checkpoint 均在 Wan-AI HF，Apache-2.0）。
 - **Qwen-Image 新版** — **Qwen-Image-2.1（7B，2026-09-20）統一 T2I+編輯+原生 RGBA，
   但為 Qwen Research License（非商用）→ 紅線確認，不碰**；2.1-Turbo（2026-10-09，8-step）
   同授權。Qwen-Image-3.0 為 hosted-only。Apache-2.0 線最新仍是
@@ -123,6 +130,12 @@
   最高的完全寬鬆授權（fully permissive）影像模型」**，與 Qwen-Image-2.1
   差 42 分——支持其作為 M7a 第三條合法路徑的 diagnostic 定位，
   seed 實測結論前不升格。
+  2026-11-26 第十五輪：補產品線譜系資料點（juejin 2026-10-08
+  同題對比，B 級）——Qwen-Image-2.0（2026-02 架構換代未放權重）
+  →3.0（2026-07 純閉源 API）→2.1（2026-09-20 回開源線、7B
+  單流 DiT，但 Qwen Research License 非商用）；2512（2025-12-31，
+  20.4B MMDiT）為 20B 分支收官版、Apache-2.0 可商用——「要商用
+  只有 2512 能用」與本專案紅線劃分一致。紅線不變、M7a 選型不變。
 - **開源 video reward 新模型** — awesome-rm-for-video-generation（2026-10 更新）新增
   AesRM（專家標註美學 RM，base + CoT 變體）、UnifiedReward-Flex、GT-SVJ（self-supervised
   judge）等；授權與權重可得性未逐一核實，VideoReward 仍為首選，暫不加第二把尺。
@@ -266,6 +279,18 @@
   2.1／2.1-Turbo 仍 Qwen Research License（QwenLM repo 直查），
   3.1 hosted-only「今年稍後推出」，紅線不變；GenRM-Flow 仍僅
   論文（arXiv 2611.11421）、未檢得程式碼。
+  2026-11-26 第十五輪：同清單（awesome-rm-for-video-generation
+  2026-10-06 版，S 級）補四筆新觀察——**Reward Lightning**
+  （latent-space RM 與對抗蒸餾共享骨幹，homologous preference
+  distillation 同步對齊＋加速 few-step 生成器，與 P1a LoRA-DPO
+  及未來 few-step 需求直接相關）、**GT-SVJ**（把影片生成器改造為
+  energy-based judge，self-supervised 於合成退化影片、不依賴外部
+  VLM——授權暴露面小於 VLM judge，值得追程式碼落地）、
+  **Reward Forcing**（reward-guided DMD 串流蒸餾，以 VLM reward
+  把 few-step student 偏向高動態樣本——M6b 串流線方法參考）、
+  **RewardDance**（reward scaling 研究：judge 換更大生成式 VLM
+  的規模律與抗 hacking 魯棒性）。四者授權／權重可得性均未核實，
+  VideoReward 首選不變，維持觀察、不改 P1a 配方。
 - **AV leaderboard（Artificial Analysis Video Arena with-audio）現況**
   （2026-11-25 第十一輪補；M5 品質目標的對標板）——**T2V w/audio**
   （11-13 快照）：Wan 3.0 第一（Elo 1175）、Utopai X（H3 post-train）
