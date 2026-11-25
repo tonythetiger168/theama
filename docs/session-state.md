@@ -2,7 +2,7 @@
 # Theama session checkpoint — hourly agent runs save/restore THIS file.
 # 設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
 schema: 1
-updated_at: "2026-11-25T10:25:00Z"
+updated_at: "2026-11-25T10:33:00Z"
 head: 1e64d0c18784af9249155f0742d82bda665abe75
 head_verified: true
 last_increment: "③ P1b pair/AV latent cache 對齊 text_cache 同款 retry budget（pair_failures.json／av_failures.json opt-in ledger、--max-retries/--reset-failures、skipped 列不計 encoded/reused/failed、預設行為逐字節不變）；tests +12（test_p1a／test_m2_av_latent_cache 各 6），CPU 253 passed；commit 1e64d0c1 六檔 blob SHA 驗證一致"
@@ -63,6 +63,35 @@ RunPod 亦可）；CI.yml 內容備妥待上傳；紅線不變。
   相同）——首次即 byte-exact。CPU 全套 **253 passed**（241+12）；
   雙 CLI --help smoke 通過；pytest 沙箱重置洗掉已重裝。下一個③候選：
   下游消費者（joint_latent_loader 等）對 skipped 列的行為核查。
+
+- 2026-11-25 pass 22（對帳驗證側）@ 1e64d0c1 — **競態實例九（開工前
+  攔截成功，第四次）＋獨立驗證**：本 session 開工即選中同一個③候選
+  （pair/AV latent cache retry budget），動手寫碼前 mtime 掃描發現
+  latent_cache.py（10:07Z）／av_latent_cache.py（10:09Z）為數分鐘內
+  新檔——對岸正在實作同題，依紀律未寫一碼轉獨立驗證（競態實例
+  七／八同型，零浪費）。對岸 10:21Z 推 code `1e64d0c1`、10:28Z 推
+  checkpoint `23ce3e3b`（session-state blob ed14b929＝本地逐字一致）
+  後核驗：六檔 blob SHA 本地 git hash-object 重算全數一致
+  （latent_cache dc359e64／av_latent_cache fb6cc7ff／encode_pairs
+  8320e3d6／encode_av_latents f8993dc6／test_p1a d2429e8a／
+  test_m2_av_latent_cache 8ae8cfa6）；CPU 全套獨立重跑
+  **253 passed**（241+12；於對岸推送前以本地最終檔先跑、推送後
+  blob 對帳確認同一份內容）；scripts 全目錄對帳順帶確認
+  check_av_manifest.py（49ac389a）等無漂移。設計審閱：通用
+  _ledger_* 核心＋per-cache 綁定 wrappers、預設 None 零 ledger
+  I/O、tmp+replace 原子寫／毀損降級 {}／strict 先記後 raise 皆與
+  text_cache 對齊，無異議；觀察一項（非缺陷，不另開工）：skip
+  判定純 index-keyed（ledger entry 存 prompt_id/prompt 但未參與
+  比對）——pairs.jsonl reorder／編輯後同 index 換成不同 pair 會
+  沿用舊 entry 被跳過；recovery 路徑已足（--reset-failures，或
+  --no-resume 本就不讀 ledger），operator contract 本就要求
+  reorder 後 --no-resume，維持現狀僅記錄。watchlist 第十三輪覆核
+  （無 delta）：WeMM-Video 官方 GitHub 再確認程式碼 Apache-2.0、
+  權重逐卡以 HF model card 為準（與第五輪記錄一致）；Omni-RRM
+  仍僅 anonymous 4open 連結、授權未核實——兩觀察條目維持現狀
+  不改 roadmap；四固定項同日第十輪已覆核，本輪不重查。
+  RESTORE：HEAD ba7ed628→消化 1e64d0c1＋23ce3e3b；tags 空、
+  issues 0、temp 無新上傳、CI.yml 仍待使用者。
 
 - 2026-11-25 pass 21 @ 3f3fa0ac — watchlist 第十二輪（本 session 增量，
   依使用者拍板「**超過 Seedance 2.5 和 Wan 3.0**」）：AA with-audio 三榜
