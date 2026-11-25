@@ -18,17 +18,26 @@ from theama.inference.config import (
 )
 
 
-def load_pipeline(spec_name: str = "ti2v-5b", offload: bool = True):
-    """Load a WanPipeline. offload=True keeps 16-24GB cards viable."""
+def load_pipeline(
+    spec_name: str = "ti2v-5b",
+    offload: bool = True,
+    model_path: str | Path | None = None,
+):
+    """Load a WanPipeline. offload=True keeps 16-24GB cards viable.
+
+    ``model_path`` points at a local Diffusers-layout checkout (e.g. a RunPod
+    network volume); otherwise the registered Hugging Face repo id is used.
+    """
     import torch
     from diffusers import AutoencoderKLWan, WanPipeline
 
     spec = MODELS[spec_name]
+    source = str(model_path) if model_path is not None else spec.repo_id
     vae = AutoencoderKLWan.from_pretrained(
-        spec.repo_id, subfolder="vae", torch_dtype=torch.float32
+        source, subfolder="vae", torch_dtype=torch.float32
     )
     pipe = WanPipeline.from_pretrained(
-        spec.repo_id, vae=vae, torch_dtype=torch.bfloat16
+        source, vae=vae, torch_dtype=torch.bfloat16
     )
     if offload:
         pipe.enable_model_cpu_offload()

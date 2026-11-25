@@ -54,6 +54,8 @@ def main() -> int:
     ap.add_argument("--out", required=True)
     ap.add_argument("--limit", type=int, default=None, help="only first N prompts")
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--model-path", default=None,
+                    help="local Diffusers checkout; default resolves the HF repo id")
     ap.add_argument("--no-offload", action="store_true",
                     help="keep the whole pipeline on GPU (fast, needs 40GB+ for A14B)")
     args = ap.parse_args()
@@ -89,7 +91,9 @@ def main() -> int:
         if is_i2v:
             pipe, _ = load_i2v_pipeline(args.model, offload=not args.no_offload)
         else:
-            pipe, _ = load_pipeline(args.model, offload=not args.no_offload)
+            pipe, _ = load_pipeline(
+                args.model, offload=not args.no_offload, model_path=args.model_path
+            )
 
     manifest_path = out_dir / "manifest.jsonl"
     for row in pending:

@@ -118,11 +118,15 @@ reports, `dac/input.wav`, `logs/cpu_tests.log`, `logs/dac_smoke.log`,
 1. **M2 smoke acceptance: done** (2026-11-25 A40 run). Reuse volume
    `theama-m2` in CA-MTL-1 for later runs to skip re-downloading weights, or
    delete it when no longer needed. A 4090 re-check is optional.
-2. **M1 GPU acceptance** on TI2V-5B (4090 is enough with CPU offload):
-   `python scripts/gen_eval_set.py --model ti2v-5b --out $WORKSPACE/eval_out/ti2v-5b --limit 5`
-   first, then the full 50-prompt `eval/t2v_v1.jsonl`, then
-   `scripts/run_vbench.py`. Needs the full TI2V-5B Diffusers repo (VAE + text
-   encoder), not only the transformer.
+2. **M1 GPU acceptance** on TI2V-5B. One-command RunPod runner:
+   `bash scripts/runpod_m1_eval.sh /workspace 5` (first 5 prompts of
+   `eval/t2v_v1.jsonl`, native 1280x704 / 121f / 24fps, CPU offload). It
+   downloads the full TI2V-5B Diffusers repo into the volume (fails fast if
+   the volume is too small), installs ffmpeg/ftfy, runs the CPU suite, then
+   writes `$WORKSPACE/m1_out/{ti2v-5b/*.mp4, m1_eval_report.json, logs/}` and
+   prints `M1_EVAL_SMOKE_OK`. Then run all 50 (`... /workspace 50`), then
+   `scripts/run_vbench.py` for the ±0.02 quality gate. Same save / verify /
+   delete-pod / keep-volume procedure as `CLAUDE.md`.
 3. **P1a GPU run**: download VideoReward (`KlingTeam/VideoReward`, Apache-2.0),
    then the pipeline printed at the end of `scripts/runpod_bootstrap.sh`
    (candidates → `score_eval_set.py --smoke` → scores → pairs →

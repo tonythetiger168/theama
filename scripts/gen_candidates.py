@@ -63,7 +63,7 @@ def main() -> int:
     from theama.inference.t2v import generate_frames, load_pipeline, save_frames
     from theama.inference.mux import mux_mp4
 
-    pipe = load_pipeline(args.model)
+    pipe, _ = load_pipeline(args.model)  # returns (pipe, spec)
     out_root = Path(args.out)
     failures, made = [], 0
     for item in prompts:
