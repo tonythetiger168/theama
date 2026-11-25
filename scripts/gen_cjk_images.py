@@ -7,14 +7,26 @@ Local GPU usage:
     pip install -e ".[dev]"
     python scripts/gen_cjk_images.py --model qwen-image-2512 --out eval_out/m7a/qwen
     python scripts/gen_cjk_images.py --model z-image-turbo --out eval_out/m7a/zimage
+    python scripts/gen_cjk_images.py --model ming-image-design --out eval_out/m7a/ming
 
 Resumable: existing readable PNGs in --out are skipped, so a crashed run
 continues where it stopped. Exit code is nonzero unless every prompt in the
 eval set produced a readable PNG. Rows and the final gate use the strict
 loader in ``theama.image`` (the same schema CI validates).
 
-Both defaults are the Apache-2.0 M7a bases from configs/theama_base.yaml;
-keep the mapping in sync with that file.
+The first two models are the Apache-2.0 M7a bases from
+configs/theama_base.yaml; keep the mapping in sync with that file.
+``ming-image-design`` (inclusionAI/Ming-Image-0.1-Design, MIT) is an
+experimental third path: results are diagnostic only and do NOT count
+toward the M7a acceptance gate until the 24-seed CJK run is measured
+(see docs/model-roadmap.md). Card settings: 12 steps, CFG 1.0, BF16,
+1024/2048 resolution buckets (requests are snapped); the official
+validated config is one 80 GiB GPU, so expect OOM on 24 GB cards
+(community quants exist but are unverified here). Its text-to-image
+path is text-only — the card's Qwen-licensed vision tower runs only
+for image-input tasks, which this script never invokes. The card's
+optional prompt-rewriting stage is skipped on purpose: prompts are
+sent verbatim so quoted strings stay under test.
 """
 
 from __future__ import annotations
@@ -30,11 +42,35 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from theama.image import load_t2i_eval  # noqa: E402
 
-# Keep in sync with configs/theama_base.yaml (image_backbone / image_backbone_fast).
+# Keep the first two entries in sync with configs/theama_base.yaml
+# (image_backbone / image_backbone_fast).
 IMAGE_MODELS = {
     "qwen-image-2512": "Qwen/Qwen-Image-2512",       # quality path
     "z-image-turbo": "Tongyi-MAI/Z-Image-Turbo",     # fast dev/draft path
+    "ming-image-design": "inclusionAI/Ming-Image-0.1-Design",  # experimental 3rd path
 }
+
+# Diagnostic-only models: not part of the M7a acceptance gate (model-roadmap.md).
+EXPERIMENTAL_MODELS = {"ming-image-design"}
+
+# Per-model sampler defaults from the official model cards.
+MODEL_DEFAULTS = {
+    "qwen-image-2512": {"steps": 30, "guidance": 3.5},
+    "z-image-turbo": {"steps": 8, "guidance": 0.0},       # guidance-distilled turbo
+    "ming-image-design": {"steps": 12, "guidance": 1.0},  # card: 12 steps, CFG 1.0
+}
+
+# Models that render only at fixed square resolutions; requests are snapped.
+RESOLUTION_BUCKETS = {"ming-image-design": (1024, 2048)}
+
+
+def snap_resolution(model: str, width: int, height: int) -> tuple[int, int]:
+    """Snap to the model's supported resolutions when it has a fixed set."""
+    buckets = RESOLUTION_BUCKETS.get(model)
+    if not buckets:
+        return width, height
+    snap = min(buckets, key=lambda b: (abs(b - width), b))
+    return snap, snap
 
 
 def png_ok(path: Path) -> bool:
@@ -61,9 +97,9 @@ def main() -> int:
     ap.add_argument("--width", type=int, default=1024)
     ap.add_argument("--height", type=int, default=1024)
     ap.add_argument("--steps", type=int, default=None,
-                    help="default: 30 (quality) / 8 (turbo)")
+                    help="default per model card: 30 / 8 / 12 (see MODEL_DEFAULTS)")
     ap.add_argument("--guidance", type=float, default=None,
-                    help="default: 3.5 (quality) / 0.0 (turbo)")
+                    help="default per model card: 3.5 / 0.0 / 1.0")
     ap.add_argument("--no-offload", action="store_true",
                     help="keep the whole pipeline on GPU (fast, needs more VRAM)")
     args = ap.parse_args()
@@ -74,9 +110,16 @@ def main() -> int:
     out_dir = Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
     repo_id = IMAGE_MODELS[args.model]
-    is_turbo = args.model == "z-image-turbo"
-    steps = args.steps if args.steps is not None else (8 if is_turbo else 30)
-    guidance = args.guidance if args.guidance is not None else (0.0 if is_turbo else 3.5)
+    defaults = MODEL_DEFAULTS[args.model]
+    steps = args.steps if args.steps is not None else defaults["steps"]
+    guidance = args.guidance if args.guidance is not None else defaults["guidance"]
+    width, height = snap_resolution(args.model, args.width, args.height)
+    if (width, height) != (args.width, args.height):
+        print(f"[note] {args.model} renders fixed buckets; "
+              f"{args.width}x{args.height} snapped to {width}x{height}")
+    if args.model in EXPERIMENTAL_MODELS:
+        print(f"[note] {args.model} is an experimental third path — diagnostic "
+              f"only, not part of the M7a acceptance gate")
 
     pending = []
     for row in rows:
@@ -107,8 +150,8 @@ def main() -> int:
         print(f"[gen ] {row.id} ({row.category}): {row.prompt[:60]}...")
         kwargs = dict(
             prompt=row.prompt,
-            height=args.height,
-            width=args.width,
+            height=height,
+            width=width,
             num_inference_steps=steps,
             generator=None if args.seed is None else _generator(args.seed, row.id),
         )
@@ -127,8 +170,8 @@ def main() -> int:
             "seed": args.seed,
             "steps": steps,
             "guidance": guidance,
-            "width": args.width,
-            "height": args.height,
+            "width": width,
+            "height": height,
             "seconds_wall": round(time.time() - t0, 1),
         }
         with manifest_path.open("a", encoding="utf-8") as fh:
