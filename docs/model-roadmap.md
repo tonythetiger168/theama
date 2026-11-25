@@ -43,7 +43,7 @@
 
 ## Watchlist（上游釋出追蹤）
 
-最近核查：**2026-11-25**（當日第五輪）。
+最近核查：**2026-11-25**（當日第六輪）。
 
 - **Wan-Animate-2-14B**（Apache-2.0）— M6a 底座候選，已寫入
   `configs/theama_base.yaml`。repo id 已核對：`Wan-AI/Wan2.2-Animate-2-14B`
@@ -66,6 +66,11 @@
   2026-11-25 第五輪覆核：11 月窗口進入最後一週，中英文檢索仍無發布
   公告或權重，維持「未發布、續盯」；Wan 3.x API-only 多方來源
   （2026-11 上旬至中旬的獨立核查）一致，無變化。
+  2026-11-25 第六輪覆核：11 月窗口剩最後五天，中英文檢索仍僅見
+  2026-09-22 雲棲預告原文的轉載，無發布公告或權重；Wan 3.x API-only
+  維持（2026-11-10／11-12 兩家第三方逐 repo 核查一致：Wan-AI HF 27 個
+  repo、Wan-Video GitHub 6 個 repo 均無 3.x 權重，最新仍為 Wan 2.2 與
+  Wan-Dancer）。Wan-Animate-2 repo id 本輪覆核無變化。
 - **Qwen-Image 新版** — **Qwen-Image-2.1（7B，2026-09-20）統一 T2I+編輯+原生 RGBA，
   但為 Qwen Research License（非商用）→ 紅線確認，不碰**；2.1-Turbo（2026-10-09，8-step）
   同授權。Qwen-Image-3.0 為 hosted-only。Apache-2.0 線最新仍是
@@ -75,6 +80,21 @@
   系列；迄今未公布權重、授權與定價，型態與 3.0 同為 hosted-only，未證實
   Apache 前不碰。另 Qwen-Image-2.1 Pro／Turbo 已於 2026-10-09 上 Model Studio
   託管 API（¥0.25／¥0.10 每張）——屬託管商用計費，不改變權重的研究授權紅線。
+  2026-11-25 第六輪：2.1／2.1-Turbo 的 Qwen Research License 條文未變
+  （10 月多方逐條核查一致，商業授權詢問無官方回覆），Apache 線仍是
+  2512／Edit-2511，M7a 選型不變。同輪新增 M7a 觀察候選：
+  **Ming-Image-0.1-Design**（螞蟻 inclusionAI，6.15B，**MIT**——
+  2026-09-17 上架 HF、09-22 發布，GitHub `inclusionAI/Ming-Image`）——
+  專攻 UI／資訊圖／海報等**文字密集型設計**的 T2I：原生 RGBA、12 steps
+  CFG 1.0、2048²，另有 Design-Layer 圖層拆解姊妹模型（同 MIT）。
+  Artificial Analysis：UI/UX Design 類開權重第一（Elo 1082，全類 17/81），
+  Layout 與 Text Rendering 均為開權重第一；總榜中段（約 45/160）。
+  對本專案的意義：M7a 除 Qwen-Image-2512（品質）＋ Z-Image Turbo（快速）
+  之外的第三條合法授權路徑候選，其強項（文字渲染）正是 cjk_t2i_v1 seed
+  的量測目標。保留事項：官方驗證配置為單卡 80 GiB（文字編碼器約 34 GB，
+  消費卡需靠 Comfy-Org／Kijai int8／w4a8 量化變體）；**CJK／非英文文字
+  渲染未見第三方實測**（外媒同列為首要待驗證項）；榜單為單一來源。列觀察，
+  待 M7a 推理重現排程時以 24 條 seed 實測後再議是否納入。
 - **開源 video reward 新模型** — awesome-rm-for-video-generation（2026-10 更新）新增
   AesRM（專家標註美學 RM，base + CoT 變體）、UnifiedReward-Flex、GT-SVJ（self-supervised
   judge）等；授權與權重可得性未逐一核實，VideoReward 仍為首選，暫不加第二把尺。
@@ -125,6 +145,13 @@
   clean-room 參考（OmniNFT 方法源自 LTX-2 社群，僅取方法論、不碰其
   權重與程式碼）。Wan-Animate-2 repo id／Wan 3.x API-only／Qwen-Image
   紅線，本輪覆核無變化。
+  2026-11-25 第六輪：新增 **Omni-RL Judge**（Adobe，Xingtai Li 等，2026-11；
+  ResearchGate 著錄 2026-11-15）——以 verifiable rewards 做 RL 訓練的
+  omni-modal 影音 judge，與 VA-Judger／Omni-Judge 同線（M2 後訓練 A/V 偏好
+  reward 候選；「可驗證獎勵」路線若成立，比純偏好對訓練的 judge 更抗
+  reward hacking）。目前僅檢得 ResearchGate 條目，arXiv hard id、程式碼、
+  權重與授權均未核實，列觀察待補。Wan-Animate-2 repo id／Wan 3.x
+  API-only／Qwen-Image 紅線，本輪覆核無變化。
 
 ## 發布策略
 
