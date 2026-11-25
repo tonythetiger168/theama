@@ -1,11 +1,11 @@
 ---
 # Theama session checkpoint — hourly agent runs save/restore THIS file.
-# 設計原設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
+# 設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
 schema: 1
-updated_at: "2026-11-25T20:10:00Z"
-head: 82d18e37ea056df0d1282d6f7f97d6f036e704f1
+updated_at: "2026-11-25T20:32:00Z"
+head: 12a5eabe214634b6472ad7d444290e3cd44d3238
 head_verified: true
-last_increment: "③ M2 CFG 文字條件 dropout（train_joint_av sample_cfg_drop_mask／apply_cfg_dropout 純函數＋trainer cfg_dropout 接線＋cfg_drop_mask batch 覆寫＋cfg_dropped metric——p=0 短路不碰 RNG 逐位元不變、null token 為零向量不增 checkpoint 參數；雙 yaml cfg_dropout: 0.1；13 tests，CPU 363）——code commit 82d18e37，五檔 blob d6e67651／5e5af6a8／3fb2a513／9aefd9e2／9d9adae8 首次即 byte-exact"
+last_increment: "③ M4 DASH manifest 兼出（對帳驗證側：inference/dash.py＋scripts/package_dash.py——parse variant/master m3u8 嚴格形狀、render_mpd deterministic per-codec AdaptationSet＋EXTINF 重建 SegmentTimeline、package_dash 四重對帳＋manifest 本體 ffprobe 驗證不過不交付、零重編碼 HLS bundle 唯讀；12 tests，CPU 375）——code commit 12a5eabe，三檔 blob 7576ce4b／f32e4490／b2135e1a 首次即 byte-exact；checkpoint 合體：對岸 2c9fff79 乾淨版交棒＋本 entry prepend＋trim pass-26"
 ci_yml: content_ready_pending_user_upload   # MCP token 推 .github/workflows 被 403（insufficient scopes）；內容已交付使用者
 issues: 1   # #4 RunPod: M2 internal wan_blocks + LoRA real-weight smoke（Claude GPU 任務書，11-25 17:20Z 開立，runbook §0 入口）
 gpu_outputs: m2_external_smoke_passed_reviewed   # PR #3 雙跑通過已判讀（pass 18）；M1/P1a/M2 internal 仍待 Claude 跑
@@ -14,10 +14,10 @@ division_of_labor:
   hourly_agent: "watchlist 核查、docs、CPU 側程式準備、repo 健康、session checkpoint"
   claude: "GPU 驗收執行（runbook 第 1–5 節＋status.md next steps）、CI.yml 上傳（人工作業）、結果回報/落盤、git tag v0.2.0（人工作業）；2026-11-25 使用者擴權：可做其他底模＋HDL on RunPod（紅線不變：H3/LTX/Qwen2.1/FLUX3-Klein/Krea2 不碰）"
 next_hour:
-  - "RESTORE：核對 HEAD 與本檔 head（pass-33：本 session M2 CFG 文字條件 dropout 82d18e37＋本 checkpoint 覆推收斂 pass-32 雙 entry——CPU 363）；repo 已轉 public（匿名 api.github.com 200），拉檔可走 curl raw 零轉錄路線；對岸若推 v1.3 簡繁對照 seed 或其他增量，先消化再增量；Claude 若回報 issue #4 GPU 結果或 v0.2.0 tag，先消化再增量"
-  - "pass 16–33 增量皆已落地請勿重做：Ming gen 第三路徑（4e1d202f）／score provenance（a3067d9b）／runbook §4.1（a7cb7697）／PR #3 判讀＋同步（0a2a3cd7）／watchlist 第十～十五輪（4fad1f38、918001c0+3f3fa0ac、129d5d67 PAVRM Apache 升格、42ec2a64）／encode_texts retry budget（e1896295）／build_av_manifest（3f94b385）／pair+AV latent cache retry budget（1e64d0c1）／joint loader skipped 列明確報缺（cc85d330）／M7a eval seed 24→48（153be48c＋9d83f6c3）／M7a seed 48→100 v1.2（1596c716，漂移已由 ea97af39／6f478fd5 覆正）／manifest_stats 剖析器（1b896e72）／M7a 跨模型 summary 比較器（d4e8d0e3＋773f61e9）／pairs_stats 偏好對剖析器（19881f0a）／pair-latent 預檢閘＋train_dpo fail-fast（afde66af）／score_eval_set.collect() 測試（59163737）／scores 預檢閘＋make_pref_pairs fail-fast（3840eb88）／M7a scorer 簡繁分軌（5d1d26a5）／M4 HLS fMP4/CMAF 分發包 packager（79191bc3）／pairs.jsonl 預檢閘＋encode_pairs fail-fast（39295734＋9b41f3bb）／M2 CFG 文字條件 dropout（82d18e37）；agent 入口改為 docs/status.md＋AGENTS.md"
+  - "RESTORE：核對 HEAD 與本檔 head（pass-33 雙增量：對岸 M2 CFG 文字條件 dropout 82d18e37＋對帳驗證側 M4 DASH manifest 兼出 12a5eabe——CPU 375）；repo 已轉 public（匿名 api.github.com 200），拉檔可走 curl raw 零轉錄路線；對岸若推新 checkpoint 或 v1.3 簡繁對照 seed，先消化再增量；Claude 若回報 issue #4 GPU 結果或 v0.2.0 tag，先消化再增量"
+  - "pass 16–33 增量皆已落地請勿重做：Ming gen 第三路徑（4e1d202f）／score provenance（a3067d9b）／runbook §4.1（a7cb7697）／PR #3 判讀＋同步（0a2a3cd7）／watchlist 第十～十五輪（4fad1f38、918001c0+3f3fa0ac、129d5d67 PAVRM Apache 升格、42ec2a64）／encode_texts retry budget（e1896295）／build_av_manifest（3f94b385）／pair+AV latent cache retry budget（1e64d0c1）／joint loader skipped 列明確報缺（cc85d330）／M7a eval seed 24→48（153be48c＋9d83f6c3）／M7a seed 48→100 v1.2（1596c716，漂移已由 ea97af39／6f478fd5 覆正）／manifest_stats 剖析器（1b896e72）／M7a 跨模型 summary 比較器（d4e8d0e3＋773f61e9）／pairs_stats 偏好對剖析器（19881f0a）／pair-latent 預檢閘＋train_dpo fail-fast（afde66af）／score_eval_set.collect() 測試（59163737）／scores 預檢閘＋make_pref_pairs fail-fast（3840eb88）／M7a scorer 簡繁分軌（5d1d26a5）／M4 HLS fMP4/CMAF 分發包 packager（79191bc3）／pairs.jsonl 預檢閘＋encode_pairs fail-fast（39295734＋9b41f3bb）／M2 CFG 文字條件 dropout（82d18e37）／M4 DASH manifest 兼出（12a5eabe）；agent 入口改為 docs/status.md＋AGENTS.md"
   - "使用者上傳 CI.yml 後：Actions 即為驗證引擎（CI image 需 ffmpeg + tesseract chi-tra＋chi-sim，否則 decode/M7a 測試 skip）"
-  - "③ 候選：P1b 資料引擎下一小件（對齊 docs/model-roadmap.md 現況表）／M7a v1.3 簡繁對照 seed 擴充（100 條補同語意簡中成對＋script 標籤——對岸可能已在進行，開工前必查 mtime 與遠端）；M2 CFG 訓練半邊已落地（82d18e37），推理期 CFG sampler 待 GPU 訓練出帶 null 列的 checkpoint 再議；阿里 11 月窗口 11-30 關閉——最近覆核為第十五輪（2026-11-26，無 delta），窗口過後降為每數輪抽查"
+  - "③ 候選：P1b 資料引擎下一小件（對齊 docs/model-roadmap.md 現況表）／M7a v1.3 簡繁對照 seed 擴充（100 條補同語意簡中成對＋script 標籤——對岸可能已在進行，開工前必查 mtime 與遠端）；M2 CFG 訓練半邊已落地（82d18e37），推理期 CFG sampler 待 GPU 訓練出帶 null 列的 checkpoint 再議；M4 分發層 HLS＋DASH 皆落地（79191bc3／12a5eabe）；阿里 11 月窗口 11-30 關閉——最近覆核為第十五輪（2026-11-26，無 delta），窗口過後降為每數輪抽查"
   - "GPU 下一棒（Claude，依 status.md＋runbook §0）：issue #4 M2 internal wan_blocks＋LoRA real-weight smoke → M1 runpod_m1_eval.sh 5→50 prompts→VBench ±0.02 → P1a（先驗 reward/score.py::_invoke 對真實 VideoReward）→ 正式訓練前換 stable-torch image"
 
 # Session State（每小時 checkpoint）
@@ -47,12 +47,49 @@ HEVC/AV1 提前至 M4 交付（獨立賣點）＋ HLS fMP4/CMAF 分發層
 （pass 31 本 session：inference/hls.py＋scripts/package_hls.py，
 逐 rung ffprobe 驗證不過不交付）＋ **M2 CFG 文字條件 dropout
 落地（pass 33 本 session：null 列訓練機制＋雙 yaml 0.1——推理期
-modality-aware CFG 的訓練半邊）**；363 CPU tests 全綠；GPU 驗收由
+modality-aware CFG 的訓練半邊）**＋ **M4 DASH manifest 兼出落地
+（pass 33 對帳驗證側：inference/dash.py＋scripts/package_dash.py——
+同批 fMP4/CMAF segment 兼出 DASH、零重編碼、manifest 本體 ffprobe
+驗證不過不交付）**；375 CPU tests 全綠；GPU 驗收由
 Claude 執行（runbook §0 開 pod SOP 落地；issue #4＝M2 internal
 wan_blocks＋LoRA real-weight smoke 任務書）；CI.yml 內容備妥待
 上傳；紅線不變。
 
 ## 本輪記錄（新輪加在最上面，保留最近 10 輪）
+
+- 2026-11-26 pass 33 @ 12a5eabe（對帳驗證側，本 session）— ③ M4 分發層
+  小件：DASH manifest 兼出落地（code commit `12a5eabe`）。缺口——
+  11-26 拍板「同批 segment 兼出 DASH」，但 HLS packager 只產
+  master.m3u8，DASH 播放器無 manifest 可吃。`src/theama/inference/
+  dash.py`（parse_variant_playlist／parse_master_playlist 嚴格只認
+  package_hls 形狀、EXTINF 數必須等於 segment URI 數；render_mpd
+  deterministic 靜態 MPD——per-codec AdaptationSet 依首現序、
+  Representation 層 SegmentTemplate 帶 rung 前綴 URI＋EXTINF 重建的
+  精確 SegmentTimeline（1e6 ticks）；muxed segment 的 codecs 沿用
+  video+AAC-LC 同 HLS；package_dash 四重對帳 master 宣告 vs
+  variant playlist vs 磁碟檔案 vs 逐 rung ffprobe，寫 manifest.mpd
+  後 ffprobe 再驗 manifest 本體，不過即 MuxError 不半交付；零重編碼、
+  HLS bundle 唯讀）＋`scripts/package_dash.py`（--json-out
+  deterministic；失敗 exit 1 不寫檔）＋tests/test_m4_dash.py +12
+  （純函數九＋ffmpeg-gated 三：720p 雙 rung bundle E2E 且 HLS master
+  不動、CLI --json-out 連跑一致、缺 master exit 1 不寫檔）。
+  **三檔同 commit 首次即 byte-exact**：dash.py **7576ce4b**／
+  package_dash.py **f32e4490**／test **b2135e1a**（inference／
+  scripts／tests 三目錄 listing 全量對帳無夾帶）；CPU 全套
+  **375 passed**（363+12）。競態實例十六（接龍模式再現）：開工
+  RESTORE 對帳乾淨（HEAD 2e6b4f49），動手前 mtime 第二閘抓到
+  對岸 04:06Z 活動中（M2 CFG dropout 五檔批次）——題目零交集續做；
+  推送前再對帳對岸已落地 `82d18e37`＋`8fe9899d`＋`a03e9cfe`，
+  本 commit 落於 `a03e9cfe` 之上。對岸 82d18e37 獨立驗證：CPU
+  375＝363（其 commit 記錄值）+12、其五檔屬本地樹 04:06Z 批次、
+  設計審閱無異議（p=0 短路不碰 RNG、null token 零向量不增
+  checkpoint 參數、預設 0.0 逐位元不變）。**checkpoint 合體：對岸
+  SAVE 事故十五兩推兩漂停手、本地乾淨版 2c9fff79 交棒——本 session
+  以其為基 prepend 本 entry＋front matter head→12a5eabe＋trim
+  pass-26 一條（事實存專案記憶第二十六輪存檔），維持 11 entries，
+  推送之。** RESTORE 其他：issue #4 仍 OPEN 無留言（Claude 未回報）、
+  tags 空、遠端仍無 .github（CI.yml 待使用者）、temp 無新 GPU
+  輸出；watchlist 第十五輪（11-25 19:09Z）無 delta 本輪不重查。
 
 - 2026-11-26 pass 33 @ 82d18e37（本 session）— ③ M2 audio DiT 骨架
   小件：**classifier-free guidance 文字條件 dropout 落地**（code
@@ -89,6 +126,17 @@ wan_blocks＋LoRA real-weight smoke 任務書）；CI.yml 內容備妥待
   2026-11-26 無 delta；阿里窗口 11-30 關閉後降每數輪抽查）。
   trim：pass-25 M7a seed v1.2 一條移出（事實存專案記憶第二十五
   輪存檔），維持 11 entries。
+  **SAVE 事故第十五實例（checkpoint 兩連漂，whack-a-mole 第二次
+  實證，停手交棒）**：首推 `8fe9899e` 一處疊字（pass-31 entry 內
+  「分發分發層」，+6B）——blob 驗證攔下；覆推 `a03e9cfe` 修掉
+  該處但同遍長兩處新疊字（line 3 註解「設計原設計原則」＋SAVE
+  協議標題「協議（每協議（每」，共 +21B，遠端 36909B）。diff
+  確認僅此兩行有異：**front matter（head 82d18e37／last_increment
+  ／next_hour）與 11 條 entries、RESTORE 協議錨標題逐字完好，
+  RESTORE／trim 功能不受影響**。依事故十一／十三紀律兩敗停手
+  不第三抄；本地乾淨版 blob **24cbaf74**（36888B）即本檔，對岸
+  下一輪 checkpoint 以本檔為基覆寫即自然收斂；壞 commit 兩枚
+  留史不強推。
 
 - 2026-11-25 pass 32 @ 9b41f3bb（本 session）— ③ P1a 資料引擎小件：
   **pairs.jsonl 預檢閘＋encode_pairs fail-fast 落地**（code commits
@@ -422,32 +470,6 @@ wan_blocks＋LoRA real-weight smoke 任務書）；CI.yml 內容備妥待
   grep 結構驗證（10 entries、四 section 齊、邊界乾淨）。教訓：
   trim 錨點必須用含後綴的完整標題，且 trim 後必做結構掃描。
 
-- 2026-11-25 pass 26 @ 773f61e9 — ③ M7a gen/score 實跑準備最後一塊：
-  `scripts/compare_m7a_summaries.py` 跨模型 summary 並排比較器＋10 tests
-  （code commits `d4e8d0e3`＋`773f61e9`，雙檔 blob **a2bb51fa**／
-  **bf086ad1** 首次即 byte-exact）。缺口：100 列 v1.2 seed 實跑後，
-  qwen／zimage（＋diagnostic-only ming）三路各產一份
-  `<stem>.summary.json`，驗收判讀此前要手開三檔對讀。本工具以
-  score_cjk_text provenance 的 model 欄位為列標籤（缺省退回檔名
-  stem）、重複標籤拒絕（表格歧義 fail-loud）；類別聯集 null 填補
-  （該模型沒跑過的類別顯示 `-`）＋ per-category spread（哪些類別
-  拉開模型差距）；import gen_cjk_images.EXPERIMENTAL_MODELS 把
-  ming-image-design 標 diagnostic_only 並排除出 gate_models；
-  文字表 stdout＋deterministic JSON --out（sorted keys，diff 兩次
-  run 有意義）；與 manifest_stats 同規「描述不判決」——結構錯誤
-  （缺檔／壞 JSON／缺 key）exit 1，內容高低 exit 0。純函數
-  build_comparison 無檔案依賴。測試 10 項：純函數六（標籤與
-  overall、類別聯集＋null、ming 旗標＋gate_models、重複標籤拒絕、
-  stem 退回、缺 key 拒絕）＋CLI 四（表＋deterministic --out 連跑
-  兩次一致、單檔 exit 1、壞 JSON exit 1、缺檔 exit 1）。RESTORE
-  對帳乾淨（開工 HEAD 845e29a0＝記憶、session-state blob 9dbd606f
-  ／eval aa87fac9／roadmap 77e790e4 三驗一致、無 Claude GPU commit、
-  tags 空、issues 0、temp 無新上傳、mtime 掃描無對岸活動）；推送前
-  再對帳無競態。CPU 全套 **274 passed**（264+10）。trim：pass 17
-  stub 與 pass 18 移出（事實存於專案記憶第十七／十八輪存檔）。
-  watchlist 本輪不重查（第十四輪 12:14Z 無 delta；阿里窗口 T-5，
-  11-30 關閉前最後覆核留給下輪或對岸）。
-
 ## RESTORE 協議（每輪第 0 步，依序執行）
 
 1. 讀取本檔 front matter。若 `head` 與遠端 HEAD 不一致，先 `list_commits`
@@ -461,7 +483,7 @@ wan_blocks＋LoRA real-weight smoke 任務書）；CI.yml 內容備妥待
    `docs/gpu-acceptance-runbook.md`（GPU 進度）→ 使用者當輪貼文。
    專案記憶 mount 可用時亦以本檔為準對帳。
 
-## SAVE 協議（每協議（每輪最後一步；僅有進度時執行）
+## SAVE 協議（每輪最後一步；僅有進度時執行）
 
 1. 更新 front matter（`updated_at`、`head`、`last_increment`、`blockers`、
    `next_hour`）並在「本輪記錄」頂端加一行：
