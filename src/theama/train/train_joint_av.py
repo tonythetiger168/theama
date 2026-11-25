@@ -92,16 +92,83 @@ def sinusoidal_time_embedding(
     return emb
 
 
+def sample_cfg_drop_mask(
+    batch: int,
+    drop_prob: float,
+    device=None,
+    generator: torch.Generator | None = None,
+) -> torch.Tensor:
+    """Bernoulli mask over batch rows; True rows train on the null text cond.
+
+    This is the training half of classifier-free guidance (CFG) for the audio
+    stream: a fraction of rows sees the unconditional (null) conditioning so
+    inference can later extrapolate between null and text-conditioned
+    predictions per modality. ``p == 0`` and ``p == 1`` short-circuit without
+    touching the RNG, so a zero dropout rate leaves the training stream
+    bit-identical to pre-CFG runs.
+    """
+    if batch < 1:
+        raise ValueError(f"batch must be >= 1, got {batch}")
+    p = float(drop_prob)
+    if not 0.0 <= p <= 1.0:
+        raise ValueError(f"cfg drop probability must be in [0, 1], got {drop_prob}")
+    if p == 0.0:
+        return torch.zeros(batch, dtype=torch.bool, device=device)
+    if p == 1.0:
+        return torch.ones(batch, dtype=torch.bool, device=device)
+    return torch.rand(batch, device=device, generator=generator) < p
+
+
+def apply_cfg_dropout(
+    cond: torch.Tensor,
+    drop_mask: torch.Tensor,
+    null_cond: torch.Tensor | None = None,
+) -> torch.Tensor:
+    """Return ``cond`` with masked rows replaced by the null (unconditional) embedding.
+
+    ``cond`` is the pooled text conditioning ``(B, D)``; ``drop_mask`` is a
+    bool tensor of shape ``(B,)`` — True rows become unconditional. The null
+    embedding defaults to a zero vector (state-free null token, so enabling
+    CFG dropout adds no checkpointed parameters); pass ``null_cond`` of shape
+    ``(D,)`` or ``(1, D)`` to override. An all-False mask returns ``cond``
+    unchanged (no copy, no numeric drift).
+    """
+    if cond.ndim != 2:
+        raise ValueError(f"cond must be 2-D (B,D), got {tuple(cond.shape)}")
+    if not isinstance(drop_mask, torch.Tensor) or drop_mask.dtype != torch.bool:
+        raise TypeError("drop mask must be a bool tensor")
+    if drop_mask.ndim != 1 or drop_mask.shape[0] != cond.shape[0]:
+        raise ValueError(
+            f"drop mask must have shape ({cond.shape[0]},), got {tuple(drop_mask.shape)}"
+        )
+    if not bool(drop_mask.any()):
+        return cond
+    if null_cond is None:
+        null = torch.zeros(cond.shape[-1], device=cond.device, dtype=cond.dtype)
+    else:
+        if null_cond.ndim not in {1, 2} or null_cond.shape[-1] != cond.shape[-1]:
+            raise ValueError(
+                f"null_cond must have shape (D,) or (1,D) with D={cond.shape[-1]}, "
+                f"got {tuple(null_cond.shape)}"
+            )
+        null = null_cond.reshape(1, -1).to(device=cond.device, dtype=cond.dtype)
+    out = cond.clone()
+    out[drop_mask.to(cond.device)] = null.expand(int(drop_mask.sum()), -1)
+    return out
+
+
 class JointAVTrainer:
     """Bridge-warmup then full-audio fine-tuning with a frozen video backbone.
 
     Config keys: ``phase`` (``bridge`` or ``full``), ``lr``, ``weight_decay``,
     ``audio_loss_weight``, ``video_loss_weight``, ``max_grad_norm``, ``mu``,
     ``sigma``, ``time_scale``, ``bridge_lora_rank`` (0 disables LoRA),
-    ``bridge_lora_alpha`` (defaults to ``2 * rank``) and ``bridge_location``
-    (``latent_pre_backbone`` or ``wan_blocks``). Changing phase rebuilds
-    the optimizer so no stale optimizer state is carried across the
-    warmup/full boundary.
+    ``bridge_lora_alpha`` (defaults to ``2 * rank``), ``bridge_location``
+    (``latent_pre_backbone`` or ``wan_blocks``) and ``cfg_dropout`` (text-
+    conditioning drop probability for classifier-free guidance; default 0.0
+    disables it and leaves training bit-identical to pre-CFG runs). Changing
+    phase rebuilds the optimizer so no stale optimizer state is carried
+    across the warmup/full boundary.
 
     With ``bridge_lora_rank > 0`` the bridge phase injects LoRA into every
     bridge ``v2a``/``a2v`` out-projection and trains only the low-rank
@@ -125,10 +192,13 @@ class JointAVTrainer:
             "bridge_lora_rank": 0,
             "bridge_lora_alpha": None,
             "bridge_location": "latent_pre_backbone",
+            "cfg_dropout": 0.0,
             **(config or {}),
         }
         if self.config["bridge_location"] not in {"latent_pre_backbone", "wan_blocks"}:
             raise ValueError(f"unknown M2 bridge_location: {self.config['bridge_location']}")
+        if not 0.0 <= float(self.config["cfg_dropout"]) <= 1.0:
+            raise ValueError(f"cfg_dropout must be in [0, 1], got {self.config['cfg_dropout']}")
         self.optimizer: torch.optim.Optimizer | None = None
         self._trainable_params: list[torch.nn.Parameter] = []
         self.set_phase(self.config["phase"])
@@ -177,7 +247,11 @@ class JointAVTrainer:
         (B,Tv,Dv) or Wan latents (B,C,F,H,W), and pooled audio ``cond`` (B,Da).
         Wan batches additionally supply ``video_cond`` (B,L,4096), which is
         passed directly to the video adapter. Optional ``audio_noise`` and
-        ``video_noise`` make the step deterministic for tests/replays.
+        ``video_noise`` make the step deterministic for tests/replays, and an
+        optional bool ``cfg_drop_mask`` (B,) overrides the sampled CFG dropout
+        mask (rows marked True train on the null text cond; the mask is
+        applied to the pooled ``cond`` before the time embedding is added, so
+        unconditional rows still receive their timestep).
         """
         if self.optimizer is None:
             raise RuntimeError("optimizer is not initialized")
@@ -202,6 +276,14 @@ class JointAVTrainer:
 
         device = audio.device
         batch_size = audio.shape[0]
+        drop_mask = batch.get("cfg_drop_mask")
+        if drop_mask is None:
+            drop_mask = sample_cfg_drop_mask(
+                batch_size,
+                float(self.config["cfg_dropout"]),
+                device=device,
+            )
+        cond = apply_cfg_dropout(cond, drop_mask)
         t_a = logit_normal_sample(
             batch_size,
             mu=float(self.config["mu"]),
@@ -268,4 +350,5 @@ class JointAVTrainer:
             "grad_norm": float(grad_norm.detach()),
             "t_audio_mean": float(t_a.mean()),
             "t_video_mean": float(t_v.mean()),
+            "cfg_dropped": float(drop_mask.sum()),
         }

@@ -34,6 +34,7 @@ training:
   mu: 0.0
   sigma: 1.0
   time_scale: 1000.0
+  cfg_dropout: 0.1  # CFG text-cond dropout (null rows) — enables modality-aware CFG at inference
 acceptance:
   av_sync_offset_ms_max: 40
   human_belonging_score_min: 7

@@ -5,7 +5,9 @@
 here is CPU-testable. The runner owns what the trainer deliberately does not:
 
   * config plumbing from ``configs/m2_joint_av.yaml`` (model dims, trainer
-    kwargs, text-embedding width);
+    kwargs, text-embedding width); the ``training.cfg_dropout`` key flows
+    straight through ``trainer_config`` into the trainer's classifier-free-
+    guidance conditioning dropout;
   * the text->audio conditioning pooler (``cond_pooler``), attached to the
     :class:`~theama.model.audio_dit.AudioDiT` *before* trainer construction so
     phase handling covers it: frozen during bridge warmup, trained in the full
