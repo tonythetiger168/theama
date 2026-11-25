@@ -1,6 +1,6 @@
 ---
 # Theama session checkpoint — hourly agent runs save/restore THIS file.
-# 設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
+# 設計原設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
 schema: 1
 updated_at: "2026-11-25T20:10:00Z"
 head: 82d18e37ea056df0d1282d6f7f97d6f036e704f1
@@ -232,7 +232,7 @@ wan_blocks＋LoRA real-weight smoke 任務書）；CI.yml 內容備妥待
   **02b3589a**／test **856d9771**（src/image＋scripts＋tests 三目錄
   listing 全量對帳無夾帶）；CPU 全套 **326 passed**（315+11）。
   **RESTORE 大事件：對岸三 docs commit 消化**——9db4c982（M7a 簡中
-  優先）／8a84f7cc（HDR+AV1 提前至 M4＋HLS fMP4/CMAF 分發分發層，驗收
+  優先）／8a84f7cc（HDR+AV1 提前至 M4＋HLS fMP4/CMAF 分發層，驗收
   +2 條 ffprobe 閘；M6b 走 LL-HLS/WebRTC）／8250bb22（runbook §0
   RunPod 開 pod SOP，issue 驅動）；三檔以遠端為準回寫本地 byte-exact
   （runbook 09fc9852 一次過／training-plan 70b8580e 首抄誤植一處
@@ -461,7 +461,7 @@ wan_blocks＋LoRA real-weight smoke 任務書）；CI.yml 內容備妥待
    `docs/gpu-acceptance-runbook.md`（GPU 進度）→ 使用者當輪貼文。
    專案記憶 mount 可用時亦以本檔為準對帳。
 
-## SAVE 協議（每輪最後一步；僅有進度時執行）
+## SAVE 協議（每協議（每輪最後一步；僅有進度時執行）
 
 1. 更新 front matter（`updated_at`、`head`、`last_increment`、`blockers`、
    `next_hour`）並在「本輪記錄」頂端加一行：
