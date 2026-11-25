@@ -2,7 +2,7 @@
 # Theama session checkpoint — hourly agent runs save/restore THIS file.
 # 設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
 schema: 1
-updated_at: "2026-11-25T11:20:00Z"
+updated_at: "2026-11-25T11:24:00Z"
 head: cc85d3307aa366dcac16b04dc5aad239c95e7ab6
 head_verified: true
 last_increment: "③ P1b 下游消費者補強：joint_latent_loader 對 retry-budget skipped 列明確報缺（skipped_av_row／skipped_text_row drop reason，不再誤報 missing_keys；fail-closed serving 不變）；tests +2（skipped 列真因報缺＋reset 重燒回補 lifecycle），CPU 255 passed；commit cc85d330 雙檔 blob SHA 驗證一致"
@@ -63,6 +63,36 @@ RunPod 亦可）；CI.yml 內容備妥待上傳；紅線不變。
   下一個③候選：阿里 11-30 窗口關閉前最後覆核；或 M2 audio DiT
   骨架小件。
 
+- 2026-11-25 pass 23 @ cc85d330（對帳驗證側）— **競態實例十（工作
+  中途撞車，本 session 主動撤退、零浪費收場）**：RESTORE 乾淨
+  （HEAD c1d93362、無 Claude GPU commit、tags 空、issues 0、temp
+  無新上傳、開工前 mtime 掃描無對岸活動）後，本 session 獨立選中
+  同一個③候選（pass-22 next_hour 明列的 skipped 列下游核查），
+  完成缺口分析（三 cache planner 對 skipped 列皆安全——reuse 恆
+  要求磁碟 .pt 驗證；唯一缺口＝join 誤報 missing_keys）並開始
+  實作：docstring 第一處 edit 落地（11:08Z）後，第二處 edit 失敗
+  ——檔案已含對岸 11:09:55Z 寫入的 skipped 處理碼（對岸工作中，
+  其 test 檔 11:10:49Z 亦落地）。依紀律立即停止自版：11:11:30Z
+  精準撤回自己的 docstring hunk（檔案還原至對岸內容）、不碰
+  對岸檔、不在範圍不明時擴散至 dataset.py，轉獨立驗證。對岸
+  11:15:17Z 推 code `cc85d330`（雙檔、parent c1d93362 乾淨、
+  +15/−1 與 +74/−1 無夾帶）、11:20:49Z 推 pass-23 checkpoint
+  `00a90fdb` 後核驗：雙檔 blob 本地 hash-object 重算一致
+  （loader 723a2506／test 91981524，14008／14416 bytes），
+  checkpoint blob 64059201 一致（size 26445）；CPU 全套獨立
+  重跑 **255 passed**；本地樹無其他 drift。設計審閱無異議：
+  skipped 判定先於 caption／missing_keys 順序正確、fail-closed
+  serving 不變僅改回報真因；兩新測試斷言不空洞（先驗 manifest
+  確帶 skipped 列、無 latent keys、非 error 列；lifecycle 覆蓋
+  reset→重燒→records 全回補 dropped {}）。補充核查（關閉審計
+  迴路，結論無需動碼）：data-card 側（dataset.py／loader.py）
+  無 skipped 列生產者（build_av_manifest skip 不半寫），silent
+  -accept 僅理論風險；summarize_encoding 直接餵 skipped 列會誤計
+  encoded，但三處 call site 皆先濾 plan.skipped。**教訓（實例十）：
+  熱門待辦即使開工前掃描乾淨，對岸仍可能同分鐘開工——長讀檔後
+  動手前可再掃一次 mtime；edit 失敗（anchor 不符）本身就是撞車
+  訊號，應先讀檔確認再決定撤退或續行。**
+
 - 2026-11-25 pass 22 @ 1e64d0c1 — ③ P1b pair/AV latent cache 對齊 retry
   budget（本 session 增量，對岸 pass-20 next_hour 明列候選）：把
   text_cache（e1896295）的 opt-in failure ledger 移植到兩個 media
@@ -107,7 +137,7 @@ RunPod 亦可）；CI.yml 內容備妥待上傳；紅線不變。
   check_av_manifest.py（49ac389a）等無漂移。設計審閱：通用
   _ledger_* 核心＋per-cache 綁定 wrappers、預設 None 零 ledger
   I/O、tmp+replace 原子寫／毀損降級 {}／strict 先記後 raise 皆與
-  text_cache 對齊，無異議；觀察一項（非缺陷，不另開工）：skip
+  text_cache 對對齊，無異議；觀察一項（非缺陷，不另開工）：skip
   判定純 index-keyed（ledger entry 存 prompt_id/prompt 但未參與
   比對）——pairs.jsonl reorder／編輯後同 index 換成不同 pair 會
   沿用舊 entry 被跳過；recovery 路徑已足（--reset-failures，或
@@ -151,7 +181,7 @@ RunPod 亦可）；CI.yml 內容備妥待上傳；紅線不變。
   .wav>.mp3>.flac>.m4a）與檔名 tie-break，與目錄列舉順序無關。
   ffprobe best-effort 補 duration/fps/width/height（無 ffprobe 或
   失敗則省略，可 --no-probe）；unpaired／無 caption／無 source 列
-  skip reason 不半寫；輸出已存在須 --force。新測試檔
+  skip reason 不半不半寫；輸出已存在須 --force。新測試檔
   test_m2_build_av_manifest.py +13（happy path 排序、sidecar 覆寫、
   三類 skip、無 source、forbidden 參數化 ×3、副檔名優先級、壞
   sidecar、main→load_manifest strict roundtrip、覆寫守衛、無
@@ -163,7 +193,7 @@ RunPod 亦可）；CI.yml 內容備妥待上傳；紅線不變。
   （228+13）後推送，無衝突（不同檔）。雙檔 blob SHA 驗證一致
   （script 1c76fafe／test 0bb4887c，本地 git hash-object 重算相同）。
   RESTORE：HEAD adcf6b40 乾淨、無 Claude GPU 新 commit、tags 空、
-  issues 0、temp 無新上傳。**順帶修復 checkpoint 檔歷史殘段**：遠端
+  issues 0、temp 無新上傳。**順帶修復 checkpoint 檔檔歷史殘段**：遠端
   f27f2a24 版「## RESTORE 協議」重複出現兩次，且第一份 item 2 混入
   pass-13 entry 截尾（「…改以 `docs0 未打）、issues 0…199 passed…
   39225c0f／8b41f5de」）——應為過往 trim 10 輪時切錯邊界所致；
