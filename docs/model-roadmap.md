@@ -44,7 +44,7 @@
 
 ## Watchlist（上游釋出追蹤）
 
-最近核查：**2026-11-26**（第十五輪）。
+最近核查：**2026-11-26**（第十六輪）。
 
 - **Wan-Animate-2-14B**（Apache-2.0）— M6a 底座候選，已寫入
   `configs/theama_base.yaml`。repo id 已核對：`Wan-AI/Wan2.2-Animate-2-14B`
@@ -53,6 +53,10 @@
   `Wan-AI/Wan2.2-Animate-2-14B-Distilled-Diffusers`（base + distilled 權重）。
   官方 quick start 只列 character animation；replacement 仍是第一代
   `Wan-AI/Wan2.2-Animate-14B` 的能力，M6a 不預設使用。
+  2026-11-26 第十六輪補：GitHub repo id 補登
+  `Wan-Video/Wan-Animate-2`（官方 repo，392★）——與 HF 三 id
+  併列為 M6a 底座完整索引；base＋distilled 權重／Apache-2.0
+  本輪再核無變化。
 - **Wan 3.x 開權重** — 仍 API-only（2026-11-25 再次確認；2026-11-05 多方核查：Wan-AI HF 27 個 repo、
   Wan-Video GitHub 6 個 repo 均無 2.5/2.6/2.7/3.0 權重；官方
   `AlibabaCloud-Official/Wan3.0` 僅 README + license 檔）。骨幹續用 Wan 2.2。
@@ -96,6 +100,13 @@
   checkpoint／GitHub repo／license 文本，最新開放權重仍 Wan 2.2
   系）。Wan-Animate-2 repo id 覆核無變化（base＋distilled 雙
   checkpoint 均在 Wan-AI HF，Apache-2.0）。
+  2026-11-26 第十六輪覆核：11 月窗口 T-4，中英文檢索
+  仍僅 2026-09-22 雲棲預告（多源一致：下一代影片模型「更長、
+  更可控、更完整、更智能」，11 月發布），無發布公告或權重；
+  Wan 3.x 日期補精確（2026-08-06 public beta／08-24 正式
+  上線，API-only、無 license 文本）＋四代旗艦連閉摘要
+  （atlascloud 2026-08-26 逐 33 repo 核查佐證）。骨幹續用
+  Wan 2.2。
 - **Qwen-Image 新版** — **Qwen-Image-2.1（7B，2026-09-20）統一 T2I+編輯+原生 RGBA，
   但為 Qwen Research License（非商用）→ 紅線確認，不碰**；2.1-Turbo（2026-10-09，8-step）
   同授權。Qwen-Image-3.0 為 hosted-only。Apache-2.0 線最新仍是
@@ -137,6 +148,9 @@
   單流 DiT，但 Qwen Research License 非商用）；2512（2025-12-31，
   20.4B MMDiT）為 20B 分支收官版、Apache-2.0 可商用——「要商用
   只有 2512 能用」與本專案紅線劃分一致。紅線不變、M7a 選型不變。
+  2026-11-26 第十六輪：2.1／2.1-Turbo 研究授權、
+  2512／Edit-2511 Apache 線、3.0／3.1 hosted-only，
+  覆核無變化。
 - **開源 video reward 新模型** — awesome-rm-for-video-generation（2026-10 更新）新增
   AesRM（專家標註美學 RM，base + CoT 變體）、UnifiedReward-Flex、GT-SVJ（self-supervised
   judge）等；授權與權重可得性未逐一核實，VideoReward 仍為首選，暫不加第二把尺。
@@ -232,7 +246,7 @@
   仍綁 LTX-2（紅線），本專案僅取 reward 方法論參考，維持觀察、不改
   P1a／M2 配方。Omni-RL Judge 仍僅 ResearchGate 條目。Wan-Animate-2
   repo id／Wan 3.x API-only／阿里下一代模型未發布／Qwen-Image 紅線，
-  本輪覆核無變化。repo 健康：CI.yml 仍未上傳（無 `.github/` 目錄）、
+  本輪覆核無變化。repo 健康：CI.yml 仍未上傳（無 `.github/` 目號錄）、
   issues 0；沙箱執行環境與專案記憶 mount 本輪仍不可用，維持 docs-only。
   2026-11-25 第九輪覆核：新增 **GenRM-Flow**（arXiv 2611.11421，
   2026-11-08，Siming Fu 等）——偏好微調後的影片生成器本身就是
@@ -292,6 +306,23 @@
   **RewardDance**（reward scaling 研究：judge 換更大生成式 VLM
   的規模律與抗 hacking 魯棒性）。四者授權／權重可得性均未核實，
   VideoReward 首選不變，維持觀察、不改 P1a 配方。
+  2026-11-26 第十六輪：兩筆升級觀察。① **VA-Judger**
+  從「授權未核實」升級為「成品已上架」——GitHub
+  `ShareLab-SII/VA-Judger`（Fudan ShareLab，2026-08-20 發布
+  basic code＋checkpoints＋VA-Judger-Bench；HF
+  `ShareLab-SII/VA-Judger` 權重、`ShareLab-SII/VA-Judger-Bench`
+  資料集）。論文 hard id 已錄（arXiv 2608.18607）；post-train
+  人類偏好率 62.30% vs OmniNFT 27.63% vs 原 LTX-2 10.08%
+  （11/13 客觀指標最佳）——紅線僅禁 LTX-2 權重／輸出，judge
+  本身授權本輪因 HF API 不可達（HTTP 000）待核，若相容列為
+  M2 後訓練 A/V 偏好 reward 首選候選；底模 Qwen3-Omni-30B-A3B
+  推測沿用 Qwen 系授權，以 model card 為準。② **IsoVRBench**
+  （arXiv 2610.17234，2026-10，S 級）——無人類回饋的 video-RM
+  評測基準（自動構造 isomorphic 影片對），現有 RM 排名：
+  VideoScore v1.1 60.1／VisionReward 72.6／VideoScore2
+  49.4／GPT-4.1 76.0／Qwen3-VL-8B 72.8 vs Human 100——可作
+  theama scorer（VideoReward 首選）的交叉驗證參考板，
+  授權／程式碼可得性未核實，列觀察。P1a 配方不變。
 - **AV leaderboard（Artificial Analysis Video Arena with-audio）現況**
   （2026-11-25 第十一輪補；M5 品質目標的對標板）——**T2V w/audio**
   （11-13 快照）：Wan 3.0 第一（Elo 1175）、Utopai X（H3 post-train）
@@ -343,7 +374,7 @@
   授權差異化。
   2026-11-26 第二筆補記（交付格式拍板）：**HDR＋AV1 提前至 M4 交付**
   並列為獨立賣點——現無任何生成模型交付 10-bit HDR10/HLG＋AV1
-  （Wan 3.0 鎖 1080P 8-bit、H3 鎖 2K 8-bit、Seedance 2.5 8-bit SDR）；
+  （Wan 3.0 鎖 1080P 8-bit、H3 鎖 2K 8-bit、Seedance 2.5 8-bit SDR）;
   新增 **HLS 分發層**——fMP4/CMAF segment＋master .m3u8 自適應階梯
   （4K HDR AV1 → 1080p HEVC → 720p/480p H.264，HEVC 層為 Safari
   fallback 屬必需，同批 segment 兼出 DASH）；Avatar 實時線（M6b）
