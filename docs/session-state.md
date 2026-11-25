@@ -2,24 +2,23 @@
 # Theama session checkpoint — hourly agent runs save/restore THIS file.
 # 設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
 schema: 1
-updated_at: "2026-11-25T02:33:04Z"
-head: bec71587da952dcbcd8e7ab757a6b9b8bed9ae3e
+updated_at: "2026-11-25T03:20:00Z"
+head: 6a08957c73c47859c1ae684e07400963a272ba8f
 head_verified: true
-last_increment: "P1b text cache：content-addressed umT5 embedding cache（text_cache.py + encode_texts.py + 14 tests，184 passed）；同輪消化遠端漂移（M7a 腳本/runbook/session-state/CLAUDE.md/0.2.0 bump 已同步本地）並補驗證 M7a 雙腳本（py_compile + scorer 純函數 + 無 chi_tra 錯誤路徑）"
+last_increment: "P1b training-side joint latent loader：joint_latent_loader.py（AV+text manifest join，fail-closed：雙成功列才上桌、model 過濾、caption 交叉核對、.pt 建構時驗證＋逐次 finite 複查、seq_len mask、masked-mean pool＋cond_pooler 接 train_step）＋15 tests（199 passed）"
 ci_yml: content_ready_pending_user_upload   # MCP token 推 .github/workflows 被 403（insufficient scopes）；內容已交付使用者
 issues: 0
 gpu_outputs: none_pending_review            # Claude 接手 GPU 驗收；若其 push 結果，下輪 RESTORE 對帳
 blockers:
-  - "（已解除）專案記憶 mount 與沙箱執行環境：本輪均恢復可用（記憶檔可讀寫、pytest 184 passed）"
   - "本地 docs/model-roadmap.md 為 echo 逐字轉錄版，與遠端 blob 83cd3626 差 33 bytes（疑為 echo 層不可見字元 artefact）；以遠端為準，本地勿推送此檔"
 division_of_labor:
   hourly_agent: "watchlist 核查、docs、CPU 側程式準備、repo 健康、session checkpoint"
   claude: "GPU 驗收執行（runbook 第 1–4 節）、CI.yml 上傳（人工作業）、結果回報/落盤、git tag v0.2.0（人工作業）"
 next_hour:
   - "RESTORE：核對 HEAD 與本檔 head；Claude 若已 push GPU 結果或 v0.2.0 tag，先消化再增量"
-  - "GPU 側新增可跑項：scripts/encode_texts.py --smoke（umT5 text cache contract，與 encode_av_latents 同模式）"
+  - "GPU 側新增可跑項：scripts/encode_texts.py --smoke（umT5 text cache contract，與 encode_av_latents 同模式）；loader 已就緒，cache 建好後 joint training smoke 可直接接"
   - "使用者上傳 CI.yml 後：Actions 即為驗證引擎（CI image 需 ffmpeg + tesseract chi-tra，否則 decode/M7a 測試 skip）"
-  - "續做 ③：P1b 資料引擎（text cache 已落地，剩 joint training 接 cache 的 training-side loader）；watchlist 固定四項覆核"
+  - "續做 ③：joint training GPU 薄殼 scripts/train_joint_av.py（接 build_joint_latent_dataloader；CPU 側 loader 本輪已落地）；watchlist 固定四項覆核（阿里下一代 11 月窗口進入最後一週，仍無發布）"
 ---
 
 # Session State（每小時 checkpoint）
@@ -27,12 +26,26 @@ next_hour:
 ## 現況一句話
 
 版本 0.2.0（CPU 側程式全落地、GPU 驗收待跑）；本輪新增 P1b
-content-addressed umT5 text cache（184 CPU tests 全綠）；沙箱與專案
-記憶 mount 均已恢復；GPU 驗收由 Claude 依 docs/gpu-acceptance-runbook.md
-執行；CI.yml 內容備妥待上傳；紅線不變。
+training-side joint latent loader（cache manifests → JointAVTrainer
+batch，199 CPU tests 全綠）；GPU 驗收由 Claude 依
+docs/gpu-acceptance-runbook.md 執行；CI.yml 內容備妥待上傳；紅線不變。
 
 ## 本輪記錄（新輪加在最上面，保留最近 10 輪）
 
+- 2026-11-25 pass 13 @ 6a08957 — P1b training-side loader：新檔
+  `src/theama/data/joint_latent_loader.py`（join 兩 cache manifest 於
+  sample index，fail-closed——僅雙成功列上桌、model 過濾預設取各 cache
+  meta.json、AV/text caption 交叉核對補 AV drift guard 刻意不管
+  caption 編輯的缺口、Dataset 建構時全量驗 ndim+finite 且 __getitem__
+  逐次複查、collate 產 video_tokens/audio_latent/video_cond/text_mask
+  並經 masked-mean pool＋cond_pooler 補 cond）、
+  `tests/test_m2_joint_latent_loader.py` 15 例（join 交集/丟棄計數、
+  caption 漂移排除、model/meta 守衛、NaN/損毀拒絕、mask/pool 正確性、
+  DataLoader→train_step E2E）。watchlist 覆核無變化（Wan 3.x 仍
+  API-only、阿里下一代 11 月窗口最後一週仍無發布、Qwen-Image 紅線不變、
+  VA-Judger 仍首選）；tags 空（v0.2.0 未打）、issues 0、.github 未上。
+  CPU 全套 199 passed（184+15）。兩檔 blob SHA 驗證一致
+  （39225c0f／8b41f5de）。
 - 2026-11-25 pass 12 @ bec7158 — P1b text cache：新檔
   `src/theama/data/text_cache.py`（content-addressed
   `text_{sha256(caption)[:16]}.pt`——caption 編輯結構性失效，舊檔成
