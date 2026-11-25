@@ -2,20 +2,20 @@
 # Theama session checkpoint — hourly agent runs save/restore THIS file.
 # 設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
 schema: 1
-updated_at: "2026-11-25T01:13:54Z"
-head: 3738703ced791acba7dfd8355403e4b7375bddfd
+updated_at: "2026-11-25T01:18:39Z"
+head: 8657e3613a29089aa21e1545081e5162173718d2
 head_verified: true
-last_increment: "watchlist 第七輪：Omni-RRM（2602.00846）／LongCat-Video-Avatar 1.6（2611.18822）／FlowPortrait hard id（2603.00159）入觀察；docs-only"
+last_increment: "watchlist 第八輪：VA-Judger repo 狀態更新（checkpoints＋VA-Judger-Bench 已釋出、RM SFT 碼與 VAPref-10K 未釋出、checkpoint 授權未標示）；四大固定項覆核無變化；repo 健康巡檢；docs-only"
 ci_yml: not_uploaded            # 使用者尚未上傳 .github/workflows/CI.yml；repo 無 .github/ 目錄
 issues: 0
 gpu_outputs: none_pending_review
 blockers:
-  - "專案記憶 mount（/1a20b091…/areas/theama.md）連續兩輪讀取失敗 → 本檔續為唯一可靠 checkpoint"
-  - "沙箱執行環境連續兩輪不可用（shell/ipython 全掛）→ 無法跑 pytest / GPU smoke，僅 docs 級增量"
+  - "專案記憶 mount（/1a20b091…/areas/theama.md）連續三輪讀取失敗 → 本檔續為唯一可靠 checkpoint"
+  - "沙箱執行環境連續三輪不可用（shell/ipython 全掛）→ 無法跑 pytest / GPU smoke，僅 docs 級增量"
 next_hour:
   - "RESTORE：核對 HEAD 與本檔 head；不一致先 list_commits 對帳再增量"
   - "沙箱若恢復：補寫專案記憶；優先 ③ 程式小件（M2 audio DiT 骨架 / P1b 資料引擎管線 / encode-score 腳本強化），CI.yml 上傳後跑 pytest"
-  - "沙箱仍未恢復：續做 ② watchlist 輕量核查（重點：阿里下一代模型 11 月窗口最後一週、Omni-RL Judge arXiv id、Omni-RRM 授權）或 ④ repo 健康巡檢"
+  - "沙箱仍未恢復：續做 ② watchlist 輕量核查（重點：阿里下一代模型 11 月窗口倒數、Omni-RL Judge arXiv id、VA-Judger checkpoint 授權逐卡核驗）或 ④ repo 健康巡檢"
 ---
 
 # Session State（每小時 checkpoint）
@@ -23,12 +23,19 @@ next_hour:
 ## 現況一句話
 
 M1 / P1a / M2 程式全部落地、GPU 驗收全部待跑；watchlist 已核查至
-2026-11-25 第七輪（新增 Omni-RRM、LongCat-Video-Avatar 1.6、FlowPortrait
-hard id 三筆觀察，不改 P1a/M2 配方）；session save/restore 機制運作中
+2026-11-25 第八輪（VA-Judger checkpoints＋bench 已於 8 月釋出、授權
+未標示待逐卡核驗；不改 P1a/M2 配方）；session save/restore 機制運作中
 （本檔）；CI.yml 待使用者上傳；授權紅線不變。
 
 ## 本輪記錄（新輪加在最上面，保留最近 10 輪）
 
+- 2026-11-25 pass 8 @ 8657e36 — watchlist 第八輪：VA-Judger repo 狀態
+  更新（ShareLab-SII/VA-Judger 自 2026-08-20 釋出基礎程式碼、
+  checkpoints 與 VA-Judger-Bench；RM SFT 程式碼與 VAPref-10K 仍 to-do；
+  RM 本體為 Qwen3-Omni-30B-A3B 全參微調；checkpoint 授權未標示，
+  維持觀察）；Wan-Animate-2 repo id／Wan 3.x API-only／阿里下一代
+  未發布／Qwen-Image 紅線覆核無變化；CI.yml 未上傳、issues 0；
+  沙箱仍掛，docs-only。
 - 2026-11-25 pass 7 @ 3738703 — watchlist 第七輪：Omni-RRM（arXiv
   2602.00846，四模態統一 RM，P1a＋M2 reward 單一 judge 候選）、
   LongCat-Video-Avatar 1.6（arXiv 2611.18822v2，frozen 底座雙 LoRA
