@@ -2,10 +2,10 @@
 # Theama session checkpoint — hourly agent runs save/restore THIS file.
 # 設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
 schema: 1
-updated_at: "2026-11-25T14:10:00Z"
-head: 773f61e95636db0be0074188b05d08a856b8f6a1
+updated_at: "2026-11-25T15:20:00Z"
+head: 19881f0ad684184bbd146d9827eb1a109e8e8012
 head_verified: true
-last_increment: "③ M7a 實跑準備：scripts/compare_m7a_summaries.py 跨模型 summary 並排比較器（provenance label、類別聯集 null 填補、per-category spread、ming diagnostic_only 排除出 gate_models；文字表 stdout＋deterministic JSON --out；描述不判決）＋10 tests；code commits d4e8d0e3／773f61e9，雙檔 blob a2bb51fa／bf086ad1 首次即 byte-exact，CPU 274 passed"
+last_increment: "③ P1a 資料引擎：scripts/pairs_stats.py 偏好對剖析器（pairs.jsonl 上盤後再檢——列數、prompt 覆蓋、pairs-per-prompt 分佈、margin 五桶＋win/lose 統計、self-pair 能見度、win/lose clip 集中度＝偏誤訊號；deterministic JSON＋--out；描述不判決）＋9 tests；code commit 19881f0a，雙檔 blob 50e73e9b／8fae3b0e 首次即 byte-exact，CPU 283 passed"
 ci_yml: content_ready_pending_user_upload   # MCP token 推 .github/workflows 被 403（insufficient scopes）；內容已交付使用者
 issues: 0
 gpu_outputs: m2_external_smoke_passed_reviewed   # PR #3 雙跑通過已判讀（pass 18）；M1/P1a/M2 internal 仍待 Claude 跑
@@ -14,8 +14,8 @@ division_of_labor:
   hourly_agent: "watchlist 核查、docs、CPU 側程式準備、repo 健康、session checkpoint"
   claude: "GPU 驗收執行（runbook 第 1–5 節＋status.md next steps）、CI.yml 上傳（人工作業）、結果回報/落盤、git tag v0.2.0（人工作業）；2026-11-25 使用者擴權：可做其他底模＋HDL on RunPod（紅線不變：H3/LTX/Qwen2.1/FLUX3-Klein/Krea2 不碰）"
 next_hour:
-  - "RESTORE：核對 HEAD 與本檔 head（pass-26 code 雙推 d4e8d0e3／773f61e9 皆首次 byte-exact，已消化）；Claude 若已 push M1/P1a/internal-wan_blocks GPU 結果或 v0.2.0 tag，先消化再增量"
-  - "pass 16–26 增量皆已落地請勿重做：Ming gen 第三路徑（4e1d202f）／score provenance（a3067d9b）／runbook §4.1（a7cb7697）／PR #3 判讀＋同步（0a2a3cd7）／watchlist 第十～十四輪（4fad1f38、918001c0+3f3fa0ac、129d5d67 PAVRM Apache 升格）／encode_texts retry budget（e1896295）／build_av_manifest（3f94b385）／pair+AV latent cache retry budget（1e64d0c1）／joint loader skipped 列明確報缺（cc85d330）／M7a eval seed 24→48（153be48c＋9d83f6c3）／M7a seed 48→100 v1.2（1596c716，漂移已由 ea97af39／6f478fd5 覆正）／manifest_stats 剖析器（1b896e72）／M7a 跨模型 summary 比較器（d4e8d0e3＋773f61e9）；agent 入口改為 docs/status.md＋AGENTS.md"
+  - "RESTORE：核對 HEAD 與本檔 head（pass-27 code 19881f0a 雙檔首次 byte-exact，已消化）；Claude 若已 push M1/P1a/internal-wan_blocks GPU 結果或 v0.2.0 tag，先消化再增量"
+  - "pass 16–27 增量皆已落地請勿重做：Ming gen 第三路徑（4e1d202f）／score provenance（a3067d9b）／runbook §4.1（a7cb7697）／PR #3 判讀＋同步（0a2a3cd7）／watchlist 第十～十四輪（4fad1f38、918001c0+3f3fa0ac、129d5d67 PAVRM Apache 升格）／encode_texts retry budget（e1896295）／build_av_manifest（3f94b385）／pair+AV latent cache retry budget（1e64d0c1）／joint loader skipped 列明確報缺（cc85d330）／M7a eval seed 24→48（153be48c＋9d83f6c3）／M7a seed 48→100 v1.2（1596c716，漂移已由 ea97af39／6f478fd5 覆正）／manifest_stats 剖析器（1b896e72）／M7a 跨模型 summary 比較器（d4e8d0e3＋773f61e9）／pairs_stats 偏好對剖析器（19881f0a）；agent 入口改為 docs/status.md＋AGENTS.md"
   - "使用者上傳 CI.yml 後：Actions 即為驗證引擎（CI image 需 ffmpeg + tesseract chi-tra，否則 decode/M7a 測試 skip）"
   - "③ 候選：阿里 11 月窗口 11-30 關閉前最後 watchlist 覆核（第十四輪已核 PAVRM，固定項無 delta）；或 M2 audio DiT 骨架／P1b 資料引擎下一小件（對齊 docs/model-roadmap.md 現況表）；M7a seed 100 閘已達＋compare 工具已備，實跑只欠 GPU 排程（Claude）"
   - "GPU 下一棒（Claude，依 status.md）：M1 runpod_m1_eval.sh 5→50 prompts→VBench ±0.02 → P1a（先驗 reward/score.py::_invoke 對真實 VideoReward）→ M2 internal wan_blocks＋LoRA smoke → 正式訓練前換 stable-torch image"
@@ -34,11 +34,45 @@ runner 落地待跑（runpod_m1_eval.sh）；P1b 鏈路補齊（manifest builder
 驗收閘**（v1.2，對岸 pass-25 `1596c716`；對岸首推／自修兩連漂，
 由本 session 以本地驗證版覆正——eval `ea97af39`／roadmap
 `6f478fd5` 皆一次 byte-exact，詳 pass-25 記錄；對岸同日 watchlist
-第十四輪將 PAVRM 官方碼核實 Apache-2.0 升格紅線內可參考），264
+第十四輪將 PAVRM 官方碼核實 Apache-2.0 升格紅線內可參考），283
 CPU tests 全綠；GPU 驗收由 Claude 執行（使用者 11-25 擴權：其他
 底模＋HDL on RunPod 亦可）；CI.yml 內容備妥待上傳；紅線不變。
 
 ## 本輪記錄（新輪加在最上面，保留最近 10 輪）
+
+- 2026-11-25 pass 27 @ 19881f0a — ③ P1a 資料引擎小件（本 session
+  增量；刻意避開 next_hour 熱門項，沿用競態實例十二的主動避讓
+  策略）：`scripts/pairs_stats.py` DPO 偏好對剖析器＋9 tests
+  （code commit `19881f0a`，雙檔 blob **50e73e9b**／**8fae3b0e**
+  首次即 byte-exact）。缺口：make_pref_pairs 的 coverage_report
+  只在 build 當下印一次，pairs.jsonl 上盤後到 encode_pairs／
+  train_dpo 燒 GPU 之前沒有再檢工具。本工具為 manifest_stats 的
+  P1a 對應件：列數＋complete/incomplete rows、unique_prompts＋
+  pairs-per-prompt 分佈、margin 五桶直方圖（lt_0.25／0.25_to_0.5／
+  0.5_to_1／1_to_2／ge_2；min_margin 低於 build 閾值即暴露陳舊或
+  手改檔）＋win/lose score 統計、self-pair 能見度計數（win_video
+  ＝lose_video 理應為 0）、winner/loser 集中度（distinct／
+  max_single_clip／top-5——單一 clip 贏或輸大量 pairs 是 DPO
+  偏誤訊號）。只讀 pairs 文字、不開 media/latent；容錯解析＋
+  bad_json_lines；deterministic JSON（sorted keys、固定 rounding）
+  ＋--out；可讀即 exit 0（描述不判決）、檔不可讀 exit 1。純函數
+  profile_pairs 無檔案依賴。測試 9 項：純函數六（空檔、prompt
+  覆蓋＋pairs-per-prompt、margin 桶邊界含下界、win/lose 集中度、
+  self-pair＋incomplete rows、deterministic 鍵序）＋CLI 三（壞行
+  容忍、缺檔 exit 1、連跑 stdout byte-identical＋--out roundtrip）。
+  RESTORE 對帳乾淨（開工 HEAD 98fc369c＝記憶、session-state blob
+  73381560＝本地 hash-object 驗證一致、無 Claude GPU commit、tags
+  空、issues 0、temp 無新上傳、mtime 掃描僅 pass-26 本 session
+  檔案無對岸活動）；推送前再對帳無競態。CPU 全套 **283 passed**
+  （274+9）。watchlist 本輪不重查（第十五輪 14:0xZ 無 delta；
+  阿里窗口 T-5，11-30 關閉前最後覆核留給下輪或對岸）。trim：
+  pass-19／pass-20 三條移出（事實存專案記憶第十九／二十輪存檔）。
+  **本地 trim 事故（未推送、本地即攔修）**：程式化 trim 以
+  `## RESTORE 協議` 為錨，誤中 pass-20@3f94b385 entry 內文
+  引述（「## RESTORE 協議」重複出現兩次…），造成殘段留存＋
+  重複插入；以唯一錨 `## RESTORE 協議（每輪第 0 步` 重修並
+  grep 結構驗證（10 entries、四 section 齊、邊界乾淨）。教訓：
+  trim 錨點必須用含後綴的完整標題，且 trim 後必做結構掃描。
 
 - 2026-11-25 pass 26 @ 773f61e9 — ③ M7a gen/score 實跑準備最後一塊：
   `scripts/compare_m7a_summaries.py` 跨模型 summary 並排比較器＋10 tests
@@ -321,94 +355,6 @@ CPU tests 全綠；GPU 驗收由 Claude 執行（使用者 11-25 擴權：其他
   byte-identical。對帳：對岸本時段推 build_av_manifest（3f94b385，
   本地 session-state 已記、遠端 checkpoint 尚未推），本輪一併消化。
   RESTORE：HEAD 3f3fa0ac、無 Claude GPU 新 commit、tags 空、issues 0。
-
-- 2026-11-25 pass 20 @ 3f94b385 — ③ P1b build_av_manifest（本 session
-  增量）：A/V data-card manifest 此前只能手寫——新腳本
-  `scripts/build_av_manifest.py` 掃 staged 目錄（<stem>.mp4/.mov/
-  .webm/.mkv 配 <stem>.wav/.mp3/.flac/.m4a，caption 取自 <stem>.txt
-  或 <stem>.json sidecar，sidecar 可逐 clip 覆寫 source）產出
-  load_manifest 直接可吃的 jsonl（路徑相對 manifest 父目錄，roundtrip
-  測試覆蓋）。**紅線建構期即攔**：逐 row 呼叫 dataset.check_source，
-  forbidden source（minimax/hailuo/h3-/ltx/lightricks）整批 abort、
-  不落盤——壞批次不會拖到 training launch 才炸。確定性：row 依 stem
-  排序、副檔名撞車按固定優先級（.mp4>.mov>.webm>.mkv／
-  .wav>.mp3>.flac>.m4a）與檔名 tie-break，與目錄列舉順序無關。
-  ffprobe best-effort 補 duration/fps/width/height（無 ffprobe 或
-  失敗則省略，可 --no-probe）；unpaired／無 caption／無 source 列
-  skip reason 不半寫；輸出已存在須 --force。新測試檔
-  test_m2_build_av_manifest.py +13（happy path 排序、sidecar 覆寫、
-  三類 skip、無 source、forbidden 參數化 ×3、副檔名優先級、壞
-  sidecar、main→load_manifest strict roundtrip、覆寫守衛、無
-  ffprobe 降級）。**競態實例七（開工前攔截成功）**：開工前 mtime
-  掃描發現對岸正在改 encode_texts.py／text_cache.py（09:02Z 數分鐘
-  內新檔），依紀律避開同題改做 manifest builder；工作中對岸推
-  `e1896295`（encode_texts retry budget）＋其 pass-20 checkpoint
-  `f27f2a24`，本 session 推送前對帳消化，全套 241 passed
-  （228+13）後推送，無衝突（不同檔）。雙檔 blob SHA 驗證一致
-  （script 1c76fafe／test 0bb4887c，本地 git hash-object 重算相同）。
-  RESTORE：HEAD adcf6b40 乾淨、無 Claude GPU 新 commit、tags 空、
-  issues 0、temp 無新上傳。**順帶修復 checkpoint 檔歷史殘段**：遠端
-  f27f2a24 版「## RESTORE 協議」重複出現兩次，且第一份 item 2 混入
-  pass-13 entry 截尾（「…改以 `docs0 未打）、issues 0…199 passed…
-  39225c0f／8b41f5de」）——應為過往 trim 10 輪時切錯邊界所致；
-  本版依 SAVE 協議裁掉 pass-13 entry 後寫回單份乾淨 RESTORE 段。
-
-- 2026-11-25 pass 20 @ e1896295 — ③ P1b encode_texts retry budget
-  （本 session 增量，next_hour 明列候選）：theama.data.text_cache 新增
-  選配 failure ledger——`--max-retries N` 下每次失敗計入
-  text_failures.json（key＝cache 檔名 stem，operator 可直接 grep
-  cache 目錄；tmp+replace 原子寫、毀損降級 {}）；達額度 caption 規劃
-  為 **skipped**（encoder 永不呼叫、manifest 記 skipped/retries/
-  last_error、summary 加 skipped 計數且不佔 failed/encoded）；
-  成功即 clear（暫態失誤不累積）；strict 先記錄 ledger 再 raise；
-  ledger 維護 best-effort（OSError 不得搞砸一次好 encode）。預設
-  max_retries=None 行為**逐字節不變**（無限重試、零 ledger I/O）。
-  CLI encode_texts.py 加 --max-retries/--reset-failures，plan 輸出
-  含 skipped 數、stderr 提示對應調整。test_m2_text_cache.py +6：
-  ledger roundtrip（含毀損容忍）、三 run 預算耗盡跳過、成功清除、
-  無旗標零 ledger、strict 記錄後 reraise、非法 max_retries 拒絕。
-  中途修一處設計（ledger key 由裸 digest 改檔名 stem，測試即規格）。
-  RESTORE 對帳乾淨（HEAD adcf6b40、無對岸新 commit、temp 無新上傳）；
-  推送前 mtime 掃描無對岸活動中檔案。push_files 三檔一次 commit
-  HEAD e1896295；**三檔 blob SHA 驗證一致**（text_cache 4143a1a5／
-  encode_texts 52a79957／test d7b0c038，本地 git hash-object 重算
-  相同）——首次即 byte-exact。CPU 全套 **228 passed**（222+6）；
-  py_compile＋--help smoke 通過。
-
-- 2026-11-25 pass 19 @ 6f4799cf — ② watchlist 第十輪覆核（本 session
-  增量）：四固定項全查——**Wan 3.x 仍 API-only**（usefastlane 11-01、
-  renoise 11-11 逐 repo 核查一致，最後開放權重仍 Wan 2.2）；
-  **阿里下一代影片模型 11 月窗口 T-5 仍無發布**（Model Studio 新模型
-  列表最新僅 qwen3.8-flash／wan3.0-video-prime／wan2.6・2.7 flash
-  變體／qwen-image-edit-max／kimi-k3，第三方 11-09／11-11 核查同）；
-  **Qwen-Image 紅線四項無變化**（2.1／2.1-Turbo 研究授權、2512／
-  Edit-2511 Apache 線、3.0／3.1 hosted-only；HF 討論 #39 請願回歸
-  Apache 無官方回應）；**VA-Judger checkpoint 授權二次核查失敗**
-  （HF 頁面沙箱 fetch 僅空 README、無 license metadata；gated 下載），
-  維持使用者代查。新增判讀：駁 youart.ai「Wan 2.7 已開權重」低權威
-  誤報（與既有逐 repo 核查矛盾，同 miraflow 類）；補 efsora 10-19
-  資料點——Ming-Image-0.1-Design 為排名最高 fully-permissive 影像
-  模型（差 2.1 四十二分），支持 M7a 第三路徑 diagnostic 定位。
-  RESTORE 對帳乾淨（HEAD 仍 0a2a3cd7、無 Claude GPU 新 commit、tags
-  空、issues 0、temp 無新上傳）；開工前 mtime 掃描無對岸活動中檔案。
-  **SAVE 事故第六實例（長檔轉錄漂移）**：roadmap 首推 d378836b 回傳
-  blob 41902464 ≠ 本地 c52928d8——cmp 定位兩處**未編輯舊文**轉錄錯
-  （out-of-domain 誤作 out-domain－3 bytes、形態相容誤作形狀相容），
-  本地檔始終正確；以本地內容重推 6f4799cf byte-exact 驗證一致，
-  壞 commit 留史。教訓加強：**20KB 級長檔推送後必做逐字節 cmp**
-  （api.github.com raw 可達，raw.githubusercontent 沙箱連不上）。
-  CPU 全套 222 passed（docs-only 重跑確認）。docs/model-roadmap.md
-  blob c52928d8 驗證一致。
-  **第十一輪補（同輪加單，依使用者指示「根據 AV model leaderboard」）**：
-  AA Video Arena with-audio 三榜快照入 roadmap 新條目（commit
-  `4fad1f38`，blob 616597e8 推送回值＝本地、逐字節一致一次過）——
-  T2V：Wan 3.0 1175 第一／H3 1161 第三（開放權重最高）／Kling 3.0
-  錨 1000；I2V：Seedance 2.5 1153 第一／前十六款 H3 post-train；
-  editing：Wan 3.0 1196 第一／Wan 2.7 Video 1074 第八（仍 API-only）。
-  四點結論：M5 對標板＝AA with-audio 雙板；H3 post-train 生態證
-  「強開放底座＋後訓練可近 frontier」→ theama 的 Wan 2.2＋LoRA-DPO
-  為紅線內同構對應；Apache 譜系唯一頂級底座仍 Wan 2.2；VBench 開源
-  前三在 Apache 線內等價追平並超出 Wan 2.2 自報 82.61。
 
 ## RESTORE 協議（每輪第 0 步，依序執行）
 
