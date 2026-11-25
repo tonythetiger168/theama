@@ -22,3 +22,27 @@
 {"id": "T2I-CJK-022", "category": "receipt", "prompt": "傳統市場收銀台上的手寫收據，藍色原子筆字跡列出「青江菜 35」「番茄 60」「雞蛋 48」，最下方寫「合計 143」，數字與繁體品名都可辨識。", "expected_text": "合計 143"}
 {"id": "T2I-CJK-023", "category": "banner", "prompt": "校園運動會紅布條掛在司令台上方，白色大字寫「第五十二屆校慶運動會」，左右各有小字「健康」「團結」，布條自然下垂有皺摺。", "expected_text": "第五十二屆校慶運動會"}
 {"id": "T2I-CJK-024", "category": "poster", "prompt": "獨立書店活動海報，米色紙感背景，書堆插畫旁用打字機字型印「夜讀計畫」，底部小字「每週五晚上七點・免費入座」，整體安靜溫暖。", "expected_text": "夜讀計畫"}
+{"id": "T2I-CJK-025", "category": "newspaper", "prompt": "早報頭版平拍，報頭紅色「山城日報」，主標題以粗黑體印「捷運通車改寫山城天際線」，配車站實景照片，繁體中文銳利無糊邊。", "expected_text": "捷運通車改寫山城天際線"}
+{"id": "T2I-CJK-026", "category": "newspaper", "prompt": "財經報紙版面特寫，版眉小字「財經焦點」，主標題黑體大字「晶圓龍頭法說登場」，下方配走勢圖，繁體中文筆畫完整。", "expected_text": "晶圓龍頭法說登場"}
+{"id": "T2I-CJK-027", "category": "ticket", "prompt": "電影票根特寫，深藍票面印著「午夜場：星海旅人」，角落有場次編號與撕角線，繁體中文清晰可讀。", "expected_text": "午夜場：星海旅人"}
+{"id": "T2I-CJK-028", "category": "ticket", "prompt": "演唱會門票平放在牛仔外套上，防偽底紋中央大字「夏日海洋音樂祭」，副標小字「戶外場」，繁體中文不得缺筆。", "expected_text": "夏日海洋音樂祭"}
+{"id": "T2I-CJK-029", "category": "sticker", "prompt": "筆電上蓋貼滿貼紙，正中一枚圓形黃底貼紙以手寫感黑字寫「工程師的浪漫」，邊緣微翹，每個字清楚可辨。", "expected_text": "工程師的浪漫"}
+{"id": "T2I-CJK-030", "category": "packaging", "prompt": "玻璃醬油瓶商品攝影，牛皮紙標籤以黑色楷體印「純釀造醬油」，下方小字「一百八十天熟成」，繁體中文印刷銳利。", "expected_text": "純釀造醬油"}
+{"id": "T2I-CJK-031", "category": "packaging", "prompt": "透明冷泡茶瓶身特寫，瓶身直印白色細明體「冷萃四季春」，背景是模糊茶園綠意，繁體中文不可變形。", "expected_text": "冷萃四季春"}
+{"id": "T2I-CJK-032", "category": "receipt", "prompt": "超商收據攤平特寫，明細第一行印「冰美式咖啡」，下方是數量與金額欄，熱感印字略淡但繁體中文仍可辨讀。", "expected_text": "冰美式咖啡"}
+{"id": "T2I-CJK-033", "category": "receipt", "prompt": "餐廳木夾板上的結帳單，底部以圓體印「謝謝光臨」，上方是餐點明細，繁體中文清晰。", "expected_text": "謝謝光臨"}
+{"id": "T2I-CJK-034", "category": "banner", "prompt": "廟會遶境隊伍前的紅色布前的紅色布條，金色大字「遶境平安」隨風微微皺摺，背景是鑼鼓與香火，繁體中文完整不缺筆。", "expected_text": "遶境平安"}
+{"id": "T2I-CJK-035", "category": "calendar", "prompt": "桌上型月曆翻開立在辦公桌，頂部紅色粗體印「2027年1月」，下方是整齊日期格，數字與國字皆清晰。", "expected_text": "2027年1月"}
+{"id": "T2I-CJK-036", "category": "label", "prompt": "手工果醬玻璃罐貼標特寫，米白標籤以深紅手寫感字體印「慢火草莓果醬」，罐內果醬顏色飽滿，繁體中文可讀。", "expected_text": "慢火草莓果醬"}
+{"id": "T2I-CJK-037", "category": "coupon", "prompt": "速食店優惠券平拍，鋸齒邊框內大字紅底白字「買一送一」，下方小字「限時優惠」，繁體中文銳利。", "expected_text": "買一送一"}
+{"id": "T2I-CJK-038", "category": "map", "prompt": "夜市入口的木製導覽立牌地圖，黃色區塊標示「美食區」、藍色區塊標示「遊戲區」，燈泡串照明下字體清楚。", "expected_text": "美食區"}
+{"id": "T2I-CJK-039", "category": "ui", "prompt": "深色模式記帳 App 畫面，頂部卡片以白色粗體顯示「本週結餘」，下方是圓餅圖與分類列表，繁體中文介面文字清晰。", "expected_text": "本週結餘"}
+{"id": "T2I-CJK-040", "category": "ui", "prompt": "捷運月台上的電子看板，黑底以綠色 LED 風格字顯示「列車即將進站」，下方跑馬燈略過，繁體中文點陣清晰。", "expected_text": "列車即將進站"}
+{"id": "T2I-CJK-041", "category": "menu", "prompt": "拉麵店掛牆木牌菜單，直排墨書「特製豚骨拉麵」，木紋與毛筆字跡自然，直排繁體中文順序正確。", "expected_text": "特製豚骨拉麵"}
+{"id": "T2I-CJK-042", "category": "menu", "prompt": "小吃店門口手寫黑板，白色粉筆字寫「今日例湯：苦瓜排骨」，粉筆顆粒感自然但每個字可辨。", "expected_text": "今日例湯：苦瓜排骨"}
+{"id": "T2I-CJK-043", "category": "poster", "prompt": "社區大學招生海報，春天花草邊框，中央圓體大字「春季班熱烈報名中」，下方列課程小字，繁體中文端正。", "expected_text": "春季班熱烈報名中"}
+{"id": "T2I-CJK-044", "category": "sign", "prompt": "巷弄快剪理髮店，旋轉燈旁壓克力招牌以紅色標楷體寫「快剪一百元」，白底紅字對比強烈，繁體中文完整。", "expected_text": "快剪一百元"}
+{"id": "T2I-CJK-045", "category": "book_cover", "prompt": "懸疑小說書籍封面，霧氣中的無人車站剪影，書名以直排細黑體印「霧中車站」，排版留白講究，繁體中文清晰。", "expected_text": "霧中車站"}
+{"id": "T2I-CJK-046", "category": "product", "prompt": "霧面運動水壺產品照，瓶身以雷射雕刻感字體印「堅持到底」，水珠附著瓶身，繁體中文刻字銳利。", "expected_text": "堅持到底"}
+{"id": "T2I-CJK-047", "category": "sign", "prompt": "傳統市場蔬菜攤，紅色壓克力價目牌插在菜堆上寫「現摘高麗菜」，塑膠袋與水珠點綴，繁體中文清楚。", "expected_text": "現摘高麗菜"}
+{"id": "T2I-CJK-048", "category": "poster", "prompt": "畢業典禮舞台背板，藍白氣球拱門下以金色立體字寫「青春啟航」，兩側小字「二〇二七級」，繁體中文工整。", "expected_text": "青春啟航"}

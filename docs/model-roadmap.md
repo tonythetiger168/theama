@@ -12,7 +12,7 @@
 | P1a | **theama-ti2v-5b-dpo**（VideoReward 偏好對 + LoRA-DPO） | 程式落地，GPU 驗收待跑 |
 | M2 | **theama-audio-dit v1**（並聯音訊 DiT + 雙向 CrossModalBridge） | CPU trainer + DAC contract + 外部 Wan adapter 落地，真實權重 GPU smoke 已通過（2026-11-24，RTX 4090，見 docs/status.md） |
 | M4b（前置） | HEVC / AV1 + HDR10 / HLG 10-bit 封裝 | mux 落地；8K regenerate 本體待 M4 穩定 |
-| M7a（前置） | CJK T2I eval seed v1（24 條繁中文字渲染 prompt + expected_text） | 已落地；Qwen-Image-2512 / Z-Image Turbo 推理重現待跑 |
+| M7a（前置） | CJK T2I eval seed v1.1（48 條繁中文字渲染 prompt + expected_text，v1 24 條已倍增） | 已落地；Qwen-Image-2512 / Z-Image Turbo 推理重現待跑；擴充至 100 條後作為驗收閘 |
 
 ## 近期（下一季）
 
@@ -43,7 +43,7 @@
 
 ## Watchlist（上游釋出追蹤）
 
-最近核查：**2026-11-25**（當日第十二輪）。
+最近核查：**2026-11-25**（當日第十四輪）。
 
 - **Wan-Animate-2-14B**（Apache-2.0）— M6a 底座候選，已寫入
   `configs/theama_base.yaml`。repo id 已核對：`Wan-AI/Wan2.2-Animate-2-14B`
@@ -111,7 +111,7 @@
   的量測目標。保留事項：官方驗證配置為單卡 80 GiB（文字編碼器約 34 GB，
   消費卡需靠 Comfy-Org／Kijai int8／w4a8 量化變體）；**CJK／非英文文字
   渲染未見第三方實測**（外媒同列為首要待驗證項）；榜單為單一來源。列觀察，
-  待 M7a 推理重現排程時以 24 條 seed 實測後再議是否納入。
+  待 M7a 推理重現排程時以 seed 集（已擴至 48 條）實測後再議是否納入。
   2026-11-25 第七輪：2.1／2.1-Turbo 研究授權、2512／Edit-2511 Apache 線、
   3.0／3.1 hosted-only，本輪覆核均無變化。
   2026-11-25 第八輪：同上四項（2.1 研究授權／2512 Apache 線／3.0・3.1
@@ -244,6 +244,28 @@
   license tag」待辦**；repo 自 08-20 已釋出 checkpoints＋Bench（SFT
   程式碼與 VAPref-10K 仍 to-do）。其餘觀察條目（GenRM-Flow／PAVRM／
   Omni-RRM 等）本輪無新增。
+  2026-11-25 第十四輪覆核：**PAVRM 官方程式碼落地且授權過紅線**——
+  騰訊混元官方 repo `Tencent-Hunyuan/HY-Video-PRFL`（GitHub API
+  直查）已釋出 PAVRM＋PRFL 完整訓練／推理程式碼，`LICENSE.txt`
+  全文為 Apache-2.0（前言明載「不附加額外限制」；GitHub 授權偵測器
+  因前言顯示 NOASSERTION，以授權全文為準）。骨幹直接吃
+  `Wan-AI/Wan2.1-I2V-14B-720P`（Apache-2.0）、不帶任何第三方受限
+  權重；repo 未發布 RM checkpoint（PAVRM reward 頭由使用者自訓），
+  無額外權重授權問題。PAVRM 自此由「觀察（授權未核實）」升格為
+  **紅線內可直接參考實作**：latent 空間打分免 VAE decode、與 P1a
+  pair latent cache 形狀相容、PRFL 較 RGB ReFL 省記憶體且 ≥1.4×
+  加速——定位為 VideoReward（首選不變）之外的 process-level
+  互補尺，P1a LoRA-DPO 之後的 latent-space ReFL 選項；骨幹
+  Wan2.1 與本專案 Wan 2.2 同 Apache 譜系，方法可直接移植。
+  固定項本輪覆核無變化：Wan 3.x 仍 API-only 無權重
+  （wan30.video 10-16／atlascloud 08-26 再核一致，「Wan 2.7 開源」
+  仍屬低權威誤報）；Wan-Animate-2 repo id
+  `Wan-AI/Wan2.2-Animate-2-14B`（Apache-2.0）無變化；阿里下一代
+  影片模型 11 月窗口 T-5（11-30 關閉）仍無名稱／規格／權重
+  （阿里 11-12 云栖官方總結稿亦未提新影片模型）；Qwen-Image
+  2.1／2.1-Turbo 仍 Qwen Research License（QwenLM repo 直查），
+  3.1 hosted-only「今年稍後推出」，紅線不變；GenRM-Flow 仍僅
+  論文（arXiv 2611.11421）、未檢得程式碼。
 - **AV leaderboard（Artificial Analysis Video Arena with-audio）現況**
   （2026-11-25 第十一輪補；M5 品質目標的對標板）——**T2V w/audio**
   （11-13 快照）：Wan 3.0 第一（Elo 1175）、Utopai X（H3 post-train）
