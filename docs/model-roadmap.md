@@ -43,7 +43,7 @@
 
 ## Watchlist（上游釋出追蹤）
 
-最近核查：**2026-11-25**（當日第八輪）。
+最近核查：**2026-11-25**（當日第九輪）。
 
 - **Wan-Animate-2-14B**（Apache-2.0）— M6a 底座候選，已寫入
   `configs/theama_base.yaml`。repo id 已核對：`Wan-AI/Wan2.2-Animate-2-14B`
@@ -204,6 +204,23 @@
   repo id／Wan 3.x API-only／阿里下一代模型未發布／Qwen-Image 紅線，
   本輪覆核無變化。repo 健康：CI.yml 仍未上傳（無 `.github/` 目錄）、
   issues 0；沙箱執行環境與專案記憶 mount 本輪仍不可用，維持 docs-only。
+  2026-11-25 第九輪覆核：新增 **GenRM-Flow**（arXiv 2611.11421，
+  2026-11-08，Siming Fu 等）——偏好微調後的影片生成器本身就是
+  process-aware RM：從 KL-constrained 最優 policy 的解析解分離 reward
+  項、映到 flow-matching surrogate 後，經驗 reward 等於連續時間
+  velocity-prediction 誤差的相對差——直接在含噪 latent 空間打分，
+  無需外部 reward 網路；並證明 DPO／IPO／RWR 是通往同一最優 policy
+  的等價優化路徑、各自誘導生成器的 reward readout（實驗以該 process
+  reward 取代外部 VLM scorer 跑 FlowAWR，下游生成有可測提升）。
+  對本專案的意義：P1a LoRA-DPO 訓完的 Wan 生成器可直接讀出
+  latent-space reward（推理期 BoN、資料過濾免載第二把尺），M2 flow
+  後訓練同適用；程式碼／權重／授權未核實，列觀察與方法參考，不改
+  P1a／M2 配方。同輪補方法參考 **PAVRM**（arXiv 2511.21541v3，
+  CVPR 2026 Findings）：video generation model 直接當 latent reward
+  model（對部分去噪樣本於 latent 空間打分、免 decode，stratified
+  timestep 評估），與 P1a pair latent cache 形態相容；授權未核實。
+  Wan-Animate-2 repo id／Wan 3.x API-only／阿里下一代模型 11 月窗口
+  倒數仍無發布／Qwen-Image 紅線，本輪覆核無變化。
 
 ## 發布策略
 
