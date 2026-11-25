@@ -59,6 +59,24 @@ python scripts/score_cjk_text.py --images eval_out/m7a/zimage
 **驗收**：各 24/24 PNG（exit 0）；記下兩路的 exact_hit_rate 與
 mean_char_recall 當 M7a 基線（第一輪無對標值，如實記錄）。
 
+### 4.1 第三路徑（diagnostic-only）：Ming-Image-0.1-Design
+
+```bash
+python scripts/gen_cjk_images.py --model ming-image-design --out eval_out/m7a/ming
+python scripts/score_cjk_text.py --images eval_out/m7a/ming   # scorer 本就 model-agnostic，吃一個 images dir
+```
+
+- `inclusionAI/Ming-Image-0.1-Design`（MIT，6B 文字密集設計 T2I）；卡片
+  預設 12 steps／CFG 1.0 已內建於 gen 腳本 MODEL_DEFAULTS，解析度自動
+  吸附 1024/2048 bucket。prompt verbatim 直送 sampler（不過官方
+  rewriting 層）；純 T2I 路徑不觸及卡片的影像輸入 vision tower。
+- **硬體：官方驗證配置為單卡 80 GiB**——24GB 卡預期 OOM（社群量化未
+  驗證）。有 80 GiB 卡再排，不阻塞本節雙路徑驗收。
+- **定位 diagnostic-only**（gen 腳本 EXPERIMENTAL_MODELS 標記，選用時印
+  [note]）：24 條 seed 實測計分前不入 M7a 驗收閘。跑出結果如實記錄
+  exact_hit_rate／mean_char_recall 與雙路徑基線並列；是否轉正由
+  hourly agent 依數據提議。
+
 ## 5. P1b joint training（M2 主訓練迴路；3 綠後再排，與 4 可平行但同卡注意 VRAM）
 
 ### 5.0 免權重自檢（先跑，約 1 分鐘，無 cache、無 Wan 權重，GPU/CPU 皆可）
