@@ -61,7 +61,7 @@ mean_char_recall 當 M7a 基線（第一輪無對標值，如實記錄）。
 
 ## 5. P1b joint training（M2 主訓練迴路；3 綠後再排，與 4 可平行但同卡注意 VRAM）
 
-### 5.0 免權重自檢（先跑，約 1 分鐘，無 cache、無 Wan 權重）
+### 5.0 免權重自檢（先跑，約 1 分鐘，無 cache、無 Wan 權重，GPU/CPU 皆可）
 
 ```bash
 python scripts/train_joint_av.py --smoke --out runs/joint_smoke
@@ -75,21 +75,24 @@ metrics.jsonl 與 ckpt_*。覆蓋合成 5-D Wan latent 路徑 4 步＋bridge→f
 
 前置：manifest 為 jsonl data-card（來源須過 `AVDataset.check_source`
 黑名單）。先靜態檢查，再 decode 探針，再建雙 cache；所有 encode 皆
-resumable，中斷重跑同一條命令即可。
+resumable，中斷重跑同一條命令即可。text cache 與 video backbone 無關，
+**用 `--encoder` 固定成 A14B repo 建一份、dev/prod 兩路共用**（cache 以
+meta.json 綁 encoder id；不帶 `--encoder` 時隨 `--model` 解析，兩路會
+各建一份、prod 白白重燒一次 UMT5）。
 
 ```bash
 python scripts/check_av_manifest.py --manifest data/av/manifest.jsonl
 python scripts/smoke_decode_to_latents.py --manifest data/av/manifest.jsonl \
     --out data/av/probe --limit 4            # decode→latent 探針
 python scripts/encode_av_latents.py --manifest data/av/manifest.jsonl \
-    --out data/av/latents --model ti2v-5b --limit 8
+    --out data/av/latents_dev --model ti2v-5b --limit 8
 python scripts/encode_texts.py --manifest data/av/manifest.jsonl \
-    --out data/av/texts --model ti2v-5b --limit 8
+    --out data/av/texts --encoder Wan-AI/Wan2.2-T2V-A14B-Diffusers --limit 8
 python scripts/train_joint_av.py --config configs/m2_joint_av_dev.yaml \
-    --av-cache data/av/latents --text-cache data/av/texts \
+    --av-cache data/av/latents_dev --text-cache data/av/texts \
     --out runs/m2_e2e --steps 20 --bridge-steps 10 --batch-size 1 --dtype bf16
 python scripts/train_joint_av.py --config configs/m2_joint_av_dev.yaml \
-    --av-cache data/av/latents --text-cache data/av/texts \
+    --av-cache data/av/latents_dev --text-cache data/av/texts \
     --out runs/m2_e2e --steps 30 --bridge-steps 10 --batch-size 1 --dtype bf16 \
     --resume auto                            # 驗精確 resume（phase/optimizer/RNG）
 ```
@@ -97,24 +100,31 @@ python scripts/train_joint_av.py --config configs/m2_joint_av_dev.yaml \
 **驗收**：載入時印 `joint cache: 8 samples (dropped: 0)`——dropped 非 0
 先查 AV/text caption 交叉核對與 cache model 守衛；metrics.jsonl 每列
 finite、audio/video loss 俱在且整體下降；step 10 切 full phase 後繼續
-出數；resume 從 step 20 接到 30 不重頭。回報 peak CUDA memory。
+出數；resume 從 step 20 接到 30（summary resumed_from=20、
+steps_completed=30）不重頭。回報 peak CUDA memory。
 
 ### 5.2 正式 run（A14B prod 路徑，80GB 或 enable offload）
+
+text cache 沿用 5.1 建的共享庫——同 encoder 下 encode_texts 以 resume
+增量補齊全量 caption，已編碼的不重燒。
 
 ```bash
 python scripts/encode_av_latents.py --manifest data/av/manifest_full.jsonl \
     --out data/av/latents_a14b --model t2v-a14b
 python scripts/encode_texts.py --manifest data/av/manifest_full.jsonl \
-    --out data/av/texts_a14b --model t2v-a14b
+    --out data/av/texts --encoder Wan-AI/Wan2.2-T2V-A14B-Diffusers
 python scripts/train_joint_av.py --config configs/m2_joint_av.yaml \
-    --av-cache data/av/latents_a14b --text-cache data/av/texts_a14b \
+    --av-cache data/av/latents_a14b --text-cache data/av/texts \
     --out runs/m2_run1 --steps 20000 --bridge-steps 2000 --batch-size 2 \
     --dtype bf16 --save-every 500
 ```
 
-**驗收**：bridge warmup（前 2000 步）loss 穩定下降、切 full 後無 NaN
-（NaN 會 fail-closed 留 ckpt_nonfinite，回報時附上）；定期用最新 ckpt
-做一次短推理目檢 AV sync（gate：offset < 40ms，見 config acceptance）。
+**驗收**：bridge warmup（前 2000 步）loss 穩定下降、step 2000 切 full
+後無 NaN；metrics.jsonl 全程 finite；ckpt_latest 可 `--resume auto`
+接續（checkpoint 恆於最終步落盤，不受 --save-every 影響）。任何 NaN
+會 fail-closed 留 ckpt_nonfinite 並中止——回報該 checkpoint 路徑，
+勿刪檔重跑。定期用最新 ckpt 做一次短推理目檢 AV sync（gate：offset
+< 40ms，見 config acceptance）。
 
 ## 回報格式（貼回 hourly agent 或寫 docs/gpu-results.md）
 
