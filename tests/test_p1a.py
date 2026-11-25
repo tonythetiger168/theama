@@ -14,11 +14,17 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from theama.data.latent_cache import (
+    FAILURES_NAME,
+    clear_failure,
     is_valid_latent,
     latent_pair_paths,
+    load_failure_ledger,
     load_reusable_rows,
+    pair_failure_key,
     plan_encoding,
     read_cache_meta,
+    record_failure,
+    reset_failure_ledger,
     run_encoding,
     save_latent_atomic,
     summarize_encoding,
@@ -438,6 +444,155 @@ def test_run_encoding_strict_raises(tmp_path):
 
     with pytest.raises(RuntimeError, match="boom"):
         run_encoding(plan, bad_encoder, strict=True)
+
+
+# ---- latent-cache retry budget (failure ledger) ------------------------------
+#
+# Same opt-in design as the text cache (test_m2_text_cache): a pair_failures.json
+# ledger counts per-pair failures, budget-exhausted pairs are planned as skipped,
+# and the default (no max_retries) keeps byte-identical pre-ledger behaviour.
+
+
+def _pair_encoder(calls: list, fail_on: tuple = ()):
+    """Fake encode_fn(video_path, dest): records calls, optionally fails."""
+
+    def encode(video_path, dest):
+        calls.append(video_path)
+        if video_path in fail_on:
+            raise RuntimeError("boom")
+        _latent(Path(dest))
+
+    return encode
+
+
+def _quiet(msg):  # keep pytest output clean
+    pass
+
+
+def test_pair_failure_ledger_roundtrip(tmp_path):
+    assert load_failure_ledger(tmp_path) == {}
+    pair = _pairs(1)[0]
+    assert pair_failure_key(3) == "pair0003"
+    assert record_failure(tmp_path, 3, pair, "RuntimeError: boom") == 1
+    assert record_failure(tmp_path, 3, pair, "RuntimeError: boom again") == 2
+    ledger = load_failure_ledger(tmp_path)
+    entry = ledger["pair0003"]
+    assert entry["count"] == 2
+    assert entry["prompt_id"] == "T2V-000"
+    assert "boom again" in entry["error"]
+    # A different index lands on a different key.
+    record_failure(tmp_path, 7, pair, "x")
+    assert len(load_failure_ledger(tmp_path)) == 2
+    # Success clears only that pair.
+    clear_failure(tmp_path, 3)
+    ledger = load_failure_ledger(tmp_path)
+    assert "pair0003" not in ledger
+    assert len(ledger) == 1
+    # Reset deletes the file entirely.
+    assert reset_failure_ledger(tmp_path)
+    assert not (tmp_path / FAILURES_NAME).exists()
+    assert not reset_failure_ledger(tmp_path)
+    # Corrupt ledger degrades to {} instead of crashing.
+    (tmp_path / FAILURES_NAME).write_text("{not json")
+    assert load_failure_ledger(tmp_path) == {}
+
+
+def test_plan_skips_pair_past_retry_budget(tmp_path):
+    pairs = _pairs(2)
+    fail = ("/v/1/win.mp4",)  # pair 1 dies on the win side every run
+    calls1: list = []
+    s1 = run_encoding(
+        plan_encoding(pairs, tmp_path, "ti2v-5b", max_retries=2),
+        _pair_encoder(calls1, fail), progress=_quiet, max_retries=2,
+    )
+    assert s1["failed"] == 1 and s1["encoded"] == 1  # pair 0 cached from here on
+    # Second run retries only pair 1 and fills its budget (count reaches 2).
+    calls2: list = []
+    s2 = run_encoding(
+        plan_encoding(pairs, tmp_path, "ti2v-5b", max_retries=2),
+        _pair_encoder(calls2, fail), progress=_quiet, max_retries=2,
+    )
+    assert calls2 == ["/v/1/win.mp4"]
+    assert s2["failed"] == 1 and s2["reused"] == 1
+    # Third run: pair 1 is skipped by the planner, never encoded; pair 0 reused.
+    plan3 = plan_encoding(pairs, tmp_path, "ti2v-5b", max_retries=2)
+    assert plan3.todo == []
+    assert set(plan3.reusable) == {0}
+    assert set(plan3.skipped) == {1}
+    skipped_row = plan3.skipped[1]
+    assert skipped_row["skipped"] is True
+    assert skipped_row["retries"] == 2
+    assert skipped_row["prompt_id"] == "T2V-001"
+    assert "boom" in skipped_row["last_error"]
+    calls3: list = []
+    s3 = run_encoding(plan3, _pair_encoder(calls3), progress=_quiet, max_retries=2)
+    assert calls3 == []
+    # Skipped rows are not counted as failed, reused, or encoded.
+    assert s3["failed"] == 0 and s3["encoded"] == 0
+    assert s3["reused"] == 1
+    assert s3["skipped"] == 1
+    rows = [json.loads(l) for l in plan3.manifest_path.read_text().splitlines()]
+    assert any(r.get("skipped") for r in rows)
+    assert not any("error" in r for r in rows)
+    # The summary sidecar carries the skipped count too.
+    assert json.loads(plan3.summary_path.read_text())["skipped"] == 1
+
+
+def test_pair_success_clears_ledger_entry(tmp_path):
+    pairs = _pairs(1)
+    run_encoding(
+        plan_encoding(pairs, tmp_path, "ti2v-5b", max_retries=3),
+        _pair_encoder([], fail_on=("/v/0/win.mp4",)), progress=_quiet, max_retries=3,
+    )
+    assert load_failure_ledger(tmp_path) != {}
+    # The pair now encodes — success wipes its failure history.
+    summary = run_encoding(
+        plan_encoding(pairs, tmp_path, "ti2v-5b", max_retries=3),
+        _pair_encoder([]), progress=_quiet, max_retries=3,
+    )
+    assert summary["encoded"] == 1 and summary["failed"] == 0
+    assert load_failure_ledger(tmp_path) == {}
+
+
+def test_pair_no_ledger_io_when_max_retries_unset(tmp_path):
+    pairs = _pairs(2)
+    summary = run_encoding(
+        plan_encoding(pairs, tmp_path, "ti2v-5b"),
+        _pair_encoder([], fail_on=("/v/1/win.mp4",)),
+        progress=_quiet,
+    )
+    assert summary["failed"] == 1
+    assert "skipped" not in summary  # default behaviour is byte-identical
+    assert not (tmp_path / FAILURES_NAME).exists()
+    # Legacy retry loop still works: the failure row lands back in todo.
+    plan2 = plan_encoding(pairs, tmp_path, "ti2v-5b")
+    assert plan2.todo == [1] and plan2.skipped == {}
+
+
+def test_pair_strict_records_failure_before_reraising(tmp_path):
+    with pytest.raises(RuntimeError, match="boom"):
+        run_encoding(
+            plan_encoding(_pairs(1), tmp_path, "ti2v-5b", max_retries=2),
+            _pair_encoder([], fail_on=("/v/0/win.mp4",)),
+            strict=True,
+            progress=_quiet,
+            max_retries=2,
+        )
+    # The abort did not lose the failure: the ledger saw the attempt.
+    ledger = load_failure_ledger(tmp_path)
+    assert ledger["pair0000"]["count"] == 1
+
+
+def test_pair_invalid_max_retries_rejected(tmp_path):
+    with pytest.raises(ValueError):
+        plan_encoding(_pairs(1), tmp_path, "ti2v-5b", max_retries=0)
+    with pytest.raises(ValueError):
+        run_encoding(
+            plan_encoding(_pairs(1), tmp_path, "ti2v-5b"),
+            _pair_encoder([]),
+            progress=_quiet,
+            max_retries=True,
+        )
 
 
 # ---- config + scripts -------------------------------------------------------

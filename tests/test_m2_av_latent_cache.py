@@ -21,12 +21,18 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from theama.data.av_latent_cache import (  # noqa: E402
+    FAILURES_NAME,
     MANIFEST_NAME,
     SUMMARY_NAME,
+    av_failure_key,
     av_latent_paths,
+    clear_failure,
     is_valid_audio_latent,
     is_valid_video_latent,
+    load_failure_ledger,
     plan_av_encoding,
+    record_failure,
+    reset_failure_ledger,
     run_av_encoding,
 )
 from theama.data.latent_cache import (  # noqa: E402
@@ -254,3 +260,138 @@ def test_contract_violation_is_recorded_not_cached(tmp_path):
     # legacy fallback rejects the 2D file as well).
     plan2 = plan_av_encoding(_samples(1), tmp_path, "ti2v-5b")
     assert plan2.todo == [0]
+
+
+# ---- retry budget (failure ledger) ---------------------------------------------
+#
+# Same opt-in design as the text cache (test_m2_text_cache): an av_failures.json
+# ledger counts per-sample failures, budget-exhausted samples are planned as
+# skipped, and the default (no max_retries) keeps byte-identical pre-ledger
+# behaviour.
+
+
+def test_av_failure_ledger_roundtrip(tmp_path):
+    assert load_failure_ledger(tmp_path) == {}
+    sample = _samples(1)[0]
+    assert av_failure_key(3) == "sample0003"
+    assert record_failure(tmp_path, 3, sample, "RuntimeError: boom") == 1
+    assert record_failure(tmp_path, 3, sample, "RuntimeError: boom again") == 2
+    ledger = load_failure_ledger(tmp_path)
+    entry = ledger["sample0003"]
+    assert entry["count"] == 2
+    assert entry["caption"] == "caption 0"
+    assert entry["video"] == "/media/clip0.mp4"
+    assert "boom again" in entry["error"]
+    # A different index lands on a different key.
+    record_failure(tmp_path, 7, sample, "x")
+    assert len(load_failure_ledger(tmp_path)) == 2
+    # Success clears only that sample.
+    clear_failure(tmp_path, 3)
+    ledger = load_failure_ledger(tmp_path)
+    assert "sample0003" not in ledger
+    assert len(ledger) == 1
+    # Reset deletes the file entirely.
+    assert reset_failure_ledger(tmp_path)
+    assert not (tmp_path / FAILURES_NAME).exists()
+    assert not reset_failure_ledger(tmp_path)
+    # Corrupt ledger degrades to {} instead of crashing.
+    (tmp_path / FAILURES_NAME).write_text("{not json")
+    assert load_failure_ledger(tmp_path) == {}
+
+
+def test_plan_skips_sample_past_retry_budget(tmp_path):
+    samples = _samples(2)
+    fail = ("/media/clip1.mp4",)
+    calls1: list = []
+    s1 = run_av_encoding(
+        plan_av_encoding(samples, tmp_path, "ti2v-5b", max_retries=2),
+        _encoder(calls1, fail_on=fail), progress=_quiet, max_retries=2,
+    )
+    assert s1["failed"] == 1 and s1["encoded"] == 1  # sample 0 cached from here on
+    # Second run retries only sample 1 and fills its budget (count reaches 2).
+    calls2: list = []
+    s2 = run_av_encoding(
+        plan_av_encoding(samples, tmp_path, "ti2v-5b", max_retries=2),
+        _encoder(calls2, fail_on=fail), progress=_quiet, max_retries=2,
+    )
+    assert calls2 == ["/media/clip1.mp4"]
+    assert s2["failed"] == 1 and s2["reused"] == 1
+    # Third run: sample 1 is skipped by the planner, never encoded.
+    plan3 = plan_av_encoding(samples, tmp_path, "ti2v-5b", max_retries=2)
+    assert plan3.todo == []
+    assert set(plan3.reusable) == {0}
+    assert set(plan3.skipped) == {1}
+    skipped_row = plan3.skipped[1]
+    assert skipped_row["skipped"] is True
+    assert skipped_row["retries"] == 2
+    assert skipped_row["video"] == "/media/clip1.mp4"
+    assert "boom" in skipped_row["last_error"]
+    calls3: list = []
+    s3 = run_av_encoding(plan3, _encoder(calls3), progress=_quiet, max_retries=2)
+    assert calls3 == []
+    # Skipped rows are not counted as failed, reused, or encoded.
+    assert s3["failed"] == 0 and s3["encoded"] == 0
+    assert s3["reused"] == 1
+    assert s3["skipped"] == 1
+    rows = _read_manifest(tmp_path)
+    assert any(r.get("skipped") for r in rows)
+    assert not any("error" in r for r in rows)
+    # The summary sidecar carries the skipped count too.
+    assert json.loads((tmp_path / SUMMARY_NAME).read_text())["skipped"] == 1
+
+
+def test_av_success_clears_ledger_entry(tmp_path):
+    samples = _samples(1)
+    run_av_encoding(
+        plan_av_encoding(samples, tmp_path, "ti2v-5b", max_retries=3),
+        _encoder([], fail_on=("/media/clip0.mp4",)), progress=_quiet, max_retries=3,
+    )
+    assert load_failure_ledger(tmp_path) != {}
+    # The sample now encodes — success wipes its failure history.
+    summary = run_av_encoding(
+        plan_av_encoding(samples, tmp_path, "ti2v-5b", max_retries=3),
+        _encoder([]), progress=_quiet, max_retries=3,
+    )
+    assert summary["encoded"] == 1 and summary["failed"] == 0
+    assert load_failure_ledger(tmp_path) == {}
+
+
+def test_av_no_ledger_io_when_max_retries_unset(tmp_path):
+    samples = _samples(2)
+    summary = run_av_encoding(
+        plan_av_encoding(samples, tmp_path, "ti2v-5b"),
+        _encoder([], fail_on=("/media/clip1.mp4",)),
+        progress=_quiet,
+    )
+    assert summary["failed"] == 1
+    assert "skipped" not in summary  # default behaviour is byte-identical
+    assert not (tmp_path / FAILURES_NAME).exists()
+    # Legacy retry loop still works: the failure row lands back in todo.
+    plan2 = plan_av_encoding(samples, tmp_path, "ti2v-5b")
+    assert plan2.todo == [1] and plan2.skipped == {}
+
+
+def test_av_strict_records_failure_before_reraising(tmp_path):
+    with pytest.raises(RuntimeError, match="boom"):
+        run_av_encoding(
+            plan_av_encoding(_samples(1), tmp_path, "ti2v-5b", max_retries=2),
+            _encoder([], fail_on=("/media/clip0.mp4",)),
+            strict=True,
+            progress=_quiet,
+            max_retries=2,
+        )
+    # The abort did not lose the failure: the ledger saw the attempt.
+    ledger = load_failure_ledger(tmp_path)
+    assert ledger["sample0000"]["count"] == 1
+
+
+def test_av_invalid_max_retries_rejected(tmp_path):
+    with pytest.raises(ValueError):
+        plan_av_encoding(_samples(1), tmp_path, "ti2v-5b", max_retries=0)
+    with pytest.raises(ValueError):
+        run_av_encoding(
+            plan_av_encoding(_samples(1), tmp_path, "ti2v-5b"),
+            _encoder([]),
+            progress=_quiet,
+            max_retries=True,
+        )

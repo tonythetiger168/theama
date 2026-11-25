@@ -16,6 +16,12 @@ first failure. A pairs_latents.summary.json sidecar (encoded / reused /
 failed counts) is written on every run. When everything is cached the VAE
 is never loaded, so resume checks are cheap.
 
+With --max-retries N, failed pairs are counted in a persistent
+pair_failures.json ledger: a pair that has failed N times is skipped
+("retry budget exhausted") until you clear the ledger with
+--reset-failures. Without the flag, retries stay unlimited and no ledger
+file is written (previous behaviour).
+
     python scripts/encode_pairs.py --pairs dpo_out/pairs.jsonl \
         --model ti2v-5b --out dpo_out/latents
 """
@@ -65,6 +71,13 @@ def main() -> int:
                     help="ignore the existing cache and re-encode everything")
     ap.add_argument("--strict", action="store_true",
                     help="abort on the first pair that fails to encode")
+    ap.add_argument("--max-retries", type=int, default=None, metavar="N",
+                    help="cap the per-pair encode retry budget; pairs "
+                         "that failed N times are skipped until the ledger "
+                         "is cleared (default: unlimited, no ledger file)")
+    ap.add_argument("--reset-failures", action="store_true",
+                    help="clear the pair_failures.json ledger before planning, "
+                         "giving budget-exhausted pairs another chance")
     args = ap.parse_args()
 
     pairs = [
@@ -82,18 +95,26 @@ def main() -> int:
 
     from theama.data.latent_cache import (
         plan_encoding,
+        reset_failure_ledger,
         run_encoding,
         save_latent_atomic,
     )
 
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
+    if args.reset_failures and reset_failure_ledger(out):
+        print(f"cleared failure ledger in {out}")
 
-    plan = plan_encoding(pairs, out, args.model, resume=not args.no_resume)
+    plan = plan_encoding(
+        pairs, out, args.model,
+        resume=not args.no_resume, max_retries=args.max_retries,
+    )
     if plan.cache_invalidated:
         print(f"cache model mismatch in {out} — re-encoding everything")
     print(
         f"{len(pairs)} pairs: {len(plan.reusable)} cached, {len(plan.todo)} to encode"
+        + (f", {len(plan.skipped)} skipped (retry budget exhausted)"
+           if plan.skipped else "")
     )
 
     encode_fn = None
@@ -113,10 +134,17 @@ def main() -> int:
     def progress(msg):
         print(msg, flush=True)
 
-    summary = run_encoding(plan, encode_fn, strict=args.strict, progress=progress)
+    summary = run_encoding(
+        plan, encode_fn, strict=args.strict, progress=progress,
+        max_retries=args.max_retries,
+    )
     if summary["failed"]:
+        hint = "rerun to retry"
+        if args.max_retries is not None:
+            hint = ("rerun to retry — pairs that exhaust the budget are "
+                    "skipped until --reset-failures")
         print(
-            f"{summary['failed']} pair(s) failed to encode (rerun to retry)",
+            f"{summary['failed']} pair(s) failed to encode ({hint})",
             file=sys.stderr,
         )
     print(f"wrote manifest -> {plan.manifest_path}")

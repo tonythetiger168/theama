@@ -20,6 +20,12 @@ and --strict to abort on the first failure. An av_latents.summary.json
 sidecar (encoded / reused / failed) is written on every run. When
 everything is cached neither encoder is loaded, so resume checks are cheap.
 
+With --max-retries N, failed samples are counted in a persistent
+av_failures.json ledger: a sample that has failed N times is skipped
+("retry budget exhausted") until you clear the ledger with
+--reset-failures. Without the flag, retries stay unlimited and no ledger
+file is written (previous behaviour).
+
     python scripts/encode_av_latents.py \
         --manifest data/av/manifest.jsonl --out data/av/latents \
         --model ti2v-5b --codec dac_44k
@@ -53,6 +59,13 @@ def main() -> int:
                     help="ignore the existing cache and re-encode everything")
     ap.add_argument("--strict", action="store_true",
                     help="abort on the first sample that fails to encode")
+    ap.add_argument("--max-retries", type=int, default=None, metavar="N",
+                    help="cap the per-sample encode retry budget; samples "
+                         "that failed N times are skipped until the ledger "
+                         "is cleared (default: unlimited, no ledger file)")
+    ap.add_argument("--reset-failures", action="store_true",
+                    help="clear the av_failures.json ledger before planning, "
+                         "giving budget-exhausted samples another chance")
     args = ap.parse_args()
 
     from theama.data.dataset import load_manifest
@@ -76,17 +89,28 @@ def main() -> int:
         print("manifest yielded zero usable samples", file=sys.stderr)
         return 1
 
-    from theama.data.av_latent_cache import plan_av_encoding, run_av_encoding
+    from theama.data.av_latent_cache import (
+        plan_av_encoding,
+        reset_failure_ledger,
+        run_av_encoding,
+    )
 
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
+    if args.reset_failures and reset_failure_ledger(out):
+        print(f"cleared failure ledger in {out}")
 
-    plan = plan_av_encoding(samples, out, args.model, resume=not args.no_resume)
+    plan = plan_av_encoding(
+        samples, out, args.model,
+        resume=not args.no_resume, max_retries=args.max_retries,
+    )
     if plan.cache_invalidated:
         print(f"cache model mismatch in {out} — re-encoding everything")
     print(
         f"{len(samples)} samples: {len(plan.reusable)} cached, "
         f"{len(plan.todo)} to encode"
+        + (f", {len(plan.skipped)} skipped (retry budget exhausted)"
+           if plan.skipped else "")
     )
 
     encode_fn = None
@@ -147,10 +171,17 @@ def main() -> int:
     def progress(msg):
         print(msg, flush=True)
 
-    summary = run_av_encoding(plan, encode_fn, strict=args.strict, progress=progress)
+    summary = run_av_encoding(
+        plan, encode_fn, strict=args.strict, progress=progress,
+        max_retries=args.max_retries,
+    )
     if summary["failed"]:
+        hint = "rerun to retry"
+        if args.max_retries is not None:
+            hint = ("rerun to retry — samples that exhaust the budget are "
+                    "skipped until --reset-failures")
         print(
-            f"{summary['failed']} sample(s) failed to encode (rerun to retry)",
+            f"{summary['failed']} sample(s) failed to encode ({hint})",
             file=sys.stderr,
         )
     print(f"wrote manifest -> {plan.manifest_path}")
