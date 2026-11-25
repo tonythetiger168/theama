@@ -2,37 +2,54 @@
 # Theama session checkpoint — hourly agent runs save/restore THIS file.
 # 設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
 schema: 1
-updated_at: "2026-11-25T01:32:11Z"
-head: 8d1920585750c108da39af80b4e1b04930bd394d
+updated_at: "2026-11-25T02:33:04Z"
+head: bec71587da952dcbcd8e7ab757a6b9b8bed9ae3e
 head_verified: true
-last_increment: "版本 0.2.0：pyproject bump（CPU 側程式全落地之 checkpoint）；tag v0.2.0 待打（MCP 無建 tag 工具，使用者本機 git tag 或網頁 Release 建立）"
+last_increment: "P1b text cache：content-addressed umT5 embedding cache（text_cache.py + encode_texts.py + 14 tests，184 passed）；同輪消化遠端漂移（M7a 腳本/runbook/session-state/CLAUDE.md/0.2.0 bump 已同步本地）並補驗證 M7a 雙腳本（py_compile + scorer 純函數 + 無 chi_tra 錯誤路徑）"
 ci_yml: content_ready_pending_user_upload   # MCP token 推 .github/workflows 被 403（insufficient scopes）；內容已交付使用者
 issues: 0
 gpu_outputs: none_pending_review            # Claude 接手 GPU 驗收；若其 push 結果，下輪 RESTORE 對帳
 blockers:
-  - "專案記憶 mount（/1a20b091…/areas/theama.md）連續多輪讀取失敗 → 本檔續為唯一可靠 checkpoint"
-  - "沙箱執行環境連續多輪不可用（shell/ipython 全掛）→ 本地 pytest 無法跑；M7a 兩支腳本為獨立 script（不被 tests import），語法/執行驗證待沙箱恢復或 CI 上線後補"
+  - "（已解除）專案記憶 mount 與沙箱執行環境：本輪均恢復可用（記憶檔可讀寫、pytest 184 passed）"
+  - "本地 docs/model-roadmap.md 為 echo 逐字轉錄版，與遠端 blob 83cd3626 差 33 bytes（疑為 echo 層不可見字元 artefact）；以遠端為準，本地勿推送此檔"
 division_of_labor:
   hourly_agent: "watchlist 核查、docs、CPU 側程式準備、repo 健康、session checkpoint"
   claude: "GPU 驗收執行（runbook 第 1–4 節）、CI.yml 上傳（人工作業）、結果回報/落盤、git tag v0.2.0（人工作業）"
 next_hour:
   - "RESTORE：核對 HEAD 與本檔 head；Claude 若已 push GPU 結果或 v0.2.0 tag，先消化再增量"
-  - "使用者上傳 CI.yml 後：Actions 即為驗證引擎；補驗證 gen_cjk_images.py / score_cjk_text.py（python -m py_compile + CPU 試跑 scorer）"
-  - "沙箱若恢復：跑全量 pytest；優先 ③ 程式小件續推（M2 audio DiT 骨架 / P1b 資料引擎管線）"
-  - "沙箱仍未恢復：續做 ② watchlist（重點：阿里下一代模型 11 月窗口倒數、Omni-RL Judge arXiv id、Omni-RRM／VA-Judger checkpoint 授權）"
+  - "GPU 側新增可跑項：scripts/encode_texts.py --smoke（umT5 text cache contract，與 encode_av_latents 同模式）"
+  - "使用者上傳 CI.yml 後：Actions 即為驗證引擎（CI image 需 ffmpeg + tesseract chi-tra，否則 decode/M7a 測試 skip）"
+  - "續做 ③：P1b 資料引擎（text cache 已落地，剩 joint training 接 cache 的 training-side loader）；watchlist 固定四項覆核"
 ---
 
 # Session State（每小時 checkpoint）
 
 ## 現況一句話
 
-版本 0.2.0 checkpoint 達成（CPU 側程式全落地、GPU 驗收待跑）；tag
-v0.2.0 待使用者本機建立；M1 / P1a / M2 / M7a 程式與腳本全部落地、
-GPU 驗收由 Claude 依 docs/gpu-acceptance-runbook.md 執行；CI.yml 內容
-備妥待上傳；紅線不變。
+版本 0.2.0（CPU 側程式全落地、GPU 驗收待跑）；本輪新增 P1b
+content-addressed umT5 text cache（184 CPU tests 全綠）；沙箱與專案
+記憶 mount 均已恢復；GPU 驗收由 Claude 依 docs/gpu-acceptance-runbook.md
+執行；CI.yml 內容備妥待上傳；紅線不變。
 
 ## 本輪記錄（新輪加在最上面，保留最近 10 輪）
 
+- 2026-11-25 pass 12 @ bec7158 — P1b text cache：新檔
+  `src/theama/data/text_cache.py`（content-addressed
+  `text_{sha256(caption)[:16]}.pt`——caption 編輯結構性失效，舊檔成
+  orphan 永不誤用，從根上消除 pair/AV cache 需程序性 drift guard 的
+  那類漏洞；resume 驗 2D finite、error 列自動重試、meta.json model
+  不符整庫作廢、同 run 重複 caption 只編碼一次、encode 後重驗拒收
+  NaN/壞檔/錯 ndim）、`scripts/encode_texts.py`（GPU 薄殼：
+  UMT5EncoderModel subfolder、padded (512,D) bf16、seq_len 入列供
+  mask 重建、全 cached 不載 encoder）、`tests/test_m2_text_cache.py`
+  14 例。RESTORE 對帳發現遠端領先本地五個提交（session-state 系
+  pass 5–11：M7a 雙腳本＋seed、GPU runbook、CLAUDE.md、0.2.0 bump）——
+  已逐檔拉回本地並驗 blob SHA（10/11 一致；model-roadmap.md 因 echo
+  層不可見字元差 33 bytes，以遠端為準不從本地推送，見 blockers）。
+  順帶補驗證 pass 9 標記待驗證的 M7a 雙腳本：py_compile 通過、
+  scorer 純函數（normalize/char_recall）與無 chi_tra 錯誤路徑
+  （exit 1 訊息正確）皆符合預期。CPU 全套 184 passed。三檔 blob
+  SHA 驗證一致（ea921edd／f91d8c6f／cf843d4d）。
 - 2026-11-25 pass 11 @ 8d19205 — 版本化：pyproject.toml 0.1.0 → 0.2.0
   （0.1.0=scaffold；0.2.0=CPU 側程式全落地 checkpoint：M1 推理/eval/mux、
   P1a DPO 管線＋latent cache drift guard、M2 AudioDiT/JointAVTrainer/
