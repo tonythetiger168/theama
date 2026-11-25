@@ -54,7 +54,7 @@ CPU tests 全綠；GPU 驗收由 Claude 執行（使用者 11-25 擴權：其他
   未測的 CPU 邏輯（GPU pod 打分前的 clip→prompt 配對，
   gen_candidates 的 <out>/<prompt_id>/cand_<k>.mp4 佈局＋
   flat stem fallback）。動手前第二閘 mtime 掃描（16:09Z）
-  乾乾淨；寫碼＋測試期間對岸於 16:06Z 落地 pair_latent_check
+  乾淨；寫寫碼＋測試期間對岸於 16:06Z 落地 pair_latent_check
   四檔（同 P1a 領域相鄰題：train_dpo 上 GPU 前 fail-fast
   預檢閘）——全套跑出 303 passed（預期 295+8）時 +12 差額
   才偵測到對岸新 test 檔。檔案零交集（本 session 僅
@@ -211,7 +211,7 @@ CPU tests 全綠；GPU 驗收由 Claude 執行（使用者 11-25 擴權：其他
   11、ui／menu 各 8、product／book_cover／newspaper／ticket／
   packaging／receipt 各 6、sticker／banner 各 5、calendar／
   label／coupon／map 各 4）；難度梯度續推——民國年號
-  （民國116年）、冒號（今日定食：照燒鮭魚／例行賽：龍象大戰）、
+  （民國116年）、冒號（今日定食：照燒鮭魚／例行／例行賽：龍象大戰）、
   直排（感恩回饋全面五折起／芒果雪花冰）、3 字短目標
   （營業中）、CJK×英數混排（維他命C發泡錠／主峰步道 3.2K）；
   本地生成即逐列機器驗證 expected_text⊆prompt、id 唯一、類別
@@ -390,7 +390,7 @@ CPU tests 全綠；GPU 驗收由 Claude 執行（使用者 11-25 擴權：其他
   budget（本 session 增量，對岸 pass-20 next_hour 明列候選）：把
   text_cache（e1896295）的 opt-in failure ledger 移植到兩個 media
   cache——latent_cache.py 新增通用 ledger 核心（_ledger_load/_record/
-  _clear/_reset：tmp+replace 原子寫、毀損降級 {}）＋pair_failures.json
+  _clear/_reset：tmp+replace 原子原子寫、毀損降級 {}）＋pair_failures.json
   綁定 wrappers（key＝pair{index:04d} 檔名 stem，可 grep cache 目錄）；
   av_latent_cache.py 共用同一核心（av_failures.json，key＝
   sample{index:04d}）。EncodePlan/AVEncodePlan 加 skipped 欄、plan/run
