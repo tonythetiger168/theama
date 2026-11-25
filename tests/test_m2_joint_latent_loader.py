@@ -9,6 +9,7 @@ mask, cond pooling), and the money test: a DataLoader batch fed straight
 into JointAVTrainer.train_step.
 """
 
+import json
 import sys
 from pathlib import Path
 
@@ -19,7 +20,9 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from theama.data.av_latent_cache import (  # noqa: E402
+    MANIFEST_NAME as AV_MANIFEST_NAME,
     plan_av_encoding,
+    reset_failure_ledger as reset_av_failures,
     run_av_encoding,
 )
 from theama.data.joint_latent_loader import (  # noqa: E402
@@ -31,7 +34,12 @@ from theama.data.joint_latent_loader import (  # noqa: E402
     masked_mean_pool,
 )
 from theama.data.latent_cache import save_latent_atomic  # noqa: E402
-from theama.data.text_cache import plan_text_encoding, run_text_encoding  # noqa: E402
+from theama.data.text_cache import (  # noqa: E402
+    MANIFEST_NAME as TEXT_MANIFEST_NAME,
+    plan_text_encoding,
+    reset_failure_ledger as reset_text_failures,
+    run_text_encoding,
+)
 from theama.model.audio_dit import AudioDiT  # noqa: E402
 from theama.train.train_joint_av import JointAVTrainer  # noqa: E402
 
@@ -163,6 +171,71 @@ def test_join_without_seq_len_records_full_length(tmp_path):
     assert "seq_len" not in join.records[0]
     dataset = JointLatentDataset(join)
     assert dataset[0]["seq_len"] == TXT_SHAPE[0]
+
+
+# ---- skipped (retry-budget) rows ----------------------------------------------
+
+
+def _run_skipped_caches(tmp_path: Path) -> tuple[Path, Path]:
+    """AV sample 1 / text sample 2 exhaust a budget of 1 -> skipped rows."""
+    samples = _samples()
+    av_dir, text_dir = tmp_path / "av", tmp_path / "text"
+    av_dir.mkdir()
+    text_dir.mkdir()
+    for _ in range(2):  # run 1 fills the budget, run 2 plans the skip
+        run_av_encoding(
+            plan_av_encoding(samples, av_dir, AV_MODEL, max_retries=1),
+            _av_encode_fn(1),
+            progress=lambda *_: None,
+            max_retries=1,
+        )
+        run_text_encoding(
+            plan_text_encoding(samples, text_dir, TXT_MODEL, max_retries=1),
+            _text_encode_fn(2),
+            progress=lambda *_: None,
+            max_retries=1,
+        )
+    return av_dir, text_dir
+
+
+def test_join_reports_budget_skipped_rows_explicitly(tmp_path):
+    av_dir, text_dir = _run_skipped_caches(tmp_path)
+    # Sanity: both manifests really carry skipped rows (not error rows), and
+    # those rows have no latent keys for the join to trip over.
+    for manifest in (av_dir / AV_MANIFEST_NAME, text_dir / TEXT_MANIFEST_NAME):
+        rows = [json.loads(line) for line in manifest.read_text().splitlines()]
+        skipped = [r for r in rows if r.get("skipped")]
+        assert len(skipped) == 1 and not any("error" in r for r in rows)
+        assert not any("video_latent" in r or "text_latent" in r for r in skipped)
+    join = load_joint_latent_records(av_dir, text_dir)
+    assert [r["index"] for r in join.records] == [0, 3]
+    # The true cause is reported — never misreported as missing_keys.
+    assert join.dropped == {"skipped_av_row": 1, "skipped_text_row": 1}
+
+
+def test_join_serves_sample_again_after_ledger_reset_and_reencode(tmp_path):
+    av_dir, text_dir = _run_skipped_caches(tmp_path)
+    join = load_joint_latent_records(av_dir, text_dir)
+    assert [r["index"] for r in join.records] == [0, 3]
+    # Recovery path: reset both budgets; the next run re-encodes the
+    # previously skipped samples (the encoders succeed this time).
+    assert reset_av_failures(av_dir) and reset_text_failures(text_dir)
+    samples = _samples()
+    run_av_encoding(
+        plan_av_encoding(samples, av_dir, AV_MODEL, max_retries=1),
+        _av_encode_fn(),
+        progress=lambda *_: None,
+        max_retries=1,
+    )
+    run_text_encoding(
+        plan_text_encoding(samples, text_dir, TXT_MODEL, max_retries=1),
+        _text_encode_fn(),
+        progress=lambda *_: None,
+        max_retries=1,
+    )
+    join = load_joint_latent_records(av_dir, text_dir)
+    assert [r["index"] for r in join.records] == [0, 1, 2, 3]
+    assert join.dropped == {}
 
 
 # ---- dataset ------------------------------------------------------------------

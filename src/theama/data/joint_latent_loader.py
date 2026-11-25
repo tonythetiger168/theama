@@ -32,6 +32,10 @@ Join safety rules (fail-closed, mirroring the caches' own guards):
     guard intentionally ignores caption edits, so this cross-check is the
     loader-side backstop against pairing a video with the previous caption's
     embedding;
+  * rows either cache planned as *skipped* (retry budget exhausted — the
+    encoder never ran, so the row carries no latent keys) are dropped with
+    explicit ``skipped_av_row`` / ``skipped_text_row`` reasons: never
+    served, and never misreported as ``missing_keys``;
   * every served .pt is validated (ndim + finite) at dataset construction
     and re-checked for finiteness on every __getitem__ — NaN latents must
     never reach a loss.
@@ -109,7 +113,9 @@ def load_joint_latent_records(
     ``av_model`` / ``text_model`` default to each cache's own meta.json model
     (the value the encoder run recorded); pass them explicitly to pin a
     specific encoder config. Only indices with a successful, model-matching
-    row in both manifests — and agreeing captions — produce a record.
+    row in both manifests — and agreeing captions — produce a record. Rows a
+    cache planned as *skipped* (retry budget exhausted) are dropped with the
+    explicit ``skipped_av_row`` / ``skipped_text_row`` reasons.
     """
     av_dir, text_dir = Path(av_dir), Path(text_dir)
     av_model = _resolve_model(av_dir, av_model, "av")
@@ -130,6 +136,14 @@ def load_joint_latent_records(
             continue
         if text_row is None:
             _drop("missing_text_row")
+            continue
+        if av_row.get("skipped"):
+            # Retry budget exhausted on the AV side: the encoder never ran,
+            # so the row has no latent keys. Report the true cause.
+            _drop("skipped_av_row")
+            continue
+        if text_row.get("skipped"):
+            _drop("skipped_text_row")
             continue
         if av_row.get("caption") != text_row.get("caption"):
             _drop("caption_mismatch")
