@@ -11,7 +11,7 @@
 | M1 | Wan 2.2 推理重現（TI2V-5B / T2V-A14B / I2V-A14B）+ eval harness + MP4 mux | 程式落地，GPU 驗收待跑 |
 | P1a | **theama-ti2v-5b-dpo**（VideoReward 偏好對 + LoRA-DPO） | 程式落地，GPU 驗收待跑 |
 | M2 | **theama-audio-dit v1**（並聯音訊 DiT + 雙向 CrossModalBridge） | CPU trainer + DAC contract + 外部 Wan adapter 落地，真實權重 GPU smoke 已通過（2026-11-24，RTX 4090，見 docs/status.md） |
-| M4b（前置） | HEVC / AV1 + HDR10 / HLG 10-bit 封裝 | mux 落地；8K regenerate 本體待 M4 穩定 |
+| M4b（前置） | HEVC / AV1 + HDR10 / HLG 10-bit 封裝 | mux 落地；**2026-11-26 拍板提前至 M4 交付（獨立賣點）**；8K regenerate 本體待 M4 穩定 |
 | M7a（前置） | CJK T2I eval seed v1.2（100 條文字渲染 prompt + expected_text，v1.1 48 條再擴一倍；**簡中 zh-Hans 優先**，簡繁對照成對、分開統計） | 已落地、達驗收閘規模；Qwen-Image-2512 / Z-Image Turbo 推理重現待跑 |
 
 ## 近期（下一季）
@@ -21,13 +21,13 @@
 | P1a→A14B | **theama-t2v-a14b-dpo** | 5B 全綠後同配方推 A14B（80GB 卡） |
 | M2 | **theama-audio-dit v1** | 真實 DAC/Wan 權重 smoke → Wan 內層 bridge、AV 資料管線與 GPU 訓練（bridge warmup LoRA 已落地）；驗收：AV-sync < 40ms |
 | M3 | **theama-extend-30s** | SVI 式接續，anchor_frames=8；驗收：identity drift ≤ 單段 1.5× |
-| M4 | **theama-4k-regen** | 720p→2K→4K 兩段 in-context 重建；驗收：LPIPS 不劣化 >10% |
+| M4 | **theama-4k-regen** | 720p→2K→4K 兩段 in-context 重建＋**HDR10/HLG 10-bit＋HEVC/AV1 輸出（11-26 提前自 M4b）＋HLS fMP4/CMAF 分發包**；驗收：LPIPS 不劣化 >10% |
 
 ## 中期
 
 | 階段 | 模型交付物 | 說明 |
 |---|---|---|
-| M4b | **theama-8k-regen** | 4K→8K tiled regenerate + HEVC/AV1 + HDR10（光環級，M4 穩定後才動） |
+| M4b | **theama-8k-regen** | 4K→8K tiled regenerate（光環級，M4 穩定後才動；HEVC/AV1＋HDR10 已提前至 M4） |
 | M5 | 品質收斂版 Film 模型 | 保底：盲測 vs H3 win/tie ≥50%、vs Wan 3.0 ≥40%、VBench 開源前三；**終局（11-25 拍板）：AA with-audio 三板登頂——T2V/editing 超越 Wan 3.0、I2V 超越 Seedance 2.5** |
 | M6a | **theama-avatar-offline** | Wan-Animate-2-14B（animation-only）底座 + LatentSync 墊底唇形 |
 | M7a | **theama-image 雙路徑** | Qwen-Image-2512（品質）+ Z-Image Turbo（快速）推理重現 + CJK 評測（**簡中優先**：zh-Hans 準確率為放行閘、zh-Hant 並行統計；seed v1.2 已達 100 條驗收閘規模） |
@@ -36,7 +36,7 @@
 
 | 階段 | 模型交付物 | 說明 |
 |---|---|---|
-| M6b | **theama-avatar-stream** | causal DiT + rolling KV + replay anchor；24GB 卡 720p 實時係數 ≥1.0 |
+| M6b | **theama-avatar-stream** | causal DiT + rolling KV + replay anchor；24GB 卡 720p 實時係數 ≥1.0；**實時分發走 LL-HLS 或 WebRTC，不用標準 HLS（11-26 拍板）** |
 | M6c | **theama-avatar-interactive** | VLM agent 互動層：串流中換參考圖、語音指令（Vidu S2 class） |
 | M7b/c | 編輯管線 + **KeyframeBridge** | Qwen-Image-Edit-2511；T2I→Film I2V、identity→Avatar 三線整合 |
 | P2 | **omni-reference encoder** | 多圖/影片/音訊參考（對標 Wan 3.0 omni-reference；H3 Contextual Omni Rep clean-room） |
@@ -315,6 +315,13 @@
   蒸餾 top10 之路不可行，強化既有路線——Wan 2.2 底座＋自我蒸餾
   （Theama Film 自產 4K/30s 帶音訊樣本回流）＋CJK 簡中優先＋開放
   授權差異化。
+  2026-11-26 第二筆補記（交付格式拍板）：**HDR＋AV1 提前至 M4 交付**
+  並列為獨立賣點——現無任何生成模型交付 10-bit HDR10/HLG＋AV1
+  （Wan 3.0 鎖 1080P 8-bit、H3 鎖 2K 8-bit、Seedance 2.5 8-bit SDR）；
+  新增 **HLS 分發層**——fMP4/CMAF segment＋master .m3u8 自適應階梯
+  （4K HDR AV1 → 1080p HEVC → 720p/480p H.264，HEVC 層為 Safari
+  fallback 屬必需，同批 segment 兼出 DASH）；Avatar 實時線（M6b）
+  不走標準 HLS，採 LL-HLS 或 WebRTC。
 
 ## 發布策略
 

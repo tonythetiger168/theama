@@ -58,14 +58,16 @@
 ## M4 — THEAMA-4K（720p→2K→4K）
 
 - Stage 1 in-context regenerate（denoise 0.35）；Stage 2 tiled upscale（denoise 0.25）。
-- **驗收**：4K 輸出對 2K 輸入的 LPIPS 不劣化 > 10%；tile 接縫不可見；單片 30s 4K 在 80GB 卡可完成。
+- **HDR + AV1 提前至 M4 交付（2026-11-26 拍板，自 M4b 前置移入）**：10-bit HDR10/HLG 封裝＋H.264/HEVC/AV1 三編碼隨 4K 上線，列為獨立賣點——「第一個輸出 10-bit HDR + AV1 的開源影片模型」（Wan 3.0／H3／Seedance 2.5 皆僅 8-bit SDR MP4）。
+- **HLS 分發層（2026-11-26 拍板）**：成片除 MP4 母檔外，輸出 HLS 播放包——fMP4/CMAF segments（AV1/HEVC 在 HLS 不走 MPEG-TS）＋ master .m3u8 自適應階梯（4K HDR AV1 → 1080p HEVC → 720p/480p H.264；HEVC 層為 Safari fallback，非加分項是必需）；同批 segment 可兼出 DASH playlist。
+- **驗收**：(1) 4K 輸出對 2K 輸入的 LPIPS 不劣化 > 10%；(2) tile 接縫不可見；(3) 單片 30s 4K 在 80GB 卡可完成；(4) HDR10/HLG 10-bit + HEVC/AV1 mux ＋ ffprobe 驗證通過；(5) HLS master playlist ＋各 variant 全數產出、ffprobe 驗證通過。
 
 ## M4b — THEAMA-8K（4K→8K tiled regenerate，2026-11-24 新增）
 
 光環型差異化（Wan 3.0 鎖 1080P、H3 鎖 2K，8K 無人提供）；**加分題不是主線**，M4 4K 穩了才動。
 
 - 方法：M4 Stage 2 直接延伸——4K base → 8K tiled in-context regenerate（~1024² tiles、overlap 128、denoise 0.15–0.25，比 4K 段更保守，只補高頻紋理）。
-- 工程前提：tiled VAE decode（8K 整張不進 VAE）；PNG 中介檔 streaming mux（8K 序列 ~21GB/30s 支，不全落盤）；HEVC/AV1 + HDR10 封裝（`mux_mp4(vcodec="hevc"|"av1", hdr="hdr10")` 已就位，hvc1 tag / SVT-AV1）。
+- 工程前提：tiled VAE decode（8K 整張不進 VAE）；PNG 中介檔 streaming mux（8K 序列 ~21GB/30s 支，不全落盤）；HEVC/AV1 + HDR10 封裝（`mux_mp4(vcodec="hevc"|"av1", hdr="hdr10")` 已就位，hvc1 tag / SVT-AV1；**HDR/AV1 封裝已提前至 M4 交付**，M4b 僅剩 8K 本體）。
 - **驗收**：(1) 8K 輸出對 4K 輸入 LPIPS 不劣化 > 10%；(2) tile 接縫人工檢不可見（含文字/人臉特寫偽影檢查）；(3) 單片 30s 8K 在 80GB 卡完成（估數小時/支）；(4) HEVC/AV1 + HDR10 mux + ffprobe 驗證通過。
 
 ## M5 — 品質收斂對標（bar = Wan 3.0 / H3，2026-11-24 細化）
@@ -83,6 +85,7 @@
 | 4K 訓練資料不足 | Stage 2 可用純影像 4K 資料預訓，再用影片 fine-tune |
 | 授權誤用（H3/LTX 輸出混入資料集） | data card 強制記錄來源；CI 加資料來源檢查腳本 |
 | 算力不足 | 每里程碑有 CPU/單卡可驗收的最小子集；M3 起才需多卡 |
+| AV1 in HLS 的 Safari 相容缺口 | HLS 階梯內 HEVC 層為 Apple 生態 fallback，必做 |
 
 ## M6 — Avatar 互動數字人線（2026-11-24 新增）
 
@@ -94,6 +97,7 @@
 ### M6b — Streaming 實時化
 
 - Causal/block-causal attention 改造 + rolling KV cache + replay anchor。
+- 分發註記（2026-11-26 拍板）：實時互動**不走標準 HLS**（segment 延遲太高），採 LL-HLS（partial segment）或 WebRTC；標準 HLS 是 Film 成片的分發格式，兩線不混。
 - **驗收**：消費級單卡（24GB 級）720p 串流實時係數 ≥ 1.0（生成速度 ≥ 播放速度）；連續 5 分鐘無可見漂移。
 
 ### M6c — 互動層
