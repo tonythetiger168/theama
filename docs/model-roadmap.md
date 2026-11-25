@@ -43,7 +43,7 @@
 
 ## Watchlist（上游釋出追蹤）
 
-最近核查：**2026-11-25**（當日第十輪）。
+最近核查：**2026-11-25**（當日第十一輪）。
 
 - **Wan-Animate-2-14B**（Apache-2.0）— M6a 底座候選，已寫入
   `configs/theama_base.yaml`。repo id 已核對：`Wan-AI/Wan2.2-Animate-2-14B`
@@ -244,6 +244,25 @@
   license tag」待辦**；repo 自 08-20 已釋出 checkpoints＋Bench（SFT
   程式碼與 VAPref-10K 仍 to-do）。其餘觀察條目（GenRM-Flow／PAVRM／
   Omni-RRM 等）本輪無新增。
+- **AV leaderboard（Artificial Analysis Video Arena with-audio）現況**
+  （2026-11-25 第十一輪補；M5 品質目標的對標板）——**T2V w/audio**
+  （11-13 快照）：Wan 3.0 第一（Elo 1175）、Utopai X（H3 post-train）
+  第二（1170）、MiniMax H3（768p）第三（1161，**開放權重最高**，
+  Kling 3.0 固定錨 1000）；**I2V w/audio**（11-02 快照）：Seedance 2.5
+  第一（1153）、H3 第四（1128），前十有六款為 H3 或其 post-train
+  （Utopai X／Hyperflow／HeyGen Video 1／P-Video-2-Pro／H3 Max）；
+  **editing w/audio**（11-03 快照）：Wan 3.0 第一（1196）、
+  Seedance 2.5 第二、Hyperflow H3 第三，Wan 2.7 Video 列第八
+  （1074，仍 API-only 無權重）。對本專案的意義：① M5 目標
+  （盲測 vs H3 win/tie ≥50%、vs Wan 3.0 ≥40%）的戰場就是 AA
+  with-audio 雙板，對手現況如上；② **H3 post-train 生態（六款以上
+  前十）證明「強開放底座＋後訓練可逼近 frontier Elo」**——theama
+  以 Wan 2.2（Apache-2.0）＋LoRA-DPO 走同構策略，是授權紅線內
+  唯一合法的對應路線；③ 開源可商用譜系中 Wan 2.2 仍為唯一頂級
+  底座（H3 restricted／LTX community 皆紅線），骨幹不變；
+  ④ VBench 對照：Wan2.2-T2V-A14B total 82.61（自報），
+  VBench-2.0 早期快照榜首 Veo 3 66.7%——M5「VBench 開源前三」
+  目標在 Apache 譜系內等價於「追平並超出 Wan 2.2 官方分」。
 
 ## 發布策略
 
