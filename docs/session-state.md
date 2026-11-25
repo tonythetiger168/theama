@@ -2,10 +2,10 @@
 # Theama session checkpoint — hourly agent runs save/restore THIS file.
 # 設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
 schema: 1
-updated_at: "2026-11-25T08:10:00Z"
-head: a3067d9b0f4c57c1e59e026c7898eebe434be82f
+updated_at: "2026-11-25T08:14:00Z"
+head: a7cb7697f200c2912a4a89c6cd10b239baab9139
 head_verified: true
-last_increment: "M7a score 腳本強化：score_cjk_text.py 讀 gen manifest.jsonl 做來源標註（summary 帶 models/model/repo_ids＋no_provenance 清單，混模型 stderr 警告，resume 舊列 setdefault 補 model；SCORER_VERSION 不變）＋ build_summary 抽成純函數；test_m7a +3；CPU 全套 220 passed"
+last_increment: "runbook §4.1 補 Ming 第三路徑驗收段（gen/score 指令對＋單卡 80 GiB 需求＋diagnostic-only 不入 M7a 驗收閘；commit be140326 首推漏檔尾換行、blob 驗證當場抓到，a7cb7697 補 byte-exact）；同輪對岸落地 M7a score 來源標註強化 a3067d9b（CPU 220 passed），已消化合併進本檔"
 ci_yml: content_ready_pending_user_upload   # MCP token 推 .github/workflows 被 403（insufficient scopes）；內容已交付使用者
 issues: 0
 gpu_outputs: none_pending_review            # Claude 接手 GPU 驗收；若其 push 結果，下輪 RESTORE 對帳
@@ -15,9 +15,9 @@ division_of_labor:
   claude: "GPU 驗收執行（runbook 第 1–5 節）、CI.yml 上傳（人工作業）、結果回報/落盤、git tag v0.2.0（人工作業）"
 next_hour:
   - "RESTORE：核對 HEAD 與本檔 head；Claude 若已 push GPU 結果或 v0.2.0 tag，先消化再增量"
-  - "M7a score 側強化已於 pass 17 落地（a3067d9b：manifest provenance＋build_summary 純函數）——RESTORE 到本檔者請勿重複做同題；gen 側第三路徑亦已於 pass 16 落地（4e1d202f）"
+  - "pass 17 雙增量皆已落地請勿重做：M7a score provenance 強化（a3067d9b）＋ runbook §4.1 Ming 第三路徑段（a7cb7697）；gen 側第三路徑 pass 16 已落地（4e1d202f）"
   - "使用者上傳 CI.yml 後：Actions 即為驗證引擎（CI image 需 ffmpeg + tesseract chi-tra，否則 decode/M7a 測試 skip）"
-  - "③ 候選：encode_texts / score 腳本進一步強化（如 encode_texts 的 error 重試配額上限）、或替對岸補 runbook §4 第三路徑段落（先對帳確認對岸未補再動手——runbook 是競態熱點，§4 加 Ming 需註明 80 GiB 卡需求）；watchlist 固定四項覆核（阿里下一代 11 月窗口 11-30 關閉，仍無發布）"
+  - "③ 候選：encode_texts 進一步強化（如 error 重試配額上限）；watchlist 固定四項覆核（阿里下一代 11 月窗口 11-30 關閉，仍無發布）"
   - "model-roadmap.md 本地已與遠端 byte-exact（pass 15 癒合），後續可正常從本地推送此檔"
 ---
 
@@ -31,6 +31,32 @@ config），220 CPU tests 全綠；GPU 驗收由 Claude 依
 docs/gpu-acceptance-runbook.md 執行；CI.yml 內容備妥待上傳；紅線不變。
 
 ## 本輪記錄（新輪加在最上面，保留最近 10 輪）
+
+- 2026-11-25 pass 17 @ a7cb7697 — runbook §4.1 Ming 第三路徑驗收段
+  （本 session 增量，next_hour 明列的「替對岸補」候選）：`### 4.1 第三
+  路徑（diagnostic-only）：Ming-Image-0.1-Design`——gen/score 指令對
+  （scorer model-agnostic）、卡片預設 12 steps/CFG 1.0 與 1024/2048
+  落桶說明、**單卡 80 GiB 官方驗證配置**（24GB 預期 OOM，有 80 GiB 卡
+  再排、不阻塞雙路徑驗收）、diagnostic-only 定位（24 seed 實測前不入
+  M7a 驗收閘）。**競態紀律實例五（開工前攔截＋工作中疊加）**：開工前
+  mtime 掃描發現 score_cjk_text.py（16:04）／test_m7a.py（16:05）為
+  數秒內新檔——對岸正在做 next_hour 明列的 score 強化，依紀律避開
+  同題轉 docs；工作中對岸推 `a3067d9b`（08:08:36Z，score provenance
+  強化，CPU 220 passed），本 session 推送前對帳（08:07）尚未落地，
+  兩次 runbook 推送疊加其上無衝突（不同檔）。**SAVE 事故第五實例
+  （尾換行）**：首推 `be140326` payload 漏檔尾換行，blob a1f5f403 ≠
+  本地 17239ef3 當場抓到；補尾換行重推 `a7cb7697` byte-exact
+  （runbook blob 17239ef3 本地重算一致），壞 commit 留史不強推。
+  教訓加強：推送 payload 結尾必帶檔尾換行（create_or_update_file
+  不會自動補）。對岸 pass-17 checkpoint 於本 session 推送途中搶先落地
+  （sha 325bca2e→6d590445，create_or_update_file 退回 stale），本
+  session 以其推送版為基核對——與先前消化之本地版逐字一致、本版為
+  嚴格超集——遂以新 sha 重建推送（front matter head→a7cb7697；對岸
+  entry 保留於下）。
+  交叉驗證：對岸記錄的 score blob 1142893e 與本 session 開工前本地
+  重算一致；CPU 全套 220 passed（217+3，本 session 獨立重跑確認）。
+  watchlist 本輪不重查（pass 15/16 已覆核，阿里窗口 11-30 才關閉）；
+  tags 空、issues 0、遠端無 .github。
 
 - 2026-11-25 pass 17 @ a3067d9b — M7a score 腳本來源標註強化（本
   session 增量，session-state next_hour 明列候選）：score_cjk_text.py
@@ -181,15 +207,6 @@ docs/gpu-acceptance-runbook.md 執行；CI.yml 內容備妥待上傳；紅線不
   {step, command, exit_code, summary, GPU, 耗時}、紅線重申）＋修簡繁錯字；
   front matter 新增 division_of_labor；下輪起 RESTORE 需對帳 Claude 的
   GPU 結果提交。docs-only。
-- 2026-11-25 pass 9 @ 0b7359b — 「我們這邊能做的全做完」批次：
-  ① M7a 生成腳本 scripts/gen_cjk_images.py（Qwen-Image-2512／Z-Image
-  Turbo 雙路徑、resumable、manifest+summary 閘）；② M7a 評分腳本
-  scripts/score_cjk_text.py（tesseract chi_tra/chi_sim OCR、exact_hit +
-  char_recall、per-category summary、scorer-version resume）；③ CI.yml
-  已備妥但 MCP token 無 workflow scope（403 insufficient scopes），
-  內容交付使用者自行上傳；④ 兩腳本均為獨立 script 不被 tests import，
-  沙箱掛機期間無法本地驗證，標記為待驗證。blob SHA 驗證一致
-  （f0d8d613／c896a9bc）。
 
 ## RESTORE 協議（每輪第 0 步，依序執行）
 
