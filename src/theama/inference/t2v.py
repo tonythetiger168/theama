@@ -18,17 +18,26 @@ from theama.inference.config import (
 )
 
 
-def load_pipeline(spec_name: str = "ti2v-5b", offload: bool = True):
-    """Load a WanPipeline. offload=True keeps 16-24GB cards viable."""
+def load_pipeline(
+    spec_name: str = "ti2v-5b",
+    offload: bool = True,
+    model_path: str | Path | None = None,
+):
+    """Load a WanPipeline. offload=True keeps 16-24GB cards viable.
+
+    ``model_path`` points at a local Diffusers-layout checkout (e.g. a RunPod
+    network volume); otherwise the registered Hugging Face repo id is used.
+    """
     import torch
     from diffusers import AutoencoderKLWan, WanPipeline
 
     spec = MODELS[spec_name]
+    source = str(model_path) if model_path is not None else spec.repo_id
     vae = AutoencoderKLWan.from_pretrained(
-        spec.repo_id, subfolder="vae", torch_dtype=torch.float32
+        source, subfolder="vae", torch_dtype=torch.float32
     )
     pipe = WanPipeline.from_pretrained(
-        spec.repo_id, vae=vae, torch_dtype=torch.bfloat16
+        source, vae=vae, torch_dtype=torch.bfloat16
     )
     if offload:
         pipe.enable_model_cpu_offload()
@@ -63,10 +72,30 @@ def generate_frames(
     return pipe(**kwargs).frames[0]
 
 
-def save_frames(frames: list[Image.Image], frames_dir: str | Path) -> Path:
-    """Write frames as 0001.png... — the naming mux_mp4() expects."""
+def _to_pil(frame) -> Image.Image:
+    """Accept PIL frames or diffusers' default numpy output.
+
+    WanPipeline's default ``output_type="np"`` yields float frames in [0, 1]
+    shaped (H, W, 3); uint8 arrays are passed through unchanged.
+    """
+    if isinstance(frame, Image.Image):
+        return frame
+    import numpy as np
+
+    arr = np.asarray(frame)
+    if arr.dtype != np.uint8:
+        arr = (np.clip(arr, 0.0, 1.0) * 255.0).round().astype(np.uint8)
+    return Image.fromarray(arr)
+
+
+def save_frames(frames, frames_dir: str | Path) -> Path:
+    """Write frames as 0001.png... — the naming mux_mp4() expects.
+
+    ``frames`` may be a list of PIL images, a list of (H, W, 3) arrays, or a
+    single (F, H, W, 3) array.
+    """
     frames_dir = Path(frames_dir)
     frames_dir.mkdir(parents=True, exist_ok=True)
     for i, frame in enumerate(frames, start=1):
-        frame.save(frames_dir / f"{i:04d}.png")
+        _to_pil(frame).save(frames_dir / f"{i:04d}.png")
     return frames_dir

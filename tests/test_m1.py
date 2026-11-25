@@ -203,3 +203,69 @@ def test_gpu_scripts_parse():
     for script in ("gen_eval_set.py", "run_vbench.py"):
         src = (ROOT / "scripts" / script).read_text(encoding="utf-8")
         compile(src, script, "exec")
+
+
+def test_load_pipeline_uses_local_model_path(monkeypatch):
+    """--model-path must load VAE and pipeline from the local checkout."""
+    import sys
+    import types
+
+    torch = pytest.importorskip("torch")
+    calls = []
+
+    class _FakeVAE:
+        @classmethod
+        def from_pretrained(cls, source, **kw):
+            calls.append(("vae", source, kw.get("subfolder")))
+            return cls()
+
+    class _FakePipe:
+        @classmethod
+        def from_pretrained(cls, source, **kw):
+            calls.append(("pipe", source, kw.get("torch_dtype")))
+            return cls()
+
+        def enable_model_cpu_offload(self):
+            calls.append(("offload",))
+
+    fake = types.ModuleType("diffusers")
+    fake.AutoencoderKLWan = _FakeVAE
+    fake.WanPipeline = _FakePipe
+    monkeypatch.setitem(sys.modules, "diffusers", fake)
+
+    from theama.inference.t2v import load_pipeline
+
+    pipe, spec = load_pipeline("ti2v-5b", offload=True, model_path="/vol/ti2v-5b")
+    assert isinstance(pipe, _FakePipe) and spec.name == "ti2v-5b"
+    assert calls == [
+        ("vae", "/vol/ti2v-5b", "vae"),
+        ("pipe", "/vol/ti2v-5b", torch.bfloat16),
+        ("offload",),
+    ]
+
+    calls.clear()
+    load_pipeline("ti2v-5b", offload=True)
+    assert calls[0][1] == "Wan-AI/Wan2.2-TI2V-5B-Diffusers"
+
+
+def test_save_frames_accepts_numpy_pipeline_output(tmp_path):
+    """WanPipeline returns float numpy frames by default; save_frames must cope."""
+    import numpy as np
+    from PIL import Image
+
+    from theama.inference.t2v import save_frames
+
+    video = np.linspace(0.0, 1.0, 3 * 4 * 6 * 3, dtype=np.float32).reshape(3, 4, 6, 3)
+    save_frames(video, tmp_path / "np")
+    files = sorted((tmp_path / "np").glob("*.png"))
+    assert [f.name for f in files] == ["0001.png", "0002.png", "0003.png"]
+    img = Image.open(files[-1])
+    assert img.size == (6, 4) and img.mode == "RGB"
+    assert np.asarray(img)[-1, -1, -1] == 255
+
+    pil = [Image.new("RGB", (6, 4), (1, 2, 3))]
+    save_frames(pil, tmp_path / "pil")
+    assert np.asarray(Image.open(tmp_path / "pil" / "0001.png"))[0, 0].tolist() == [1, 2, 3]
+
+    save_frames([np.zeros((4, 6, 3), dtype=np.uint8)], tmp_path / "u8")
+    assert (tmp_path / "u8" / "0001.png").exists()
