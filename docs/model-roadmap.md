@@ -143,7 +143,7 @@
   2026-11-25 第三輪覆核：補 **VA-Judger** hard id——arXiv 2608.18607（2026-08）；
   VAPref-10K 約 9K prompts／10.3K 精細偏好對，五維 rubric（prompt alignment／
   video-audio consistency／audio quality／video quality／completeness & coherence），
-  附 VA-Judger-Bench（含 closed-source 模型輸出的 out-domain split）；論文以
+  附 VA-Judger-Bench（含 closed-source 模型輸出的 out-of-domain split）；論文以
   LoRA 後訓練驗證其 reward 可提升生成品質，惟 policy 實驗用 LTX-2（紅線模型）——
   僅取 reward 方法論參考，不碰其權重與輸出。同清單再補 **Omni-Judge**（2026，
   以 omni-modal LLM 做 text-conditioned A/V 生成的 CoT judge，覆蓋感知品質與
@@ -234,7 +234,7 @@
   P1a／M2 配方。同輪補方法參考 **PAVRM**（arXiv 2511.21541v3，
   CVPR 2026 Findings）：video generation model 直接當 latent reward
   model（對部分去噪樣本於 latent 空間打分、免 decode，stratified
-  timestep 評估），與 P1a pair latent cache 形狀相容；授權未核實。
+  timestep 評估），與 P1a pair latent cache 形態相容；授權未核實。
   Wan-Animate-2 repo id／Wan 3.x API-only／阿里下一代模型 11 月窗口
   倒數仍無發布／Qwen-Image 紅線，本輪覆核無變化。
   2026-11-25 第十輪：**VA-Judger checkpoint 授權二次核查失敗**——
