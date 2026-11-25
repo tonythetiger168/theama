@@ -28,7 +28,7 @@
 | 階段 | 模型交付物 | 說明 |
 |---|---|---|
 | M4b | **theama-8k-regen** | 4K→8K tiled regenerate + HEVC/AV1 + HDR10（光環級，M4 穩定後才動） |
-| M5 | 品質收斂版 Film 模型 | 盲測 vs H3 win/tie ≥50%、vs Wan 3.0 ≥40%；VBench 開源前三 |
+| M5 | 品質收斂版 Film 模型 | 保底：盲測 vs H3 win/tie ≥50%、vs Wan 3.0 ≥40%、VBench 開源前三；**終局（11-25 拍板）：AA with-audio 三板登頂——T2V/editing 超越 Wan 3.0、I2V 超越 Seedance 2.5** |
 | M6a | **theama-avatar-offline** | Wan-Animate-2-14B（animation-only）底座 + LatentSync 墊底唇形 |
 | M7a | **theama-image 雙路徑** | Qwen-Image-2512（品質）+ Z-Image Turbo（快速）推理重現 + CJK 評測（seed v1 已落地，擴充到 100 prompts 後作為驗收閘） |
 
@@ -43,7 +43,7 @@
 
 ## Watchlist（上游釋出追蹤）
 
-最近核查：**2026-11-25**（當日第十一輪）。
+最近核查：**2026-11-25**（當日第十二輪）。
 
 - **Wan-Animate-2-14B**（Apache-2.0）— M6a 底座候選，已寫入
   `configs/theama_base.yaml`。repo id 已核對：`Wan-AI/Wan2.2-Animate-2-14B`
@@ -67,7 +67,7 @@
   公告或權重，維持「未發布、續盯」；Wan 3.x API-only 多方來源
   （2026-11 上旬至中旬的獨立核查）一致，無變化。
   2026-11-25 第六輪覆核：11 月窗口剩最後五天，中英文檢索仍僅見
-  2026-09-22 雲棲預告原文的轉載，無發布公告或權重；Wan 3.x API-only
+  2026-09-22 雲棲預告原文的轉載，無發布公告或權重；Wan 3.0 API-only
   維持（2026-11-10／11-12 兩家第三方逐 repo 核查一致：Wan-AI HF 27 個
   repo、Wan-Video GitHub 6 個 repo 均無 3.x 權重，最新仍為 Wan 2.2 與
   Wan-Dancer）。Wan-Animate-2 repo id 本輪覆核無變化。
@@ -263,6 +263,18 @@
   ④ VBench 對照：Wan2.2-T2V-A14B total 82.61（自報），
   VBench-2.0 早期快照榜首 Veo 3 66.7%——M5「VBench 開源前三」
   目標在 Apache 譜系內等價於「追平並超出 Wan 2.2 官方分」。
+  ⑤ 第十二輪（2026-11-25，依使用者指示「**超過 Seedance 2.5 和
+  Wan 3.0**」）：上列三榜榜首自此由「對標板」升格為 **M5 終局超越
+  對象**——T2V w/audio 須越過 Wan 3.0（1175）、I2V w/audio 須越過
+  Seedance 2.5（1153）、editing w/audio 須越過 Wan 3.0（1196）；
+  三者皆 closed/API-only，達成即是以 **Apache-2.0 開放權重身份直接
+  登頂 with-audio 三榜**（而非僅開源第一）。差距盤點（以開放權重
+  現況計）：T2V 差 14 Elo（H3 1161→1175）、I2V 差 25（H3 1128→1153）、
+  editing 開放最高僅第三（Hyperflow H3，榜首 Wan 3.0 1196）——
+  theama 的追趕路徑全在既有管線上：P1a LoRA-DPO（品味對齊）
+  ＋M2 audio DiT（with-audio 評分主戰場）＋資料引擎擴量。
+  驗收語意不變：保底閘（盲測 win rate、VBench）照舊，登頂為
+  stretch 層，兩者並列於 M5 列。
 
 ## 發布策略
 
