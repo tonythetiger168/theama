@@ -11,10 +11,10 @@ Last updated: 2026-11-25. This file is the single entry point for any agent
 |---|---|---|
 | M1 inference + eval harness | landed | **not run** |
 | P1a VideoReward + LoRA-DPO | landed (encode_pairs resume/fault tolerance hardened) | **not run** |
-| M2 audio DiT + joint A/V trainer | CPU trainer, DAC codec, external Wan adapter, bridge LoRA warmup, AV manifest data pipeline | **real-weight contract smoke PASSED** (RTX 4090 2026-11-24; full runbook re-run on A40 2026-11-25, see below) |
+| M2 audio DiT + joint A/V trainer | CPU trainer, DAC codec, external Wan adapter, internal Wan block bridges, bridge LoRA warmup, joint training runner, AV manifest data pipeline | **external latent-bridge real-weight contract smoke PASSED** (RTX 4090 2026-11-24; full runbook re-run on A40 2026-11-25, see below); **internal `wan_blocks` real-weight GPU acceptance not run** |
 | M3+ | planned | — |
 
-## M2 real-weight RunPod smoke — 2026-11-25 full runbook re-run (A40)
+## M2 external latent-bridge RunPod smoke — 2026-11-25 full runbook re-run (A40)
 
 This is the run that satisfies every `CLAUDE.md` acceptance item (all three
 JSON reports, both DAC WAVs, logs, terminal output, verified locally, pod
@@ -40,7 +40,7 @@ grad norm 0.52, peak **9.37 GiB** — identical memory to the 4090 run.
 Same scope limits as below: contract smoke only, no prompt-to-video, perceptual
 audio or A/V-sync gate.
 
-## M2 real-weight RunPod smoke — 2026-11-24 result (first run, RTX 4090)
+## M2 external latent-bridge RunPod smoke — 2026-11-24 result (first run, RTX 4090)
 
 Command: `bash scripts/runpod_m2_smoke.sh /workspace` (repo at commit
 `c13d0f2`, i.e. after PR #2).
@@ -115,9 +115,10 @@ reports, `dac/input.wav`, `logs/cpu_tests.log`, `logs/dac_smoke.log`,
 
 ## Next steps (in order)
 
-1. **M2 smoke acceptance: done** (2026-11-25 A40 run). Reuse volume
+1. **External M2 smoke acceptance: done** (2026-11-25 A40 run). Reuse volume
    `theama-m2` in CA-MTL-1 for later runs to skip re-downloading weights, or
-   delete it when no longer needed. A 4090 re-check is optional.
+   delete it when no longer needed. A 4090 re-check is optional. Internal
+   `wan_blocks` GPU acceptance remains open in step 4.
 2. **M1 GPU acceptance** on TI2V-5B. One-command RunPod runner:
    `bash scripts/runpod_m1_eval.sh /workspace 5` (first 5 prompts of
    `eval/t2v_v1.jsonl`, native 1280x704 / 121f / 24fps, CPU offload). It
@@ -132,9 +133,11 @@ reports, `dac/input.wav`, `logs/cpu_tests.log`, `logs/dac_smoke.log`,
    (candidates → `score_eval_set.py --smoke` → scores → pairs →
    `encode_pairs.py` → `train_dpo.py`). Verify `reward/score.py::_invoke`
    against the real model first.
-4. **M2 integration**: move bridges inside Wan transformer blocks (current
-   bridge is pre-backbone on the latent grid), connect the AV manifest
-   pipeline to real licensed data, then a real bridge-warmup training run.
+4. **M2 internal integration**: internal Wan block bridges and the joint
+   training runner have landed with CPU contracts. Run the real-weight
+   `wan_blocks` + LoRA smoke (`--bridge-location wan_blocks
+   --bridge-lora-rank 8 --bridge-lora-alpha 16`), connect the AV manifest
+   pipeline to real licensed data, then run a real bridge-warmup training run.
    Acceptance target: AV-sync < 40 ms.
 5. Pick a stable-torch RunPod image and record it in `CLAUDE.md`.
 
