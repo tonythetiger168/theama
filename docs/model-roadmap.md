@@ -43,7 +43,7 @@
 
 ## Watchlist（上游釋出追蹤）
 
-最近核查：**2026-11-25**（當日第四輪）。
+最近核查：**2026-11-25**（當日第五輪）。
 
 - **Wan-Animate-2-14B**（Apache-2.0）— M6a 底座候選，已寫入
   `configs/theama_base.yaml`。repo id 已核對：`Wan-AI/Wan2.2-Animate-2-14B`
@@ -63,6 +63,9 @@
   （2026-11-09 第三方核查 Model Studio 新模型列表與 Wan-AI HF 均無新模型）。
   若最終開權重且授權相容，列為骨幹再評估觸發點；續盯 Model Studio 新模型
   列表、Wan-AI HF、Wan-Video GitHub。
+  2026-11-25 第五輪覆核：11 月窗口進入最後一週，中英文檢索仍無發布
+  公告或權重，維持「未發布、續盯」；Wan 3.x API-only 多方來源
+  （2026-11 上旬至中旬的獨立核查）一致，無變化。
 - **Qwen-Image 新版** — **Qwen-Image-2.1（7B，2026-09-20）統一 T2I+編輯+原生 RGBA，
   但為 Qwen Research License（非商用）→ 紅線確認，不碰**；2.1-Turbo（2026-10-09，8-step）
   同授權。Qwen-Image-3.0 為 hosted-only。Apache-2.0 線最新仍是
@@ -100,6 +103,28 @@
   Wan2.2-Animate 官方 HF Space 已 401 下線（2026-11-16 確認；ModelScope Studio
   與社群 ZeroGPU Space 仍在）——M6a 走自架權重路線，不受影響。
   Wan-Animate-2 repo id／Wan 3.x API-only／Qwen-Image 紅線三項本輪覆核無變化。
+  2026-11-25 第五輪：新增 **WeMM-Video**（Tencent WeChat Vision，
+  arXiv 2611.26409；2026-11-19 技術報告、11-20 權重上架 HF）——2B／4B／9B
+  dense + 35B-A3B MoE 的 omni-modal 影音**理解**模型（影格＋原始音軌聯合
+  輸入、文字輸出，Instruct／Thinking 雙模式，約 1.2T 多模態 token 預訓練，
+  官方稱已部署於微信核心影片服務）。GitHub 程式碼 Apache-2.0，官方說法為
+  全系列 checkpoint 適用 Apache-2.0（含第三方元件保留原條款之 carve-out；
+  逐卡採用前以各 HF model card 為準）。對本專案的意義：M2 原生音訊路線
+  後續的**聯合 A/V judge 底座候選**——相對 Qwen2-VL-2B 系的 VideoReward
+  多了原生音軌通道，可做 A/V 一致性評分；亦可用於 P1b 資料引擎的
+  A/V 一致性過濾與 dense caption。保留事項：需 `trust_remote_code` 與
+  patched vLLM／SGLang（source overlay，上游未合併）、官方 recipe 限 8K
+  context／16 frames、量化變體（AWQ／GGUF／NVFP4）自標 unvalidated、
+  榜單數字全部官方自報（Video-MME v2 w/ audio 54.9 vs Qwen3.5-Omni-Flash
+  36.6，尚無第三方複測；Music／JointAVBench 等子項仍落後）——列觀察，
+  不改 P1a／M2 配方。同輪補 **Kandinsky 6.0**（MIT，已列 M2 對照）RL
+  配方細節作方法參考：OmniNFT 八 reward 三分支——video（HPSv3／
+  VideoAlign）、audio（AudioBox Aesthetics／CLAP／Whisper-ASR）、
+  sync（AV-desync／AV-align／LatentSync-gated）；sync 分支的獎項設計直接
+  對應 M2「AV-sync < 40ms」驗收維度，可作 M2 後訓練 reward 組合的
+  clean-room 參考（OmniNFT 方法源自 LTX-2 社群，僅取方法論、不碰其
+  權重與程式碼）。Wan-Animate-2 repo id／Wan 3.x API-only／Qwen-Image
+  紅線，本輪覆核無變化。
 
 ## 發布策略
 
