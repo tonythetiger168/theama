@@ -43,7 +43,7 @@ ideas only* from H3 / LTX-2.5. Full analysis: see Docs below.
 ## Repository layout
 
 ```
-docs/            landscape survey, architecture, model stack & roadmap, training plan, license risks
+docs/            landscape survey, architecture, model stack & roadmap, training plan, license risks, session checkpoint
 src/theama/      model / data / train / inference / reward / avatar / image packages
 configs/         base model, P1a DPO and M2 joint A/V configs
 eval/            50-prompt T2V eval set + VBench reference scores
@@ -151,3 +151,4 @@ likenesses and voices — only use imagery and audio you have rights to.
 - [`docs/model-roadmap.md`](docs/model-roadmap.md) — model release roadmap & watchlist
 - [`docs/training-plan.md`](docs/training-plan.md) — milestones & acceptance criteria
 - [`docs/license-risks.md`](docs/license-risks.md) — license analysis (H3 / LTX / Qwen / FLUX)
+- [`docs/session-state.md`](docs/session-state.md) — hourly session checkpoint: restore (step 0) / save (last step) protocol + current state
