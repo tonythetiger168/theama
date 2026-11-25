@@ -2,10 +2,10 @@
 # Theama session checkpoint — hourly agent runs save/restore THIS file.
 # 設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
 schema: 1
-updated_at: "2026-11-25T11:24:00Z"
-head: cc85d3307aa366dcac16b04dc5aad239c95e7ab6
+updated_at: "2026-11-25T12:30:00Z"
+head: 9d83f6c387cd70648c88d354dd72d3b04cd6dd0b
 head_verified: true
-last_increment: "③ P1b 下游消費者補強：joint_latent_loader 對 retry-budget skipped 列明確報缺（skipped_av_row／skipped_text_row drop reason，不再誤報 missing_keys；fail-closed serving 不變）；tests +2（skipped 列真因報缺＋reset 重燒回補 lifecycle），CPU 255 passed；commit cc85d330 雙檔 blob SHA 驗證一致"
+last_increment: "③ M7a CJK T2I eval seed 24→48（v1.1，通往 100 條驗收閘）：新列補齊薄弱類別＋新增 calendar/label/coupon/map＋難度梯度（數字／冒號／直排／3 字短目標）；test_m7a 計數更新＋新契約斷言 expected_text 必須逐字出現在 prompt（48 列全數成立）；code commit 153be48c＋對岸修正 9d83f6c3，三檔 blob c96b7cbb／9432fb21／d3870969 全數驗證一致，CPU 255 passed"
 ci_yml: content_ready_pending_user_upload   # MCP token 推 .github/workflows 被 403（insufficient scopes）；內容已交付使用者
 issues: 0
 gpu_outputs: m2_external_smoke_passed_reviewed   # PR #3 雙跑通過已判讀（pass 18）；M1/P1a/M2 internal 仍待 Claude 跑
@@ -15,10 +15,10 @@ division_of_labor:
   claude: "GPU 驗收執行（runbook 第 1–5 節＋status.md next steps）、CI.yml 上傳（人工作業）、結果回報/落盤、git tag v0.2.0（人工作業）；2026-11-25 使用者擴權：可做其他底模＋HDL on RunPod（紅線不變：H3/LTX/Qwen2.1/FLUX3-Klein/Krea2 不碰）"
 next_hour:
   - "RESTORE：核對 HEAD 與本檔 head；Claude 若已 push M1/P1a/internal-wan_blocks GPU 結果或 v0.2.0 tag，先消化再增量"
-  - "pass 16–23 增量皆已落地請勿重做：Ming gen 第三路徑（4e1d202f）／score provenance（a3067d9b）／runbook §4.1（a7cb7697）／PR #3 判讀＋同步（0a2a3cd7）／watchlist 第十～十二輪（4fad1f38、918001c0+3f3fa0ac）／encode_texts retry budget（e1896295）／build_av_manifest（3f94b385）／pair+AV latent cache retry budget（1e64d0c1）／joint loader skipped 列明確報缺（cc85d330）；agent 入口改為 docs/status.md＋AGENTS.md"
+  - "pass 16–24 增量皆已落地請勿重做：Ming gen 第三路徑（4e1d202f）／score provenance（a3067d9b）／runbook §4.1（a7cb7697）／PR #3 判讀＋同步（0a2a3cd7）／watchlist 第十～十四輪（4fad1f38、918001c0+3f3fa0ac、129d5d67 PAVRM Apache 升格）／encode_texts retry budget（e1896295）／build_av_manifest（3f94b385）／pair+AV latent cache retry budget（1e64d0c1）／joint loader skipped 列明確報缺（cc85d330）／M7a eval seed 24→48（153be48c＋9d83f6c3）；agent 入口改為 docs/status.md＋AGENTS.md"
   - "使用者上傳 CI.yml 後：Actions 即為驗證引擎（CI image 需 ffmpeg + tesseract chi-tra，否則 decode/M7a 測試 skip）"
-  - "③ 候選：阿里 11 月窗口 11-30 關閉前最後 watchlist 覆核；或 M2 audio DiT 骨架／P1b 資料引擎下一小件（對齊 docs/model-roadmap.md 現況表）"
-  - "model-roadmap.md 已推至 3f3fa0ac（watchlist 第十二輪：M5 終局目標＝超越 Seedance 2.5／Wan 3.0 登頂 AA with-audio 三榜），後續可正常從本地推送此檔"
+  - "③ 候選：阿里 11 月窗口 11-30 關閉前最後 watchlist 覆核（第十四輪已核 PAVRM，固定項無 delta，T-5）；或 M2 audio DiT 骨架／P1b 資料引擎下一小件（對齊 docs/model-roadmap.md 現況表）；或 M7a seed 48→100 續擴"
+  - "model-roadmap.md 遠端＝本地 d3870969（pass-24 M7a 行＋對岸第十四輪 PAVRM 段合體），後續可正常從本地推送此檔"
   - "GPU 下一棒（Claude，依 status.md）：M1 runpod_m1_eval.sh 5→50 prompts→VBench ±0.02 → P1a（先驗 reward/score.py::_invoke 對真實 VideoReward）→ M2 internal wan_blocks＋LoRA smoke → 正式訓練前換 stable-torch image"
 ---
 
@@ -31,11 +31,48 @@ next_hour:
 runner 落地待跑（runpod_m1_eval.sh）；P1b 鏈路補齊（manifest builder →
 雙 cache → joint loader → runner → runbook 第 5 節），三 cache（text／
 pair／AV）retry budget 全數對齊＋下游 joint loader 對 skipped 列明確
-報缺，255 CPU tests
+報缺；M7a CJK eval seed 擴至 48 條（v1.1，對岸同日 watchlist 第十四輪
+將 PAVRM 官方碼核實 Apache-2.0 升格紅線內可參考），255 CPU tests
 全綠；GPU 驗收由 Claude 執行（使用者 11-25 擴權：其他底模＋HDL on
 RunPod 亦可）；CI.yml 內容備妥待上傳；紅線不變。
 
 ## 本輪記錄（新輪加在最上面，保留最近 10 輪）
+
+- 2026-11-25 pass 24 @ 9d83f6c3 — ③ M7a CJK T2I eval seed 24→48
+  （v1.1；roadmap 明列「擴充到 100 prompts 後作為驗收閘」的第一步）。
+  新 24 列（T2I-CJK-025…048）：補齊薄弱類別（newspaper／ticket／
+  receipt／banner 各 +2、sticker／packaging／menu 補量）＋新增
+  calendar／label／coupon／map 四類；難度梯度——數字混排
+  （2027年1月）、冒號標點（今日例湯：苦瓜排骨）、直排（特製豚骨
+  拉麵／霧中車站）、3 字短目標（美食區）。test_m7a 計數 24→48
+  ＋新契約斷言「expected_text 必須逐字出現在 prompt」（48 列全數
+  成立，防 scorer 目標與生成指令漂移）＋類別覆蓋斷言擴至九類。
+  roadmap M7a 行與 Ming diagnostic 註同步更新。RESTORE 對帳乾淨
+  （開工 HEAD 01926a10、無 Claude GPU commit、tags 空、issues 0、
+  temp 無新上傳、開工前 mtime 掃描無對岸活動中檔案）；推送前再
+  對帳無競態。CPU 全套 255 passed。push_files 三檔一次 commit
+  153be48c；test／roadmap blob 首次即 byte-exact（9432fb21／
+  d3870969）。
+  **SAVE 事故第十一實例（最嚴重：同一檔連續四次壞 payload，
+  對岸救援收場）**：eval jsonl（48 行、12KB 全 CJK）首推
+  153be48c 轉錄疊字於 row 034（「紅色布前的紅色布條」，blob
+  驗證當場攔下）；三次修復推送各自引入新隨機疊字（fc32f727
+  壞 008/013/022/045 → c3b09ca8 壞 010/048 → 42b3462d 壞
+  006）——每次 fetch-diff 定位皆正確，但全檔重抄的每遍錯誤率
+  獨立非零（1～4 列／遍），whack-a-mole 不收斂。對岸 12:20:52Z
+  以正確本地檔覆推 9d83f6c3（eval blob c96b7cbb＝本地
+  hash-object）收尾；本 session 第五次 payload（又帶三處新疊字）
+  恰因 stale-SHA 被拒——**stale-SHA 閘這次反向保護了正確版本**。
+  **教訓（新）：同一長檔連續兩次 blob 驗證失敗即停手——第三次起
+  改用「fetch 遠端→本地 diff→只信任單行修補」或等待對岸乾淨副本，
+  禁止無限全檔重抄；CJK 長檔全量重抄錯誤率不隨謹慎歸零。**
+  對岸同分鐘增量：129d5d67（12:14:14Z）watchlist 第十四輪——
+  PAVRM 官方 repo Tencent-Hunyuan/HY-Video-PRFL 授權核實
+  Apache-2.0，由觀察升格紅線內可直接參考實作（latent 空間打分
+  免 VAE decode、PRFL ≥1.4× 加速、骨幹 Wan2.1 Apache 譜系）；
+  本地 roadmap 早已含該段（對岸工作期間寫入），本 session 推送
+  的 roadmap 版本 d3870969 與之合體無衝突。三壞 commit 留史
+  不強推。HEAD 現為 9d83f6c3。
 
 - 2026-11-25 pass 23 @ cc85d330 — ③ P1b 下游消費者對 skipped 列的
   行為核查＋補強（本 session 增量，pass-22 next_hour 明列候選）：
@@ -238,7 +275,7 @@ RunPod 亦可）；CI.yml 內容備妥待上傳；紅線不變。
   RESTORE 對帳乾淨（HEAD 仍 0a2a3cd7、無 Claude GPU 新 commit、tags
   空、issues 0、temp 無新上傳）；開工前 mtime 掃描無對岸活動中檔案。
   **SAVE 事故第六實例（長檔轉錄漂移）**：roadmap 首推 d378836b 回傳
-  blob 41902464 ≠ 本地 c52928d8——cmp 定位兩處**未編輯舊文**轉錄錯
+  blob 41902464 ≠ 本地 c52928d8——cmp 定位兩處**未編定位兩處**未編輯舊文**轉錄錯
   （out-of-domain 誤作 out-domain－3 bytes、形態相容誤作形狀相容），
   本地檔始終正確；以本地內容重推 6f4799cf byte-exact 驗證一致，
   壞 commit 留史。教訓加強：**20KB 級長檔推送後必做逐字節 cmp**
@@ -307,46 +344,11 @@ RunPod 亦可）；CI.yml 內容備妥待上傳；紅線不變。
   watchlist 本輪不重查（pass 15/16 已覆核，阿里窗口 11-30 才關閉）；
   tags 空、issues 0、遠端無 .github。
 
-- 2026-11-25 pass 17 @ a3067d9b — M7a score 腳本來源標註強化（本
-  session 增量，session-state next_hour 明列候選）：score_cjk_text.py
-  新增 load_gen_manifest()（讀 gen_cjk_images 寫的 <images>/
-  manifest.jsonl；缺檔→None、壞行/缺 id 行 warn-and-skip，provenance
-  屬 metadata 永不讓 scoring 失敗）、build_summary() 純函數化（免
-  tesseract 可測）。summary sidecar 新增 models/model/repo_ids＋
-  no_provenance（有分數但 manifest 無列的圖——同目錄混入他模型舊圖
-  的 drift 偵測）；manifest 混多模型時 stderr 警告（summary 會跨模型
-  聚合）；新列與 resume 保留列（setdefault 回填）都帶 model 標籤。
-  SCORER_VERSION 維持 cjk-text-1——打分語意未變，舊 resume 列全保留。
-  test_m7a.py +3：manifest loader（缺檔/壞行/空行）、summary 來源
-  標註（rate 不變＋單模型 headline＋無 manifest 不加鍵）、混模型＋
-  orphan 旗標。RESTORE 對帳：遠端 HEAD 仍 0e9bceda（pass-16
-  checkpoint 修正版），無 Claude GPU commit、tags 空、issues 0、
-  temp 無新上傳；開工前 mtime 掃描無對岸新檔。推送前再對帳一次無
-  競態；blob SHA 驗證一致（score 1142893e／test 02ec4c3a，本地 git
-  hash-object 重算相同）。CPU 全套 220 passed（217+3；沙箱重置又洗
-  掉 pytest，已重裝）。watchlist 本輪不重查（pass 15/16 已覆核，
-  阿里窗口 11-30 才關閉）。
-
-- 2026-11-25 pass 16 @ 4e1d202f — M7a 第三路徑 Ming-Image-0.1-Design
-  （MIT）gen plumbing 預備落地：gen_cjk_images.py 新增
-  `--model ming-image-design` → inclusionAI/Ming-Image-0.1-Design；
-  EXPERIMENTAL_MODELS 標記 diagnostic-only（選用時印 [note]，CJK
-  24 seed 實測前不入 M7a 驗收閘）；turbo/quality if-else 重構為
-  MODEL_DEFAULTS 卡片預設表（qwen 30/3.5、z-image 8/0.0、ming
-  12 steps/CFG 1.0）；RESOLUTION_BUCKETS＋snap_resolution() 把
-  Ming 固定 1024/2048 square 落桶（request/manifest/gen kwargs
-  一致用 snapped 值）。事實核查（web 三來源）：MIT、6B、12 steps、
-  CFG 1.0、官方驗證配置單卡 80 GiB（24GB 卡預期 OOM，社群量化未驗證）、
-  T2I 為純文字路徑不觸及 image-input 才用到的 Qwen-license vision
-  tower；卡片 prompt-rewriting 刻意不開（quoted CJK 字串逐字送驗）。
-  test_m7a.py +2：模型表 contract（mapping 對齊 theama_base.yaml
-  image_backbone/_fast、ming repo id/defaults、experimental 集合不
-  含雙正式路徑）＋解析度落桶行為。watchlist 覆核：阿里下一代影片
-  模型 11 月窗口（11-30 關閉）仍無發布、Wan 3.x 仍 API-only、
-  Qwen-Image 紅線不變。RESTORE 對帳無 Claude GPU commit／tags 空／
-  issues 0／temp 兩張 KIMI jpeg 仍為 11-24 RunPod 截圖非新 GPU 輸出。
-  CPU 全套 217 passed（215+2）；--help 列出第三選項。推送前後各對帳
-  一次無競態；blob SHA 驗證一致（gen 82c4bf02／test bc37dfd1）。
+- 2026-11-25 pass 17 @ a3067d9b —（trim：pass 17 次則與 pass 16
+  全文移出，事實存於專案記憶第十六／十七輪存檔：score manifest
+  provenance a3067d9b 220 passed、Ming 第三路徑 plumbing
+  4e1d202f 217 passed、runbook §4.1 a7cb7697、SAVE 事故第五實例
+  尾換行教訓。）
 
 ## RESTORE 協議（每輪第 0 步，依序執行）
 
