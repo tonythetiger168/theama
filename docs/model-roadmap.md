@@ -43,7 +43,7 @@
 
 ## Watchlist（上游釋出追蹤）
 
-最近核查：**2026-11-25**（當日第七輪）。
+最近核查：**2026-11-25**（當日第八輪）。
 
 - **Wan-Animate-2-14B**（Apache-2.0）— M6a 底座候選，已寫入
   `configs/theama_base.yaml`。repo id 已核對：`Wan-AI/Wan2.2-Animate-2-14B`
@@ -75,6 +75,10 @@
   公告或權重；Wan 3.x API-only 多方來源一致（2026-10 至 11 月中旬的
   逐 repo 獨立核查均確認 Wan-AI HF 無 2.5 以上權重）。Wan-Animate-2
   repo id 本輪覆核無變化。
+  2026-11-25 第八輪覆核：11 月窗口進入倒數，中英文檢索仍無發布公告
+  或權重；Wan 3.x API-only 維持（2026-11-05 逐 repo 核查：Wan-AI HF
+  27 個 repo、Wan-Video GitHub 6 個 repo 均無 2.5 以上權重，最新開放
+  權重仍為 Wan2.2-Animate-2 系）。Wan-Animate-2 repo id 本輪覆核無變化。
 - **Qwen-Image 新版** — **Qwen-Image-2.1（7B，2026-09-20）統一 T2I+編輯+原生 RGBA，
   但為 Qwen Research License（非商用）→ 紅線確認，不碰**；2.1-Turbo（2026-10-09，8-step）
   同授權。Qwen-Image-3.0 為 hosted-only。Apache-2.0 線最新仍是
@@ -101,6 +105,8 @@
   待 M7a 推理重現排程時以 24 條 seed 實測後再議是否納入。
   2026-11-25 第七輪：2.1／2.1-Turbo 研究授權、2512／Edit-2511 Apache 線、
   3.0／3.1 hosted-only，本輪覆核均無變化。
+  2026-11-25 第八輪：同上四項（2.1 研究授權／2512 Apache 線／3.0・3.1
+  hosted-only／Ming-Image 觀察）覆核均無變化。
 - **開源 video reward 新模型** — awesome-rm-for-video-generation（2026-10 更新）新增
   AesRM（專家標註美學 RM，base + CoT 變體）、UnifiedReward-Flex、GT-SVJ（self-supervised
   judge）等；授權與權重可得性未逐一核實，VideoReward 仍為首選，暫不加第二把尺。
@@ -186,6 +192,18 @@
   id／Wan 3.x API-only／阿里下一代模型未發布／Qwen-Image 紅線，本輪
   覆核無變化。repo 健康：CI.yml 仍未上傳、issues 0；沙箱執行環境與
   專案記憶 mount 本輪仍不可用，維持 docs-only。
+  2026-11-25 第八輪：**VA-Judger repo 狀態更新**——GitHub
+  `ShareLab-SII/VA-Judger` 自 2026-08-20 起已釋出 project page、論文、
+  基礎程式碼、**checkpoints 與 VA-Judger-Bench**（SFT 訓練程式碼與
+  VAPref-10K 資料集仍列 to-do 未釋出）；reward model 本體為
+  Qwen3-Omni-30B-A3B-Instruct 全參微調（visual encoder／aligner 凍結，
+  8×GPU BF16 + DeepSpeed ZeRO-3），推理經 vLLM。checkpoint 授權於
+  repo 檢索結果中未標示——採用前須逐卡核驗 model card；其 policy 驗證
+  仍綁 LTX-2（紅線），本專案僅取 reward 方法論參考，維持觀察、不改
+  P1a／M2 配方。Omni-RL Judge 仍僅 ResearchGate 條目。Wan-Animate-2
+  repo id／Wan 3.x API-only／阿里下一代模型未發布／Qwen-Image 紅線，
+  本輪覆核無變化。repo 健康：CI.yml 仍未上傳（無 `.github/` 目錄）、
+  issues 0；沙箱執行環境與專案記憶 mount 本輪仍不可用，維持 docs-only。
 
 ## 發布策略
 
