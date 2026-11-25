@@ -20,7 +20,7 @@ project on a fully permissive license stack, with three product lines:
 | Duration | 30 s per prompt | THEAMA-Extend: SVI-style autoregressive continuation with consistency anchors |
 | Resolution | 4K (3840×2160) | THEAMA-4K: two-stage in-context regenerate 720p → 2K → 4K |
 | Output | MP4 (H.264 / HEVC / AV1 + AAC, SDR / HDR10 / HLG) | `theama.inference` export / mux pipeline |
-| Avatar | 720p real-time interactive | Wan-Animate base (Apache-2.0) + LatentSync (Apache-2.0) lip-sync fallback + causal streaming + replay anchors (clean-room SRF-class) |
+| Avatar | 720p real-time interactive | Wan-Animate-2 base (Apache-2.0, animation-only) + LatentSync (Apache-2.0) lip-sync fallback + causal streaming + replay anchors (clean-room SRF-class) |
 | Image | CJK-text-accurate T2I + editing | Qwen-Image-2512 (Apache-2.0) quality base; Z-Image Turbo (Apache-2.0) 8-NFE fast path |
 | License | End-to-end permissive | Apache-2.0 / MIT components only — no community-license weights anywhere in the stack |
 
@@ -43,7 +43,7 @@ ideas only* from H3 / LTX-2.5. Full analysis: see Docs below.
 ## Repository layout
 
 ```
-docs/            landscape survey, architecture, model stack & roadmap, training plan, license risks
+docs/            landscape survey, architecture, model stack & roadmap, training plan, license risks, session checkpoint
 src/theama/      model / data / train / inference / reward / avatar / image packages
 configs/         base model, P1a DPO and M2 joint A/V configs
 eval/            50-prompt T2V eval set + VBench reference scores
@@ -124,7 +124,7 @@ Film line:
 
 Avatar line:
 
-- **M6a** — Offline single-image + audio talking avatar (Wan-Animate base, Apache-2.0; LatentSync lip-sync fallback)
+- **M6a** — Offline single-image + audio talking avatar (Wan-Animate-2 base, Apache-2.0; LatentSync lip-sync fallback)
 - **M6b** — Streaming real-time generation (causal DiT + rolling KV cache + replay anchors)
 - **M6c** — Interactive layer: mid-stream reference swap, voice-directed control (Vidu S2 class)
 
@@ -152,3 +152,4 @@ likenesses and voices — only use imagery and audio you have rights to.
 - [`docs/model-roadmap.md`](docs/model-roadmap.md) — model release roadmap & watchlist
 - [`docs/training-plan.md`](docs/training-plan.md) — milestones & acceptance criteria
 - [`docs/license-risks.md`](docs/license-risks.md) — license analysis (H3 / LTX / Qwen / FLUX)
+- [`docs/session-state.md`](docs/session-state.md) — hourly session checkpoint: restore (step 0) / save (last step) protocol + current state

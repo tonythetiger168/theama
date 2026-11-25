@@ -347,6 +347,35 @@ def test_plan_encoding_legacy_file_fallback(tmp_path):
     assert plan.todo == [1, 2]
 
 
+def test_plan_encoding_drifted_row_blocks_legacy_fallback(tmp_path):
+    """A manifest row rejected by the prompt_id drift guard marks the
+    on-disk .pt files stale: they must NOT be re-adopted via the legacy
+    file fallback (same hole the AV cache closed in the round-9 build)."""
+    pairs = _pairs(2)
+    win0, lose0 = latent_pair_paths(tmp_path, 0)
+    _latent(win0)
+    _latent(lose0)  # valid files, but the manifest row below has drifted
+    manifest = tmp_path / "pairs_latents.jsonl"
+    manifest.write_text(json.dumps({
+        "index": 0, "prompt_id": "STALE", "prompt": "old",
+        "model": "ti2v-5b", "win_latent": str(win0), "lose_latent": str(lose0),
+    }) + "\n")
+    plan = plan_encoding(pairs, tmp_path, "ti2v-5b")
+    assert plan.reusable == {}          # fallback must not rescue index 0
+    assert plan.todo == [0, 1]
+
+    # After re-encoding under the current prompt_id, resume reuses normally.
+    def encode(video_path, dest):
+        _latent(Path(dest))
+
+    summary = run_encoding(plan, encode)
+    assert summary == {"model": "ti2v-5b", "total": 2,
+                       "encoded": 2, "reused": 0, "failed": 0}
+    plan2 = plan_encoding(pairs, tmp_path, "ti2v-5b")
+    assert sorted(plan2.reusable) == [0, 1]
+    assert plan2.todo == []
+
+
 def test_plan_encoding_meta_model_mismatch_invalidates(tmp_path):
     pairs = _pairs(1)
     win, lose = latent_pair_paths(tmp_path, 0)

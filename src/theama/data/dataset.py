@@ -26,6 +26,8 @@ from pathlib import Path
 import torch
 from torch.utils.data import Dataset
 
+from theama.data.decode import decode_audio, decode_video
+
 FORBIDDEN_SOURCES = ("minimax", "hailuo", "h3-", "ltx", "lightricks")
 
 REQUIRED_KEYS = ("video", "audio", "caption", "source")
@@ -196,10 +198,13 @@ class AVDataset(Dataset):
         fps: int = 24,
         sample_rate: int = 44100,
         *,
+        height: int = 240,
+        width: int = 432,
         strict: bool = False,
     ):
         self.manifest_path = Path(manifest_path)
         self.seconds, self.fps, self.sample_rate = seconds, fps, sample_rate
+        self.height, self.width = height, width
         report = load_manifest(self.manifest_path, strict=strict)
         self.samples: list[AVSample] = report.samples
         self.errors: list[ManifestRowError] = report.errors
@@ -212,9 +217,36 @@ class AVDataset(Dataset):
     def __len__(self) -> int:
         return len(self.samples)
 
-    def __getitem__(self, idx: int) -> dict[str, torch.Tensor]:
+    def __getitem__(self, idx: int) -> dict[str, object]:
+        """Decode one triple into latents-ready tensors.
+
+        Returns ``video`` float32 ``(3, T, H, W)`` in ``[-1, 1]`` (VAE-ready),
+        ``audio`` float32 ``(2, N)`` stereo in ``[-1, 1]``, plus ``caption``
+        and ``source`` metadata. Decode failures raise
+        :class:`~theama.data.decode.MediaDecodeError` — a corrupt clip must
+        crash the worker loudly rather than slip zeros into a batch; wrap the
+        loader if a training run should skip instead. Text encoding stays
+        outside the dataset (cached upstream, like the VAE latents).
+        """
         sample = self.samples[idx]
-        check_source(sample.source)
-        # TODO(M2): decode video -> (T,H,W,C) tensor; decode audio -> stereo
-        # waveform; encode text; return latents-ready tensors.
-        raise NotImplementedError("M2: decode + tokenize path lands with the A/V data pipeline")
+        check_source(sample.source)  # defence in depth; manifest load already gated
+        frames = decode_video(
+            sample.video_path,
+            fps=self.fps,
+            seconds=self.seconds,
+            height=self.height,
+            width=self.width,
+        )
+        wave = decode_audio(
+            sample.audio_path,
+            sample_rate=self.sample_rate,
+            seconds=self.seconds,
+        )
+        video = torch.from_numpy(frames).permute(3, 0, 1, 2).float() / 127.5 - 1.0
+        audio = torch.from_numpy(wave)
+        return {
+            "video": video,
+            "audio": audio,
+            "caption": sample.caption,
+            "source": sample.source,
+        }

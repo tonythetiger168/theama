@@ -9,6 +9,7 @@ def test_config_loads():
     cfg = yaml.safe_load(open("configs/theama_base.yaml"))
     assert cfg["generation"]["target_seconds"] == 30
     assert cfg["model"]["audio"]["sample_rate"] == 44100
+    assert cfg["model"]["avatar_backbone"] == "Wan-AI/Wan2.2-Animate-2-14B"
     assert cfg["training"]["forbid_third_party_outputs"] is True
 
 

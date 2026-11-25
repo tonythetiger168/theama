@@ -19,10 +19,13 @@ Resume rules (default on):
   * a manifest row is only reused when the pair at that index still has the
     same prompt_id (guards against pairs.jsonl edits) and both .pt files
     validate;
-  * fallback: with no usable manifest row, a pair is reused when both
+  * fallback: with NO manifest row for an index, a pair is reused when both
     pair{index}_{win,lose}.pt exist and validate (legacy behaviour, now
     with corruption checks). This assumes pairs.jsonl ordering is unchanged
-    — pass --no-resume after reordering.
+    — pass --no-resume after reordering. The fallback NEVER applies to an
+    index that has a manifest row: a row rejected by the prompt_id drift
+    guard means the .pt files at that index are stale and must be
+    re-encoded, not silently re-adopted.
   * out_dir/meta.json records the encoding model; a mismatch invalidates
     the whole cache (defence against silently mixing VAE normalizations).
 """
@@ -48,11 +51,14 @@ def latent_pair_paths(out_dir: str | Path, index: int) -> tuple[Path, Path]:
     return out / f"pair{index:04d}_win.pt", out / f"pair{index:04d}_lose.pt"
 
 
-def is_valid_latent(path: str | Path) -> bool:
-    """True when `path` holds a loadable, finite, 5D (1,C,F,H,W) tensor.
+def is_valid_latent(path: str | Path, *, ndim: int = 5) -> bool:
+    """True when `path` holds a loadable, finite tensor with `ndim` dims.
 
-    A truncated write from a killed run must fail this check so the pair is
-    re-encoded instead of poisoning DPO training.
+    The DPO pair cache stores 5D (1,C,F,H,W) video latents (the default);
+    the AV cache (theama.data.av_latent_cache) reuses this with ``ndim=3``
+    for (1,T_lat,C) audio token latents. A truncated write from a killed
+    run must fail this check so the sample is re-encoded instead of
+    poisoning training.
     """
     p = Path(path)
     if not p.exists():
@@ -65,7 +71,7 @@ def is_valid_latent(path: str | Path) -> bool:
         return False
     return (
         torch.is_tensor(t)
-        and t.ndim == 5
+        and t.ndim == ndim
         and bool(torch.isfinite(t).all())
     )
 
@@ -185,11 +191,13 @@ def plan_encoding(
         else:
             candidates = load_reusable_rows(plan.manifest_path, model=model)
 
+    fallback_blocked: set[int] = set()  # indices the manifest has spoken for
     for index, row in candidates.items():
         if index >= len(pairs):
             continue
+        fallback_blocked.add(index)
         if pairs[index].get("prompt_id") != row.get("prompt_id"):
-            continue  # pairs.jsonl changed under this index
+            continue  # pairs.jsonl changed under this index — .pt is stale
         win, lose = latent_pair_paths(plan.out_dir, index)
         if is_valid_latent(win) and is_valid_latent(lose):
             row = dict(row)
@@ -199,9 +207,11 @@ def plan_encoding(
     for index, pair in enumerate(pairs):
         if index in plan.reusable:
             continue
-        if resume and not plan.cache_invalidated:
+        if resume and not plan.cache_invalidated and index not in fallback_blocked:
             win, lose = latent_pair_paths(plan.out_dir, index)
-            # Legacy fallback: .pt files from a pre-manifest run.
+            # Legacy fallback: .pt files from a pre-manifest run. Never
+            # applies where the manifest has a row — a drift-rejected row
+            # marks those files stale, and the pair must be re-encoded.
             if is_valid_latent(win) and is_valid_latent(lose):
                 plan.reusable[index] = {
                     "index": index,

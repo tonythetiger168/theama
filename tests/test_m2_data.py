@@ -163,8 +163,11 @@ def test_av_dataset_loads_manifest_and_keeps_rejections(tmp_path):
     assert len(ds) == 1
     assert len(ds.errors) == 1 and ds.duplicates == 0
     assert ds.samples[0].caption == "a cat"
-    # decode path is still the documented TODO
-    with pytest.raises(NotImplementedError, match="M2: decode"):
+    # decode path is live: fixture media files do not exist on disk, so
+    # __getitem__ surfaces the missing file loudly instead of returning zeros
+    from theama.data.decode import MediaDecodeError
+
+    with pytest.raises(MediaDecodeError, match="not found"):
         ds[0]
 
 
