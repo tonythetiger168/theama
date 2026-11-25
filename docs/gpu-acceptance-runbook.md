@@ -131,6 +131,8 @@ python scripts/encode_av_latents.py --manifest data/av/manifest.jsonl \
     --out data/av/latents_dev --model ti2v-5b --limit 8
 python scripts/encode_texts.py --manifest data/av/manifest.jsonl \
     --out data/av/texts --encoder Wan-AI/Wan2.2-T2V-A14B-Diffusers --limit 8
+python scripts/check_joint_latents.py --av-cache data/av/latents_dev \
+    --text-cache data/av/texts --validate-files  # joint cache 預檢閘：燒 GPU 前攔 dropped／壞 .pt
 python scripts/train_joint_av.py --config configs/m2_joint_av_dev.yaml \
     --av-cache data/av/latents_dev --text-cache data/av/texts \
     --out runs/m2_e2e --steps 20 --bridge-steps 10 --batch-size 1 --dtype bf16
@@ -140,7 +142,10 @@ python scripts/train_joint_av.py --config configs/m2_joint_av_dev.yaml \
     --resume auto                            # 驗精確 resume（phase/optimizer/RNG）
 ```
 
-**驗收**：載入時印 `joint cache: 8 samples (dropped: 0)`——dropped 非 0
+**驗收**：check_joint_latents 先過——exit 0 且 summary served=8、
+dropped 全零（--validate-files 會實載每個 .pt 抓 corrupt/non-finite）；
+預檢閘不過就修 cache，不要進 trainer。trainer 載入時印
+`joint cache: 8 samples (dropped: 0)`——dropped 非 0
 先查 AV/text caption 交叉核對與 cache model 守衛；metrics.jsonl 每列
 finite、audio/video loss 俱在且整體下降；step 10 切 full phase 後繼續
 出數；resume 從 step 20 接到 30（summary resumed_from=20、
@@ -156,6 +161,8 @@ python scripts/encode_av_latents.py --manifest data/av/manifest_full.jsonl \
     --out data/av/latents_a14b --model t2v-a14b
 python scripts/encode_texts.py --manifest data/av/manifest_full.jsonl \
     --out data/av/texts --encoder Wan-AI/Wan2.2-T2V-A14B-Diffusers
+python scripts/check_joint_latents.py --av-cache data/av/latents_a14b \
+    --text-cache data/av/texts --validate-files  # 正式 run 前同一道閘：dropped≠0 即 exit 1
 python scripts/train_joint_av.py --config configs/m2_joint_av.yaml \
     --av-cache data/av/latents_a14b --text-cache data/av/texts \
     --out runs/m2_run1 --steps 20000 --bridge-steps 2000 --batch-size 2 \
