@@ -275,7 +275,7 @@ RunPod 亦可）；CI.yml 內容備妥待上傳；紅線不變。
   RESTORE 對帳乾淨（HEAD 仍 0a2a3cd7、無 Claude GPU 新 commit、tags
   空、issues 0、temp 無新上傳）；開工前 mtime 掃描無對岸活動中檔案。
   **SAVE 事故第六實例（長檔轉錄漂移）**：roadmap 首推 d378836b 回傳
-  blob 41902464 ≠ 本地 c52928d8——cmp 定位兩處**未編定位兩處**未編輯舊文**轉錄錯
+  blob 41902464 ≠ 本地 c52928d8——cmp 定位兩處**未編輯舊文**轉錄錯
   （out-of-domain 誤作 out-domain－3 bytes、形態相容誤作形狀相容），
   本地檔始終正確；以本地內容重推 6f4799cf byte-exact 驗證一致，
   壞 commit 留史。教訓加強：**20KB 級長檔推送後必做逐字節 cmp**
