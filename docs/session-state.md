@@ -2,10 +2,10 @@
 # Theama session checkpoint — hourly agent runs save/restore THIS file.
 # 設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
 schema: 1
-updated_at: "2026-11-25T03:20:00Z"
-head: 6a08957c73c47859c1ae684e07400963a272ba8f
+updated_at: "2026-11-25T04:35:00Z"
+head: 8042bff6fd6dd5e627777db34b6b388b16720422
 head_verified: true
-last_increment: "P1b training-side joint latent loader：joint_latent_loader.py（AV+text manifest join，fail-closed：雙成功列才上桌、model 過濾、caption 交叉核對、.pt 建構時驗證＋逐次 finite 複查、seq_len mask、masked-mean pool＋cond_pooler 接 train_step）＋15 tests（199 passed）"
+last_increment: "P1b joint training runner＋GPU 薄殼：joint_av_runner.py（cond_pooler 掛 audio 隨 phase 凍結/訓練、on-device pooling、bridge→full 排程切換、metrics.jsonl、checkpoint 精確 resume——phase 先還原再 strict load、optimizer state 搬 device、RNG 還原、NaN fail-closed 留緊急 ckpt）＋scripts/train_joint_av.py（--smoke 印 TRAIN_JOINT_AV_SMOKE_OK；real run 接雙 cache＋WanVideoAdapter）＋15 tests（214 passed）"
 ci_yml: content_ready_pending_user_upload   # MCP token 推 .github/workflows 被 403（insufficient scopes）；內容已交付使用者
 issues: 0
 gpu_outputs: none_pending_review            # Claude 接手 GPU 驗收；若其 push 結果，下輪 RESTORE 對帳
@@ -16,21 +16,44 @@ division_of_labor:
   claude: "GPU 驗收執行（runbook 第 1–4 節）、CI.yml 上傳（人工作業）、結果回報/落盤、git tag v0.2.0（人工作業）"
 next_hour:
   - "RESTORE：核對 HEAD 與本檔 head；Claude 若已 push GPU 結果或 v0.2.0 tag，先消化再增量"
-  - "GPU 側新增可跑項：scripts/encode_texts.py --smoke（umT5 text cache contract，與 encode_av_latents 同模式）；loader 已就緒，cache 建好後 joint training smoke 可直接接"
+  - "GPU 側新增可跑項：scripts/train_joint_av.py --smoke（本輪落地，無 cache/無 Wan 權重即可驗 runner 全路徑＋resume）；cache 建好後正式 joint training 直接用同腳本 --av-cache/--text-cache"
   - "使用者上傳 CI.yml 後：Actions 即為驗證引擎（CI image 需 ffmpeg + tesseract chi-tra，否則 decode/M7a 測試 skip）"
-  - "續做 ③：joint training GPU 薄殼 scripts/train_joint_av.py（接 build_joint_latent_dataloader；CPU 側 loader 本輪已落地）；watchlist 固定四項覆核（阿里下一代 11 月窗口進入最後一週，仍無發布）"
+  - "續做 ③ 候選：runbook 增補第 5 節 joint training 驗收段（train_joint_av.py --smoke → 小 cache E2E）；watchlist 固定四項覆核（阿里下一代 11 月窗口最後一週，仍無發布）"
 ---
 
 # Session State（每小時 checkpoint）
 
 ## 現況一句話
 
-版本 0.2.0（CPU 側程式全落地、GPU 驗收待跑）；本輪新增 P1b
-training-side joint latent loader（cache manifests → JointAVTrainer
-batch，199 CPU tests 全綠）；GPU 驗收由 Claude 依
-docs/gpu-acceptance-runbook.md 執行；CI.yml 內容備妥待上傳；紅線不變。
+版本 0.2.0（CPU 側程式全落地、GPU 驗收待跑）；本輪新增 P1b joint
+training runner＋GPU 薄殼 scripts/train_joint_av.py（雙 cache →
+JointAVTrainer 訓練迴路、checkpoint resume、--smoke 自檢，214 CPU
+tests 全綠）；GPU 驗收由 Claude 依 docs/gpu-acceptance-runbook.md
+執行；CI.yml 內容備妥待上傳；紅線不變。
 
 ## 本輪記錄（新輪加在最上面，保留最近 10 輪）
+
+- 2026-11-25 pass 14 @ 8042bff — P1b joint training runner＋薄殼：新檔
+  `src/theama/train/joint_av_runner.py`（RunnerConfig＋JointAVRunner：
+  dataloader 無限循環、device/dtype 搬運、cond 改為 on-device 由
+  audio.cond_pooler（掛 AudioDiT 子模組，bridge phase 凍結/full phase
+  訓練、隨 audio state_dict 入 ckpt）對 masked-mean pool 的 video_cond
+  投影——pooling 移出 DataLoader collation 保梯度在訓練裝置；
+  --bridge-steps 排程切 bridge→full；metrics.jsonl；checkpoint
+  精確 resume——先 set_phase（bridge ckpt 重注 LoRA 補齊 strict load
+  keys、full ckpt 先 merge 新 LoRA）再載 state、optimizer state 搬
+  param device、torch/CUDA RNG 還原；NaN metrics fail-closed 留
+  ckpt_nonfinite 緊急檔）、`scripts/train_joint_av.py`（--smoke 合成
+  5-D Wan latent 路徑 4 步＋phase 切換＋+2 步 auto-resume，印
+  TRAIN_JOINT_AV_SMOKE_OK；real run 接 WanVideoAdapter＋雙 cache）、
+  `tests/test_m2_joint_av_runner.py` 15 例（yaml contract、pooler
+  phase 行為、loop/log/ckpt、phase 排程、LoRA bridge 與 merged-full
+  resume roundtrip、NaN 緊急中止、production planner cache→DataLoader
+  →runner E2E、CLI smoke）。watchlist 覆核無變化（Wan 3.0 仍 API-only
+  無權重、阿里下一代 11 月窗口最後一週仍無發布、Qwen-Image 紅線不變、
+  VA-Judger 仍首選）；RESTORE 對帳無新 commit／無 tag／issues 0。
+  CPU 全套 214 passed（199+15）。三檔 blob SHA 驗證一致
+  （e270e982／72c69105／bd5022d5）。
 
 - 2026-11-25 pass 13 @ 6a08957 — P1b training-side loader：新檔
   `src/theama/data/joint_latent_loader.py`（join 兩 cache manifest 於
