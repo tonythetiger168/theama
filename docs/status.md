@@ -57,7 +57,7 @@ Command: `bash scripts/runpod_m2_smoke.sh /workspace` (repo at commit
 | Item | Value |
 |---|---|
 | Pod | `8glb2h730bo2mb` "theama-m2-smoke", 1x RTX 4090 24 GB (23.52 GiB visible), secure cloud, US, $0.89/hr, no network volume, 60 GB container disk |
-| Image / torch | `runpod/pytorch:2.8.0-py3.11-cuda12.8.1-cudnn-devel-ubuntu22.04` → torch `2.8.0.dev20250319+cu128` (**nightly**), CUDA 12.8 |
+| Image | `runpod/pytorch:2.8.0-py3.11-cuda12.8.1-cudnn-devel-ubuntu22.04` → torch `2.8.0.dev20250319+cu128` (**nightly**), CUDA 12.8 |
 | Runtime / cost | ~6 min pod uptime (~4 min smoke), ≈ $0.09 |
 | CPU suite on pod | 101 passed, 4 skipped |
 | Markers | `M2_DAC_SMOKE_OK`, `M2_WAN_SMOKE_OK`, `M2_RUNPOD_SMOKE_OK`, exit 0 |
