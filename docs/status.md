@@ -9,15 +9,15 @@ Last updated: 2026-11-26. This file is the single entry point for any agent
 
 | Milestone | Code | GPU validation |
 |---|---|---|
-| M1 inference + eval harness | landed; VBench tolerance gate (`run_vbench.py`) pure-function + CLI CPU tests (fake-vbench injection); `gen_eval_set.py` probe_ok + resume skip/regenerate CPU tests (fake mux/pipeline injection) | **not run** |
+| M1 inference + eval harness | landed; VBench tolerance gate (`run_vbench.py`) pure-function + CLI CPU tests (fake-vbench injection); `gen_eval_set.py` probe_ok + resume skip/regenerate CPU tests (fake mux/pipeline injection) | **5-prompt generation smoke PASSED** (2026-11-26, commit `0bf42cd`: 5/5 probe-valid MP4s — H.264 1280x704/24fps/121f + silent AAC, mean 842 s/clip with CPU offload, peak 33.7 GB; full run table in PR #5); 50-prompt run + VBench ±0.02 gate pending |
 | P1a VideoReward + LoRA-DPO | landed; full preflight-gate chain: `check_scores.py` → `make_pref_pairs.py` fail-fast, `check_pairs.py` → `encode_pairs.py` fail-fast, `check_pair_latents.py` → `train_dpo.py` fail-fast; retry budgets + `pairs_stats.py` / `scores_stats.py` profilers; runbook §2 command chain wired (three gates + profilers in-chain) | **not run** |
 | P1b data engine | landed: `build_av_manifest.py` → `encode_texts.py` / `encode_av_latents.py` (retry budgets on all three caches) → joint latent loader (explicit `skipped_*_row` drop reasons) → joint training runner + runbook §5; joint-cache preflight gate `check_joint_latents.py` wired into runbook §5.1/§5.2 (fails before any GPU burn on dropped rows or corrupt/non-finite `.pt`) | **not run** (issue #4 open) |
-| M2 audio DiT + joint A/V trainer | CPU trainer, DAC codec, external Wan adapter, internal Wan block bridges, bridge LoRA warmup, joint training runner, AV manifest data pipeline, **CFG text-conditioning dropout** (audio-stream null-condition training, default 0.0 off) | **external latent-bridge real-weight contract smoke PASSED** (RTX 4090 2026-11-24; full runbook re-run on A40 2026-11-25, see below); **internal `wan_blocks` real-weight GPU acceptance not run** |
+| M2 audio DiT + joint A/V trainer | CPU trainer, DAC codec, external Wan adapter, internal Wan block bridges, bridge LoRA warmup, joint training runner, AV manifest data pipeline, **CFG text-conditioning dropout** (audio-stream null-condition training, default 0.0 off), **`norm_video_kv` bridge-input norm** (parameter-free per-token LayerNorm on the v2a K/V for `wan_blocks` bridges; fail-closed adapter guard; default off keeps the latent-grid path bit-identical) | **external latent-bridge real-weight contract smoke PASSED** (RTX 4090 2026-11-24; full runbook re-run on A40 2026-11-25, see below); **internal `wan_blocks` + LoRA real-weight smoke ran 2026-11-26** (commit `2e16595`, issue #4): contract PASSED (100,352 trainable, 8 grad/4 updated, Wan frozen, peak 9.54 GiB) with a loss-scale red flag — audio loss 79.0 / grad norm 94.0 (~40x external) from un-normalised Wan block hidden states feeding the v2a K/V; CPU-side fix landed (`b5321003`..`d455e3dc`); **GPU re-run pending, bridge-warmup blocked until the red flag clears** |
 | M4 distribution layer | **HLS fMP4/CMAF packager** (`package_hls.py`: 2160p AV1 → 1080p HEVC Safari fallback → 720p/480p H.264 ladder, per-rung ffprobe gates) + **DASH manifest.mpd over the same segments** (`package_dash.py`, zero re-encode); HDR10/HLG 10-bit HEVC/AV1 mux landed | n/a (CPU-verified packaging) |
 | M7a CJK T2I eval | seed v1.2 (100 prompts) at acceptance-gate size; scorer script-split (zh-Hans gate / zh-Hant parallel stats); Ming-Image-0.1-Design third path plumbed as diagnostic-only | **not run** (Qwen-Image-2512 / Z-Image Turbo repro) |
 | M3+ | planned | — |
 
-Since 2026-11-25 the CPU suite has grown to **422 passed**; the repo is now
+As of 2026-11-26 the CPU suite stands at **431 passed**; the repo is now
 **public** (`github.com/tonythetiger168/theama`). The M5 north-star (per
 Tony 2026-11-25): top the Artificial Analysis Video Arena with-audio boards —
 T2V/editing above Wan 3.0, I2V above Seedance 2.5 (see
@@ -57,7 +57,7 @@ Command: `bash scripts/runpod_m2_smoke.sh /workspace` (repo at commit
 | Item | Value |
 |---|---|
 | Pod | `8glb2h730bo2mb` "theama-m2-smoke", 1x RTX 4090 24 GB (23.52 GiB visible), secure cloud, US, $0.89/hr, no network volume, 60 GB container disk |
-| Image | `runpod/pytorch:2.8.0-py3.11-cuda12.8.1-cudnn-devel-ubuntu22.04` → torch `2.8.0.dev20250319+cu128` (**nightly**), CUDA 12.8 |
+| Image / torch | `runpod/pytorch:2.8.0-py3.11-cuda12.8.1-cudnn-devel-ubuntu22.04` → torch `2.8.0.dev20250319+cu128` (**nightly**), CUDA 12.8 |
 | Runtime / cost | ~6 min pod uptime (~4 min smoke), ≈ $0.09 |
 | CPU suite on pod | 101 passed, 4 skipped |
 | Markers | `M2_DAC_SMOKE_OK`, `M2_WAN_SMOKE_OK`, `M2_RUNPOD_SMOKE_OK`, exit 0 |
@@ -128,15 +128,14 @@ reports, `dac/input.wav`, `logs/cpu_tests.log`, `logs/dac_smoke.log`,
    `theama-m2` in CA-MTL-1 for later runs to skip re-downloading weights, or
    delete it when no longer needed. A 4090 re-check is optional. Internal
    `wan_blocks` GPU acceptance remains open in step 4.
-2. **M1 GPU acceptance** on TI2V-5B. One-command RunPod runner:
-   `bash scripts/runpod_m1_eval.sh /workspace 5` (first 5 prompts of
-   `eval/t2v_v1.jsonl`, native 1280x704 / 121f / 24fps, CPU offload). It
-   downloads the full TI2V-5B Diffusers repo into the volume (fails fast if
-   the volume is too small), installs ffmpeg/ftfy, runs the CPU suite, then
-   writes `$WORKSPACE/m1_out/{ti2v-5b/*.mp4, m1_eval_report.json, logs/}` and
-   prints `M1_EVAL_SMOKE_OK`. Then run all 50 (`... /workspace 50`), then
-   `scripts/run_vbench.py` for the ±0.02 quality gate. Same save / verify /
-   delete-pod / keep-volume procedure as `CLAUDE.md`.
+2. **M1 GPU acceptance** on TI2V-5B — 5-prompt smoke **PASSED** 2026-11-26
+   (commit `0bf42cd`: 5/5 probe-valid MP4s, mean 842 s/clip with CPU offload,
+   peak 33.7 GB; a `numpy.ndarray.save` bug was fixed by `ecf50d60`; full run
+   table in PR #5). Remaining: all 50 prompts
+   (`bash scripts/runpod_m1_eval.sh /workspace 50` — ≈ 12 h at the observed
+   per-clip wall time; the volume has only ~5 GB free, expand or clean it
+   first), then `scripts/run_vbench.py` for the ±0.02 quality gate. Same save
+   / verify / delete-pod / keep-volume procedure as `CLAUDE.md`.
 3. **P1a GPU run**: download VideoReward (`KlingTeam/VideoReward`, Apache-2.0),
    then the pipeline printed at the end of `scripts/runpod_bootstrap.sh`
    (candidates → `score_eval_set.py --smoke` → scores → pairs →
@@ -144,13 +143,19 @@ reports, `dac/input.wav`, `logs/cpu_tests.log`, `logs/dac_smoke.log`,
    against the real model first. Each stage is now fail-fast gated
    (`check_scores.py` / `check_pairs.py` / `check_pair_latents.py`); a bad
    manifest aborts before any GPU burn instead of crashing mid-loop.
-4. **M2 internal integration**: internal Wan block bridges and the joint
-   training runner have landed with CPU contracts. Run the real-weight
-   `wan_blocks` + LoRA smoke (`--bridge-location wan_blocks
-   --bridge-lora-rank 8 --bridge-lora-alpha 16`) — tracked as GitHub
-   issue #4 — then connect the AV manifest pipeline to real licensed data
-   and run a real bridge-warmup training run.
-   Acceptance target: AV-sync < 40 ms.
+4. **M2 internal integration**: the real-weight `wan_blocks` + LoRA smoke ran
+   2026-11-26 (issue #4): contract PASSED but flagged a loss-scale red flag
+   (audio loss 79.0 / grad norm 94.0, ~40x the external run) traced to raw
+   Wan block hidden states feeding the v2a cross-attention K/V. The CPU-side
+   fix (`norm_video_kv`, commits `b5321003`..`d455e3dc`) is landed and
+   `run_wan_smoke` auto-enables it for `--bridge-location wan_blocks`. **Next
+   GPU step: re-run the same smoke command at HEAD >= `d455e3dc` (no CLI
+   change); the red flag clears if audio loss / grad norm return to
+   single-digit, external-path scale. Bridge-warmup training stays blocked
+   until that re-run passes.** Then connect the AV manifest pipeline to real
+   licensed data and run the bridge-warmup training run.
+   Acceptance target: AV-sync < 40 ms (not measurable with random
+   conditioning; stays open for the trained run).
 5. Pick a stable-torch RunPod image and record it in `CLAUDE.md`.
 
 License red lines in `CLAUDE.md` and `docs/license-risks.md` apply to every
