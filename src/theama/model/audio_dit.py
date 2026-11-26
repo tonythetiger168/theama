@@ -13,12 +13,26 @@ from __future__ import annotations
 
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 
 class CrossModalBridge(nn.Module):
-    """Bidirectional cross-attention between video and audio token streams."""
+    """Bidirectional cross-attention between video and audio token streams.
 
-    def __init__(self, video_dim: int, audio_dim: int, heads: int = 16):
+    Set ``norm_video_kv`` when the video tokens are un-normalised backbone
+    hidden states (``wan_blocks`` internal bridging). Wan block activations
+    arrive ~40x larger than VAE latents; feeding them raw as v2a
+    cross-attention keys/values blows up the audio stream (issue #4 RunPod
+    smoke: audio loss 79.0 / grad norm 94.0, ~40x the latent-grid path). The
+    flag applies a parameter-free per-token LayerNorm to the video tokens
+    used as v2a keys/values only — the a2v direction and the video residual
+    keep the raw hidden states, so the frozen backbone stream is untouched.
+    Leave it False for the latent-grid path: VAE latents are already ~unit
+    scale and their per-token channel statistics carry content.
+    """
+
+    def __init__(self, video_dim: int, audio_dim: int, heads: int = 16,
+                 norm_video_kv: bool = False):
         super().__init__()
         self.v2a = nn.MultiheadAttention(audio_dim, heads, kdim=video_dim, vdim=video_dim,
                                          batch_first=True)
@@ -26,11 +40,13 @@ class CrossModalBridge(nn.Module):
                                          batch_first=True)
         self.v_norm = nn.LayerNorm(video_dim)
         self.a_norm = nn.LayerNorm(audio_dim)
+        self.norm_video_kv = bool(norm_video_kv)
 
     def forward(self, v: torch.Tensor, a: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
         """v: (B, Tv, Dv), a: (B, Ta, Da). Returns updated (v, a) with residual adds."""
         dv, _ = self.a2v(self.v_norm(v), a, a)
-        da, _ = self.v2a(self.a_norm(a), v, v)
+        v_kv = F.layer_norm(v, self.v_norm.normalized_shape) if self.norm_video_kv else v
+        da, _ = self.v2a(self.a_norm(a), v_kv, v_kv)
         return v + dv, a + da
 
 
@@ -59,16 +75,21 @@ class AudioDiT(nn.Module):
     Bridges into the video stream every `bridge_every` layers. The video
     stream itself lives in the Wan 2.2 backbone; this module owns only the
     audio tokens and the bridges (trained first via LoRA on bridges, M2).
+
+    ``norm_video_kv`` must be True for ``wan_blocks`` internal bridging
+    (Wan hidden states are un-normalised; see CrossModalBridge) and False
+    for the default latent-grid path.
     """
 
     def __init__(self, dim: int = 1024, layers: int = 12, heads: int = 16,
-                 video_dim: int = 5120, bridge_every: int = 3, latent_dim: int = 128):
+                 video_dim: int = 5120, bridge_every: int = 3, latent_dim: int = 128,
+                 norm_video_kv: bool = False):
         super().__init__()
         self.bridge_every = bridge_every
         self.in_proj = nn.Linear(latent_dim, dim)
         self.blocks = nn.ModuleList(AudioDiTBlock(dim, heads) for _ in range(layers))
         self.bridges = nn.ModuleList(
-            CrossModalBridge(video_dim, dim, heads)
+            CrossModalBridge(video_dim, dim, heads, norm_video_kv=norm_video_kv)
             for _ in range(layers // bridge_every)
         )
         self.out = nn.Linear(dim, latent_dim)

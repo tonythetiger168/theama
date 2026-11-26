@@ -271,6 +271,12 @@ class WanVideoAdapter(torch.nn.Module):
                 f"audio bridge video_dim {bridge_dim} != Wan inner dim {self.inner_dim}; "
                 "build AudioDiT with video_dim=video.inner_dim for wan_blocks"
             )
+        if not all(getattr(bridge, "norm_video_kv", False) for bridge in bridges):
+            raise ValueError(
+                "wan_blocks bridging feeds un-normalised Wan hidden states into the "
+                "audio bridge v2a keys/values (issue #4 smoke: audio loss / grad norm "
+                "~40x the latent-grid path); build AudioDiT with norm_video_kv=True"
+            )
 
         audio = audio_dit.start_stream(audio_latent)
         handles = []
