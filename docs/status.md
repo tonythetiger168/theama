@@ -168,7 +168,7 @@ reports, `dac/input.wav`, `logs/cpu_tests.log`, `logs/dac_smoke.log`,
 - Secure-cloud stock changes within minutes; some datacenters (e.g. EU-SE-1)
   don't support network volumes.
 - Existing network volume `aevum-data` (850 GB) is in EU-RO-1, which had no
-  RTX 4090 stock on 2026-11-24; a 4096 run needs its own volume in a
+  RTX 4090 stock on 2026-11-24; a 4090 run needs its own volume in a
   datacenter that has 4090s.
 - Never commit or print API keys.
 
