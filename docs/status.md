@@ -95,7 +95,7 @@ reports, `dac/input.wav`, `logs/cpu_tests.log`, `logs/dac_smoke.log`,
    when downloaded through the pod's `python -m http.server` proxy and were lost
    at stop. **Resolved** by the 2026-11-25 re-run (tar the tree, then download).
 2. This run used no network volume and only stopped its pod. **Resolved**:
-   pod `8glb2h730bo2mb` was deleted on 2026-11-24, and the re-run followed the
+   pod `8glb2h730bo2mb` was deleted 2026-11-24, and the re-run followed the
    delete-pod / keep-volume rule.
 3. The image above ships a **nightly** torch. Fine for the smoke; pick an image
    with a stable torch release before any real training.
