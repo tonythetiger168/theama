@@ -9,7 +9,7 @@ Last updated: 2026-11-26. This file is the single entry point for any agent
 
 | Milestone | Code | GPU validation |
 |---|---|---|
-| M1 inference + eval harness | landed; VBench tolerance gate (`run_vbench.py`) pure-function + CLI CPU tests (fake-vbench injection) | **not run** |
+| M1 inference + eval harness | landed; VBench tolerance gate (`run_vbench.py`) pure-function + CLI CPU tests (fake-vbench injection); `gen_eval_set.py` probe_ok + resume skip/regenerate CPU tests (fake mux/pipeline injection) | **not run** |
 | P1a VideoReward + LoRA-DPO | landed; full preflight-gate chain: `check_scores.py` → `make_pref_pairs.py` fail-fast, `check_pairs.py` → `encode_pairs.py` fail-fast, `check_pair_latents.py` → `train_dpo.py` fail-fast; retry budgets + `pairs_stats.py` / `scores_stats.py` profilers; runbook §2 command chain wired (three gates + profilers in-chain) | **not run** |
 | P1b data engine | landed: `build_av_manifest.py` → `encode_texts.py` / `encode_av_latents.py` (retry budgets on all three caches) → joint latent loader (explicit `skipped_*_row` drop reasons) → joint training runner + runbook §5; joint-cache preflight gate `check_joint_latents.py` wired into runbook §5.1/§5.2 (fails before any GPU burn on dropped rows or corrupt/non-finite `.pt`) | **not run** (issue #4 open) |
 | M2 audio DiT + joint A/V trainer | CPU trainer, DAC codec, external Wan adapter, internal Wan block bridges, bridge LoRA warmup, joint training runner, AV manifest data pipeline, **CFG text-conditioning dropout** (audio-stream null-condition training, default 0.0 off) | **external latent-bridge real-weight contract smoke PASSED** (RTX 4090 2026-11-24; full runbook re-run on A40 2026-11-25, see below); **internal `wan_blocks` real-weight GPU acceptance not run** |
@@ -17,7 +17,7 @@ Last updated: 2026-11-26. This file is the single entry point for any agent
 | M7a CJK T2I eval | seed v1.2 (100 prompts) at acceptance-gate size; scorer script-split (zh-Hans gate / zh-Hant parallel stats); Ming-Image-0.1-Design third path plumbed as diagnostic-only | **not run** (Qwen-Image-2512 / Z-Image Turbo repro) |
 | M3+ | planned | — |
 
-Since 2026-11-25 the CPU suite has grown to **410 passed**; the repo is now
+Since 2026-11-25 the CPU suite has grown to **422 passed**; the repo is now
 **public** (`github.com/tonythetiger168/theama`). The M5 north-star (per
 Tony 2026-11-25): top the Artificial Analysis Video Arena with-audio boards —
 T2V/editing above Wan 3.0, I2V above Seedance 2.5 (see
