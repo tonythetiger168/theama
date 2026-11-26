@@ -181,7 +181,7 @@
   待 M7a 推理重現排程時以 seed 集（v1.2 已達 100 條驗收閘規模）實測後再議是否納入。
   2026-11-25 第七輪：2.1／2.1-Turbo 研究授權、2512／Edit-2511 Apache 線、
   3.0／3.1 hosted-only，本輪覆核均無變化。
-  2026-11-25 第八輪：同上四項（2.1 研究授權／2512 Apache 線／3.0・3.1
+  2026-11-25 第八輪：同上四項（2.1 研究授權／2512 Apache 線、3.0・3.1
   hosted-only／Ming-Image 觀察）覆核均無變化。
   2026-11-25 第十輪：四項覆核無變化（2.1／2.1-Turbo 研究授權、
   2512／Edit-2511 Apache 線、3.0／3.1 hosted-only）；HF 社群討論 #39
@@ -234,7 +234,7 @@
   judge）等；授權與權重可得性未逐一核實，VideoReward 仍為首選，暫不加第二把尺。
   2026-11-25 補查同清單，新增觀察 **joint audio-video reward** 線：**VA-Judger**
   （VAPref-10K 影音偏好對訓練的 A/V 聯合 judge，直接獎勵跨模態一致性而非手工拼接
-  分分維指標）與 **AVBench**（人本影音評測器，二元判決信心可轉連續分，可作 RLHF
+  分維指標）與 **AVBench**（人本影音評測器，二元判決信心可轉連續分，可作 RLHF
   reward 與資料過濾）——與 M2 原生音訊路線後續的 A/V 偏好後訓練直接相關；
   授權／權重可得性同樣未核實，列為 P1a 之後的觀察候選，現階段不改動 P1a 配方。
   同輪覆核再補三筆 A/V reward 觀察（同清單 2026-10-06 版）：**AV-GRPO**（2026，
@@ -253,7 +253,7 @@
   LoRA 後訓練驗證其 reward 可提升生成品質，惟 policy 實驗用 LTX-2（紅線模型）——
   僅取 reward 方法論參考，不碰其權重與輸出。同清單再補 **Omni-Judge**（2026，
   以 omni-modal LLM 做 text-conditioned A/V 生成的 CoT judge，覆蓋感知品質與
-  跨模態對齊維度），同列觀察，授權／權重未核實。另記上游營運訊號：
+  跨模態對齊維度），同列維度），同列觀察，授權／權重未核實。另記上游營運訊號：
   Wan2.2-Animate 官方 HF Space 已 401 下線（2026-11-16 確認；ModelScope Studio
   與社群 ZeroGPU Space 仍在）——M6a 走自架權重路線，不受影響。
   Wan-Animate-2 repo id／Wan 3.x API-only／Qwen-Image 紅線三項本輪覆核無變化。
@@ -337,7 +337,7 @@
   對本專案的意義：P1a LoRA-DPO 訓完的 Wan 生成器可直接讀出
   latent-space reward（推理期 BoN、資料過濾免載第二把尺），M2 flow
   後訓練同適用；程式碼／權重／授權未核實，列觀察與方法參考，不改
-  P1a／M2 配方。同輩補方法參考 **PAVRM**（arXiv 2511.21541v3，
+  P1a／M2 配方。同輪補方法參考 **PAVRM**（arXiv 2511.21541v3，
   CVPR 2026 Findings）：video generation model 直接當 latent reward
   model（對部分去噪樣本於 latent 空間打分、免 decode，stratified
   timestep 評估），與 P1a pair latent cache 形態相容；授權未核實。
@@ -367,7 +367,7 @@
   （wan30.video 10-16／atlascloud 08-26 再核一致，「Wan 2.7 開源」
   仍屬低權威誤報）；Wan-Animate-2 repo id
   `Wan-AI/Wan2.2-Animate-2-14B`（Apache-2.0）無變化；阿里下一代
-  影片模型 11 月窗口 T-5（11-30 關閉）仍無名關閉）仍無名稱／規格／權重
+  影片模型 11 月窗口 T-5（11-30 關閉）仍無名稱／規格／權重
   （阿里 11-12 云栖官方總結稿亦未提新影片模型）；Qwen-Image
   2.1／2.1-Turbo 仍 Qwen Research License（QwenLM repo 直查），
   3.1 hosted-only「今年稍後推出」，紅線不變；GenRM-Flow 仍僅
