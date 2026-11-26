@@ -46,9 +46,9 @@ ideas only* from H3 / LTX-2.5. Full analysis: see Docs below.
 docs/            landscape survey, architecture, model stack & roadmap, training plan, license risks, session checkpoint
 src/theama/      model / data / train / inference / reward / avatar / image packages
 configs/         base model, P1a DPO and M2 joint A/V configs
-eval/            50-prompt T2V eval set + VBench reference scores
-scripts/         weight download, inference, eval/VBench, P1a DPO pipeline, RunPod bootstrap
-tests/           CPU-only tests (M1 / P1a / M2 / smoke)
+eval/            50-prompt T2V eval set + VBench reference scores + CJK T2I seeds (zh-Hant/zh-Hans paired)
+scripts/         weight download, inference, eval/VBench, P1a DPO + P1b A/V data pipelines, M4 packaging, M7a CJK eval, RunPod bootstrap
+tests/           CPU-only tests (M1-M7 / P1a / P1b: contracts, CLI, profilers, smoke)
 ```
 
 ## Quick start
@@ -56,7 +56,7 @@ tests/           CPU-only tests (M1 / P1a / M2 / smoke)
 ```bash
 pip install -e .[dev]                         # add [train] for DPO / M2 training deps
 bash scripts/download_weights.sh              # Wan 2.2 + VideoReward (Apache-2.0) + DAC (MIT), user-side
-pytest tests/                                 # CPU tests: M1 configs/eval set/mux, P1a DPO math, M2 audio DiT trainer
+pytest tests/                                 # CPU tests: contract + CLI suites for all landed milestones
 ```
 
 On a fresh RunPod pod, `bash scripts/runpod_bootstrap.sh [/workspace]` clones the
@@ -116,7 +116,7 @@ random latent/text conditioning; it is a contract smoke, not a quality gate.
 
 Film line:
 
-- **M1** — Wan 2.2 inference reproduction + eval harness (VBench + AV-sync metrics) — code landed 2026-11-24, GPU acceptance run pending
+- **M1** — Wan 2.2 inference reproduction + eval harness (VBench + AV-sync metrics) — code landed 2026-11-24; 5-prompt RunPod GPU smoke passed 2026-11-26 (5/5 probe-valid), 50-prompt + VBench acceptance pending
 - **P1a** — Preference post-training: VideoReward (Apache-2.0) scoring + LoRA-DPO on Wan 2.2 — code landed 2026-11-24, GPU run pending
 - **M2** — Audio DiT branch + joint A/V fine-tune (bridge warmup → full) — CPU trainer, DAC/Wan adapters, internal block bridges and joint runner landed; external real-weight GPU smoke passed on RTX 4090 and A40; internal GPU acceptance pending (see docs/status.md)
 - **M3** — THEAMA-Extend: 5 s → 30 s continuation without drift
