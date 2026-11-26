@@ -19,6 +19,7 @@ model:
     text_dim: 4096
     timestep_scale: 1000
     bridge_location: latent_pre_backbone  # wan_blocks = internal path; set audio.video_dim to Wan inner dim
+    # wan_blocks also requires audio.norm_video_kv: true (un-normalised Wan hidden states, issue #4)
     frozen: true
 training:
   phase: bridge  # bridge warmup first; set_phase("full") for full-audio FT

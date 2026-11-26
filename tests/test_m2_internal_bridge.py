@@ -85,7 +85,7 @@ def _video(*, fail: bool = False) -> WanVideoAdapter:
     return WanVideoAdapter(_TinyInternalWan(fail=fail), spec)
 
 
-def _audio(*, video_dim: int = INNER_DIM) -> AudioDiT:
+def _audio(*, video_dim: int = INNER_DIM, norm_video_kv: bool = True) -> AudioDiT:
     return AudioDiT(
         dim=AUDIO_DIM,
         layers=2,
@@ -93,6 +93,9 @@ def _audio(*, video_dim: int = INNER_DIM) -> AudioDiT:
         video_dim=video_dim,
         bridge_every=1,
         latent_dim=AUDIO_LATENT_DIM,
+        # wan_blocks feeds un-normalised Wan hidden states to the bridges
+        # (issue #4 red flag); the adapter rejects bridges without this flag
+        norm_video_kv=norm_video_kv,
     )
 
 
