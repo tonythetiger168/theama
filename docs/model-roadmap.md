@@ -37,10 +37,10 @@
 
 | 階段 | 模型交付物 | 說明 |
 |---|---|---|
-| M4b | **theama-8k-regen** | 4K→8K tiled regenerate（光環級，M4 穩定後才動；HEVC/AV1＋HDR10 已提前至 M4） |
-| M5 | 品質收斂版 Film 模型 | 保底：盲測 vs H3 win/tie ≥50%、vs Wan 3.0 ≥40%、VBench 開源前三；**終局（11-25 拍板）：AA with-audio 三板登頂——T2V/editing 超越 Wan 3.0、I2V 超越 Seedance 2.5** |
-| M6a | **theama-avatar-offline** | Wan-Animate-2-14B（animation-only）底座 + LatentSync 墊底唇形 |
-| M7a | **theama-image 雙路徑** | Qwen-Image-2512（品質）+ Z-Image Turbo（快速）推理重現 + CJK 評測（**簡中優先**：zh-Hans 準確率為放行閘、zh-Hant 並行統計；seed v1.2 已達 100 條驗收閘規模） |
+| M6b | **theama-avatar-stream** | causal DiT + rolling KV + replay anchor；24GB 卡 720p 實時係數 ≥1.0；**實時分發走 LL-HLS 或 WebRTC，不用標準 HLS（11-26 拍板）** |
+| M6c | **theama-avatar-interactive** | VLM agent 互動層：串流中換參考圖、語音指令（Vidu S2 class） |
+| M7b/c | 編輯管線 + **KeyframeBridge** | Qwen-Image-Edit-2511；T2I→Film I2V、identity→Avatar 三線整合 |
+| P2 | **omni-reference encoder** | 多圖/影片/音訊參考（對標 Wan 3.0 omni-reference；H3 Contextual Omni Rep clean-room） |
 
 ## Watchlist（上游釋出追蹤）
 
