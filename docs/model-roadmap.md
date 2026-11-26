@@ -181,7 +181,7 @@
   待 M7a 推理重現排程時以 seed 集（v1.2 已達 100 條驗收閘規模）實測後再議是否納入。
   2026-11-25 第七輪：2.1／2.1-Turbo 研究授權、2512／Edit-2511 Apache 線、
   3.0／3.1 hosted-only，本輪覆核均無變化。
-  2026-11-25 第八輪：同上四項（2.1 研究授權／2512 Apache 線、3.0・3.1
+  2026-11-25 第八輪：同上四項（2.1 研究授權／2512 Apache 線／3.0・3.1
   hosted-only／Ming-Image 觀察）覆核均無變化。
   2026-11-25 第十輪：四項覆核無變化（2.1／2.1-Turbo 研究授權、
   2512／Edit-2511 Apache 線、3.0／3.1 hosted-only）；HF 社群討論 #39
@@ -253,7 +253,7 @@
   LoRA 後訓練驗證其 reward 可提升生成品質，惟 policy 實驗用 LTX-2（紅線模型）——
   僅取 reward 方法論參考，不碰其權重與輸出。同清單再補 **Omni-Judge**（2026，
   以 omni-modal LLM 做 text-conditioned A/V 生成的 CoT judge，覆蓋感知品質與
-  跨模態對齊維度），同列維度），同列觀察，授權／權重未核實。另記上游營運訊號：
+  跨模態對齊維度），同列觀察，授權／權重未核實。另記上游營運訊號：
   Wan2.2-Animate 官方 HF Space 已 401 下線（2026-11-16 確認；ModelScope Studio
   與社群 ZeroGPU Space 仍在）——M6a 走自架權重路線，不受影響。
   Wan-Animate-2 repo id／Wan 3.x API-only／Qwen-Image 紅線三項本輪覆核無變化。
@@ -468,7 +468,7 @@
   現況計）：T2V 差 14 Elo（H3 1161→1175）、I2V 差 25（H3 1128→1153）、
   editing 開放最高僅第三（Hyperflow H3，榜首 Wan 3.0 1196）——
   theama 的追趕路徑全在既有管線上：P1a LoRA-DPO（品味對齊）
-  ＋M2 audio DiT（with-audio 評分主戰場）＋資料引擎擴量。
+  ＋M2 audio DiT（with-audio 評分主評分主戰場）＋資料引擎擴量。
   驗收語意不變：保底閘（盲測 win rate、VBench）照舊，登頂為
   stretch 層，兩者並列於 M5 列。
   2026-11-26 補記（蒸餾合法性盤點，依使用者提問「各榜前五或十可蒸餾？」）：
