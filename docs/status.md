@@ -23,6 +23,55 @@ Tony 2026-11-25): top the Artificial Analysis Video Arena with-audio boards —
 T2V/editing above Wan 3.0, I2V above Seedance 2.5 (see
 `docs/model-roadmap.md`).
 
+## RunPod run 2026-11-26 (A40): M1 rerun + issue #4 internal smoke
+
+One pod ran both jobs back to back.
+
+| Item | Value |
+|---|---|
+| Pod | `bsmi95ocgchqot`, secure, CA-MTL-1, A40 48 GB, $0.59/hr — **deleted** 2026-11-26 01:13:00 UTC (absent from pod list afterwards) |
+| Uptime / cost | 2026-11-25 23:54:12 → 2026-11-26 01:13:00 UTC (78.8 min), ≈ **$0.78** of the $2 cap |
+| Network volume | `theama-m2` (`xb1dc3goq4`) **kept**; now ~5.1 GB free. Older outputs moved to `m1_out_run1_20261125/` and `smoke_out_m2_20261125/` on the volume |
+
+### M1 eval generation smoke (rerun after the `save_frames` fix)
+
+- Commit `0bf42cd`, `bash scripts/runpod_m1_eval.sh /workspace 5`.
+- CPU suite on pod 395 passed / 1 skipped; `M1_EVAL_SMOKE_OK`, exit 0.
+- 5/5 clips probe-valid: H.264 1280x704, 24 fps, 121 frames (5.06 s), silent
+  AAC 44.1 kHz track. Wall time per clip 865.3 / 835.7 / 837.4 / 844.2 /
+  829.3 s (mean **842 s**, CPU offload), nvidia-smi peak **33,679 MiB**.
+- Run 1 (pod `31tuzdf6pcdj9z`) had failed on `numpy.ndarray.save` in
+  `save_frames`; fixed in `ecf50d6` (`_to_pil`).
+- Local results: `C:\Users\chien\aios\theama\results\runpod\m1-eval-rerun\`
+  on trinity (MP4s, `m1_eval_report.json`, logs; not committed).
+- Scope: plumbing/generation gate only. No VBench or quality judgement yet.
+
+### Issue #4: internal `wan_blocks` + LoRA real-weight smoke
+
+- Commit `2e16595`. External sanity first: CPU 409 passed / 1 skipped,
+  `M2_DAC_SMOKE_OK`, `M2_WAN_SMOKE_OK` (9.37 GiB), `M2_RUNPOD_SMOKE_OK`.
+- Internal run (`--bridge-location wan_blocks --bridge-lora-rank 8
+  --bridge-lora-alpha 16`, bf16): `bridge_video_dim` 3072, bridge blocks
+  `[14, 29]`, 100,352 trainable params, 8 grad tensors / 4 updated (consistent
+  with LoRA B zero-init on step 1), max delta 1.01e-4, Wan frozen, CFG dropped
+  0.0, peak **9.54 GiB** allocated / 9.56 GiB reserved.
+- Loss 81.5 (audio **79.0**, video 2.375), grad norm **94.0**.
+- Local results: `C:\Users\chien\aios\theama\results\runpod\m2-internal-lora\`
+  on trinity; archive also on the volume at
+  `/workspace/smoke_out_wan_internal_lora.tar.gz`.
+
+**Red flag:** audio loss 79 is ~37x and grad norm 94 is ~180–300x the
+external-bridge run (audio 2.14, grad norm 0.31–0.52). Likely cause: raw Wan block hidden states
+(dim 3072, un-normalised) feed the audio bridge at a much larger scale than
+latents do. Check hidden-state RMS at blocks 14/29 and add a norm / scale on
+the bridge input (or a gate init) before any real bridge-warmup training.
+The contract (shapes, backward, frozen Wan, memory) passes; the scale does not
+look trainable as is.
+
+**更新（2026-11-26）**：CPU 修復 `norm_video_kv` 已落地（commits
+`b5321003`..`d455e3dc`，`run_wan_smoke` 對 `--bridge-location wan_blocks`
+自動啟用）；GPU 重跑 pending，見 next step 4。
+
 ## M2 external latent-bridge RunPod smoke — 2026-11-25 full runbook re-run (A40)
 
 This is the run that satisfies every `CLAUDE.md` acceptance item (all three
@@ -57,7 +106,7 @@ Command: `bash scripts/runpod_m2_smoke.sh /workspace` (repo at commit
 | Item | Value |
 |---|---|
 | Pod | `8glb2h730bo2mb` "theama-m2-smoke", 1x RTX 4090 24 GB (23.52 GiB visible), secure cloud, US, $0.89/hr, no network volume, 60 GB container disk |
-| Image | `runpod/pytorch:2.8.0-py3.11-cuda12.8.1-cudnn-devel-ubuntu22.04` → torch `2.8.0.dev20250319+cu128` (**nightly**), CUDA 12.8 |
+| Image / torch | `runpod/pytorch:2.8.0-py3.11-cuda12.8.1-cudnn-devel-ubuntu22.04` → torch `2.8.0.dev20250319+cu128` (**nightly**), CUDA 12.8 |
 | Runtime / cost | ~6 min pod uptime (~4 min smoke), ≈ $0.09 |
 | CPU suite on pod | 101 passed, 4 skipped |
 | Markers | `M2_DAC_SMOKE_OK`, `M2_WAN_SMOKE_OK`, `M2_RUNPOD_SMOKE_OK`, exit 0 |
