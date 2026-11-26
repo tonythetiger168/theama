@@ -7,7 +7,9 @@ Layout produced:
     <out>/<prompt_id>/cand_<k>.mp4        (k = 0..N-1, seed = seed_base + k)
     <out>/<prompt_id>/manifest.jsonl
 
-Existing probe-valid MP4s are skipped, so reruns resume cheaply.
+Existing probe-valid MP4s are skipped, so reruns resume cheaply. The
+pipeline is loaded lazily on the first clip that actually needs
+(re)generation — a fully cached rerun never pays the model-load cost.
 
     python scripts/gen_candidates.py --model ti2v-5b --out dpo_out/candidates \
         --candidates 4 --limit 5        # smoke
@@ -63,7 +65,7 @@ def main() -> int:
     from theama.inference.t2v import generate_frames, load_pipeline, save_frames
     from theama.inference.mux import mux_mp4
 
-    pipe, _ = load_pipeline(args.model)  # returns (pipe, spec)
+    pipe = None  # lazy: loaded on the first clip that needs generation
     out_root = Path(args.out)
     failures, made = [], 0
     for item in prompts:
@@ -77,6 +79,8 @@ def main() -> int:
             seed = args.seed_base + k
             t0 = time.time()
             try:
+                if pipe is None:
+                    pipe, _ = load_pipeline(args.model)  # returns (pipe, spec)
                 frames = generate_frames(
                     pipe, spec, text, seed=seed,
                     num_frames=frames_for_seconds(spec, spec.native_seconds),
