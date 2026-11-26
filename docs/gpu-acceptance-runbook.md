@@ -51,14 +51,21 @@ python scripts/run_vbench.py --videos eval_out/ti2v-5b   # gate: 6 維 ±0.02 vs
 ## 2. P1a DPO 管線（M1 綠後）
 
 ```bash
-python scripts/gen_candidates.py            # 每 prompt 4 seeds
-python scripts/score_eval_set.py --videos dpo_out/candidates
-python scripts/make_pref_pairs.py           # best-vs-worst, margin >= 0.5
+python scripts/gen_candidates.py --out dpo_out/candidates           # 每 prompt 4 seeds
+python scripts/score_eval_set.py --videos dpo_out/candidates        # → dpo_out/candidates/scores.jsonl
+python scripts/check_scores.py --scores dpo_out/candidates/scores.jsonl   # 閘 1：壞列/混 scorer exit 1
+python scripts/scores_stats.py --scores dpo_out/candidates/scores.jsonl   # 配對產出預覽（pairable / all_failed）
+python scripts/make_pref_pairs.py --scores dpo_out/candidates/scores.jsonl --out dpo_out/pairs.jsonl   # best-vs-worst, margin >= 0.5
+python scripts/check_pairs.py --pairs dpo_out/pairs.jsonl           # 閘 2：任一 unusable exit 1（壞檔由 make_pref_pairs 重建，不丟列續跑）
+python scripts/pairs_stats.py --pairs dpo_out/pairs.jsonl           # 可選：margin 分佈 / winner 集中度預覽
 python scripts/encode_pairs.py --pairs dpo_out/pairs.jsonl --model ti2v-5b --out dpo_out/latents
+python scripts/check_pair_latents.py --manifest dpo_out/latents/pairs_latents.jsonl   # 閘 3：dropped/缺檔 exit 1
 python scripts/train_dpo.py --config configs/dpo_ti2v_5b.yaml
 ```
 
-**驗收**：held-out 盲測 win ≥ 65%；VBench 對 DPO 前 baseline 不掉 ±0.01；
+**驗收**：三段預檢閘皆 exit 0 才進下一步（閘 2 不通過時以 make_pref_pairs
+重建 pairs.jsonl——pair index 為 latent cache 鍵，不可丟列續跑）；
+held-out 盲測 win ≥ 65%；VBench 對 DPO 前 baseline 不掉 ±0.01；
 dpo_metrics.json 500 steps 收斂。
 
 ## 3. M2 真實權重 contract smoke（DAC → Wan）
