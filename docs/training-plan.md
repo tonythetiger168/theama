@@ -58,13 +58,13 @@
 ## M4 — THEAMA-4K（720p→2K→4K）
 
 - Stage 1 in-context regenerate（denoise 0.35）；Stage 2 tiled upscale（denoise 0.25）。
-- **HDR + AV1 提前至 M4 交付（2026-11-26 拍板，自 M4b 前置移入）**：10-bit HDR10/HLG 封裝＋H.264/HEVC/AV1 三編碼隨 4K 上線，列為獨立賣點——「第一個輸出 10-bit HDR + AV1 的開源影片模型」（Wan 3.0／H3／Seedance 2.5 皆僅 8-bit SDR MP4）。
+- **HDR + AV1 提前至 M4 交付（2026-11-26 拍板，自 M4b 前置移入）**：10-bit HDR10/HLG 封裝＋H.264/HEVC/AV1 三編碼隨 4K 上線，列為獨立賣點——「第一個輸出真 HDR（HDR10/HLG）＋AV1 的開源影片模型」。**修正（2026-11-26）**：Seedance 2.5 已於 2026-11-13 上線原生 4K/30s＋10-bit BT.709（SDR，非 HDR10/HLG；閉源 API 計費，限時 ¥0.15/秒）——4K 與 10-bit 不再是孤峰，Theama 差異化收斂為：真 HDR、AV1/HEVC＋HLS 分發包、開放權重本地部署、8K（M4b）。
 - **HLS 分發層（2026-11-26 拍板）**：成片除 MP4 母檔外，輸出 HLS 播放包——fMP4/CMAF segments（AV1/HEVC 在 HLS 不走 MPEG-TS）＋ master .m3u8 自適應階梯（4K HDR AV1 → 1080p HEVC → 720p/480p H.264；HEVC 層為 Safari fallback，非加分項是必需）；同批 segment 可兼出 DASH playlist。
 - **驗收**：(1) 4K 輸出對 2K 輸入的 LPIPS 不劣化 > 10%；(2) tile 接縫不可見；(3) 單片 30s 4K 在 80GB 卡可完成；(4) HDR10/HLG 10-bit + HEVC/AV1 mux ＋ ffprobe 驗證通過；(5) HLS master playlist ＋各 variant 全數產出、ffprobe 驗證通過。
 
 ## M4b — THEAMA-8K（4K→8K tiled regenerate，2026-11-24 新增）
 
-光環型差異化（Wan 3.0 鎖 1080P、H3 鎖 2K，8K 無人提供）；**加分題不是主線**，M4 4K 穩了才動。
+光環型差異化（Wan 3.0 鎖 1080P、H3 鎖 2K、Seedance 2.5 上限 4K，8K 無人提供）；**加分題不是主線**，M4 4K 穩了才動。
 
 - 方法：M4 Stage 2 直接延伸——4K base → 8K tiled in-context regenerate（~1024² tiles、overlap 128、denoise 0.15–0.25，比 4K 段更保守，只補高頻紋理）。
 - 工程前提：tiled VAE decode（8K 整張不進 VAE）；PNG 中介檔 streaming mux（8K 序列 ~21GB/30s 支，不全落盤）；HEVC/AV1 + HDR10 封裝（`mux_mp4(vcodec="hevc"|"av1", hdr="hdr10")` 已就位，hvc1 tag / SVT-AV1；**HDR/AV1 封裝已提前至 M4 交付**，M4b 僅剩 8K 本體）。
@@ -74,7 +74,7 @@
 
 - 對手：MiniMax H3 API（2K/15s/音訊）、Wan 3.0 API（30s/1080P/音訊，AA T2V #1）固定 eval set 盲測。
 - 前置：P1 資料引擎 + DPO/RLHF 偏好後訓練、P2 omni-reference — 見 [`quality-path-wan3-h3.md`](quality-path-wan3-h3.md)。
-- **驗收**：(1) 50-prompt 盲測 win/tie ≥ 50% vs H3（768p 對 768p）；(2) win/tie ≥ 40% vs Wan 3.0（720p 對 720p）；(3) VBench 總分進開源前三（當時榜單）；(4) 4K/30s 交付（Wan 3.0 無 4K — 差異化贏點）。
+- **驗收**：(1) 50-prompt 盲測 win/tie ≥ 50% vs H3（768p 對 768p）；(2) win/tie ≥ 40% vs Wan 3.0（720p 對 720p）；(3) VBench 總分進開源前三（當時榜單）；(4) 4K/30s 交付（對 Wan 3.0 仍是贏點；Seedance 2.5 自 2026-11-13 已有原生 4K/30s——差異化主軸改掛真 HDR＋AV1＋開放權重）。
 
 ## 風險與對策
 
