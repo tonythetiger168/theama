@@ -11,6 +11,10 @@ Exit 0 when the overall score is within tolerance of eval/reference.json,
 nonzero otherwise. The reference (AMD BF16 study, 0.8681) was measured at
 832x480 / 81f @ 16fps / 30 steps / CFG 5.0 — match that config for an
 apples-to-apples comparison.
+
+The gate itself (overall-score extraction, 0-100 vs 0-1 normalization,
+tolerance verdict) is pure and CPU-tested in tests/test_m1_vbench_gate.py,
+so a parsing bug surfaces before a GPU VBench run, not after one.
 """
 
 from __future__ import annotations
@@ -21,6 +25,36 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+
+_OVERALL_KEYS = ("overall", "total_score", "vbench_score")
+
+
+def extract_overall(result: object) -> float | None:
+    """Pull an overall score out of a VBench evaluate() return value.
+
+    Returns None when the result is not a dict, carries none of the known
+    keys, or the first known key holds a non-numeric value (clean exit 2
+    upstream instead of a traceback).
+    """
+    if not isinstance(result, dict):
+        return None
+    for key in _OVERALL_KEYS:
+        if key in result:
+            try:
+                return float(result[key])
+            except (TypeError, ValueError):
+                return None
+    return None
+
+
+def normalize_overall(score: float) -> float:
+    """VBench reports 0-100 in some versions, 0-1 in others; normalize to 0-1."""
+    return score / 100.0 if score > 1.5 else score
+
+
+def gate_passed(overall: float, target: float, tolerance: float) -> bool:
+    """True when |overall - target| <= tolerance (boundary inclusive)."""
+    return abs(overall - target) <= tolerance
 
 
 def main() -> int:
@@ -61,12 +95,7 @@ def main() -> int:
     out_path = ROOT / "eval" / "vbench_out" / f"{args.model}-m1_results.json"
     print(f"raw results: {out_path}")
 
-    overall = None
-    if isinstance(result, dict):
-        for key in ("overall", "total_score", "vbench_score"):
-            if key in result:
-                overall = float(result[key])
-                break
+    overall = extract_overall(result)
     target = ref["vbench_overall_bf16"]
     if target is None:
         print("no reference score for this model; record the printed scores "
@@ -76,14 +105,12 @@ def main() -> int:
         print("could not parse an overall score from VBench output; "
               "inspect the results JSON manually", file=sys.stderr)
         return 2
-    # VBench reports 0-100 in some versions, 0-1 in others; normalize.
-    if overall > 1.5:
-        overall /= 100.0
+    overall = normalize_overall(overall)
     delta = overall - target
     tol = ref["tolerance"]
     print(f"overall={overall:.4f}  reference={target:.4f}  "
           f"delta={delta:+.4f}  tolerance=±{tol}")
-    if abs(delta) <= tol:
+    if gate_passed(overall, target, tol):
         print("PASS: within ±2% of the BF16 reference")
         return 0
     print("FAIL: outside tolerance — check eval config parity first", file=sys.stderr)
