@@ -44,7 +44,7 @@
 
 ## Watchlist（上游釋出追蹤）
 
-最近核查：**2026-11-26**（第十六輪）。
+最近核查：**2026-11-26**（第十七輪）。
 
 - **Wan-Animate-2-14B**（Apache-2.0）— M6a 底座候選，已寫入
   `configs/theama_base.yaml`。repo id 已核對：`Wan-AI/Wan2.2-Animate-2-14B`
@@ -107,6 +107,18 @@
   上線，API-only、無 license 文本）＋四代旗艦連閉摘要
   （atlascloud 2026-08-26 逐 33 repo 核查佐證）。骨幹續用
   Wan 2.2。
+  2026-11-26 第十七輪覆核（11 月窗口關閉前最後覆核，T-4／11-30 關閉）：
+  阿里下一代影片模型**仍未發布**——中英文檢索僅見 2026-09-22 雲棲預告
+  及其轉載（搜狐時間線 B 級同文：「更長、更可控、更完整、更智能」、
+  11 月發布）；阿里 11 月中旬實際發布為 Qwen4-Max（文本旗艦，非影片
+  模型）與雙 11 檔期的 Wan3.0-Video 七折促銷（developer.aliyun.com
+  2026-11-19，A 級——仍以 Wan3.0-Video 為影片旗艦介紹），均非下一代
+  影片模型。窗口 11-30 關閉後若仍無發布，本項降為每數輪抽查。
+  Wan 3.x API-only 維持（熙娛 2026-11-12 前台＋官方列表雙核、
+  kenerateai 2026-11-12 逐 repo 核查一致：Wan-AI HF／Wan-Video
+  GitHub 無 2.5 以上權重，`AlibabaCloud-Official/Wan3.0` 仍僅
+  README＋LICENSE——cinemadrop 2026-11-01 同確認）。Wan-Animate-2
+  repo id 覆核無變化。骨幹續用 Wan 2.2。
 - **Qwen-Image 新版** — **Qwen-Image-2.1（7B，2026-09-20）統一 T2I+編輯+原生 RGBA，
   但為 Qwen Research License（非商用）→ 紅線確認，不碰**；2.1-Turbo（2026-10-09，8-step）
   同授權。Qwen-Image-3.0 為 hosted-only。Apache-2.0 線最新仍是
@@ -151,6 +163,11 @@
   2026-11-26 第十六輪：2.1／2.1-Turbo 研究授權、
   2512／Edit-2511 Apache 線、3.0／3.1 hosted-only，
   覆核無變化。
+  2026-11-26 第十七輪：四項覆核無變化（2.1／2.1-Turbo 研究授權紅線、
+  2512／Edit-2511 Apache 線、3.0／3.1 hosted-only）；補資料點——
+  Qwen-Image-3.0 Pro 已 2026-08-04 GA on Model Studio（orcarouter
+  2026-11-05，B 級：仍無權重、無 model card、無技術報告、無參數量）。
+  紅線不變、M7a 選型不變。
 - **開源 video reward 新模型** — awesome-rm-for-video-generation（2026-10 更新）新增
   AesRM（專家標註美學 RM，base + CoT 變體）、UnifiedReward-Flex、GT-SVJ（self-supervised
   judge）等；授權與權重可得性未逐一核實，VideoReward 仍為首選，暫不加第二把尺。
@@ -323,6 +340,14 @@
   49.4／GPT-4.1 76.0／Qwen3-VL-8B 72.8 vs Human 100——可作
   theama scorer（VideoReward 首選）的交叉驗證參考板，
   授權／程式碼可得性未核實，列觀察。P1a 配方不變。
+  2026-11-26 第十七輪：awesome-rm 清單仍 2026-10-06 版無更新；新增
+  一筆觀察 **Wan-R1**（2026，task-verifiable decomposed rewards 驅動
+  Flow-GRPO——遊戲影片 agent-trajectory 打分、機器人導航的影格相似度／
+  排序／端點 verifier，並附 VLM reward hacking 系統分析——可驗證獎勵
+  路線對 P1a 防 hacking 設計是直接參考；授權／程式碼未核實，列觀察）。
+  **VA-Judger checkpoint 授權第三次核查仍失敗**（HF API 自沙箱持續
+  HTTP 000），維持「使用者代查 model card license tag」待辦。
+  VideoReward 首選不變，P1a 配方不變。
 - **AV leaderboard（Artificial Analysis Video Arena with-audio）現況**
   （2026-11-25 第十一輪補；M5 品質目標的對標板）——**T2V w/audio**
   （11-13 快照）：Wan 3.0 第一（Elo 1175）、Utopai X（H3 post-train）
