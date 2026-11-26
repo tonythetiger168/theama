@@ -99,6 +99,9 @@ def test_yaml_config_maps_to_runner_builders():
     assert kwargs == {
         "dim": 1024, "layers": 12, "heads": 16,
         "video_dim": 16, "bridge_every": 3, "latent_dim": 2048,
+        # latent-grid path keeps raw VAE-latent keys/values (issue #4 fix is
+        # wan_blocks-only); yaml sets True when bridge_location = wan_blocks
+        "norm_video_kv": False,
     }
     train = trainer_config(cfg)
     assert train["phase"] == "bridge" and train["bridge_location"] == "latent_pre_backbone"
