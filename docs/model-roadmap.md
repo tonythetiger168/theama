@@ -468,7 +468,7 @@
   現況計）：T2V 差 14 Elo（H3 1161→1175）、I2V 差 25（H3 1128→1153）、
   editing 開放最高僅第三（Hyperflow H3，榜首 Wan 3.0 1196）——
   theama 的追趕路徑全在既有管線上：P1a LoRA-DPO（品味對齊）
-  ＋M2 audio DiT（with-audio 評分主評分主戰場）＋資料引擎擴量。
+  ＋M2 audio DiT（with-audio 評分主戰場）＋資料引擎擴量。
   驗收語意不變：保底閘（盲測 win rate、VBench）照舊，登頂為
   stretch 層，兩者並列於 M5 列。
   2026-11-26 補記（蒸餾合法性盤點，依使用者提問「各榜前五或十可蒸餾？」）：
