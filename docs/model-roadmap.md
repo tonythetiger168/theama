@@ -295,7 +295,7 @@
   靜態塌陷（3.3 vs SFT 4.10），結論是 MLLM 高層判決必須配低層感知／
   光流約束。對 M6a 唇形＋表情 reward 組合與防 hacking 設計是直接參考；
   授權／權重未核實，觀察。Omni-RL Judge 本輪再查仍僅 ResearchGate
-  條目（2026-11-15），arXiv id 未未補上，維持觀察。Wan-Animate-2 repo
+  條目（2026-11-15），arXiv id 未補上，維持觀察。Wan-Animate-2 repo
   id／Wan 3.x API-only／阿里下一代模型未發布／Qwen-Image 紅線，本輪
   覆核無變化。repo 健康：CI.yml 仍未上傳、issues 0；沙箱執行環境與
   專案記憶 mount 本輪仍不可用，維持 docs-only。
