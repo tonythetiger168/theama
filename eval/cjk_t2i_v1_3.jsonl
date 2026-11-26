@@ -1,0 +1,200 @@
+{"id": "T2I-CJK-001", "category": "poster", "prompt": "電影海報，深藍夜色背景，一名偵探站在雨中的騎樓下，畫面中央以粗黑體直排寫著「夜雨偵探」，副標「真相只在黎明前」，繁體中文必須清晰可讀。", "expected_text": "夜雨偵探", "script": "hant", "pair_of": "T2I-CJK-101"}
+{"id": "T2I-CJK-002", "category": "poster", "prompt": "音樂節海報，夕陽色漸層與紙張紋理，舞台剪影在下方，標題用大手筆書法字寫「山海音樂節」，角落小字「2026 冬季場」，繁體中文筆畫完整。", "expected_text": "山海音樂節", "script": "hant", "pair_of": "T2I-CJK-102"}
+{"id": "T2I-CJK-003", "category": "sign", "prompt": "台北夜市巷弄實景，紅色霓虹燈招牌從鐵皮屋伸出，招牌上直排寫「蚵仔煎大王」，下方小燈箱寫「現點現做」，雨後地面反射招牌文字。", "expected_text": "蚵仔煎大王", "script": "hant", "pair_of": "T2I-CJK-103"}
+{"id": "T2I-CJK-004", "category": "sign", "prompt": "老中藥房門面，木質牌匾以金色楷書刻著「仁心堂藥行」，兩側紅燈籠各寫「參」「茸」，玻璃櫃內擺滿藥罐，繁體中文不得缺筆。", "expected_text": "仁心堂藥行", "script": "hant", "pair_of": "T2I-CJK-104"}
+{"id": "T2I-CJK-005", "category": "sign", "prompt": "巷口豆漿店清晨開門，手寫白板立在門口，用黑色馬克筆寫「今日特餐：鹹豆漿＋蛋餅」，字跡自然但每個字清楚可辨。", "expected_text": "今日特餐：鹹豆漿＋蛋餅", "script": "hant", "pair_of": "T2I-CJK-105"}
+{"id": "T2I-CJK-006", "category": "product", "prompt": "茶葉禮盒商品攝影，霧面米白盒身，正面以燙金細明體印「阿里山高山烏龍」，側邊小字「海拔一千二百公尺」，背景是柔光茶園。", "expected_text": "阿里山高山烏龍", "script": "hant", "pair_of": "T2I-CJK-106"}
+{"id": "T2I-CJK-007", "category": "product", "prompt": "手工醬油玻璃瓶標籤特寫，牛皮紙標籤中央用紅色印章風格寫「古法釀造」，下方黑字「純黑豆・二年熟成」，瓶身反射暖色棚燈。", "expected_text": "古法釀造", "script": "hant", "pair_of": "T2I-CJK-107"}
+{"id": "T2I-CJK-008", "category": "book_cover", "prompt": "長篇小說書封設計，霧藍色海面與遠方燈塔，書名以優雅宋體橫排「潮汐帶走的名字」，作者欄小字「林晚晴 著」，整體留白乾淨。", "expected_text": "潮汐帶走的名字", "script": "hant", "pair_of": "T2I-CJK-108"}
+{"id": "T2I-CJK-009", "category": "book_cover", "prompt": "推理小說書封，黑底配上紅色雨傘插在雪地，書名直排白色粗體「雪停之前」，腰封黃字寫「本格派年度代表作」。", "expected_text": "雪停之前", "script": "hant", "pair_of": "T2I-CJK-109"}
+{"id": "T2I-CJK-010", "category": "ui", "prompt": "手機 App 截圖樣機，深色系記帳介面，頂部標題列顯示「本月支出」，主要按鈕寫「新增一筆」，圓餅圖旁標籤「餐飲」「交通」「房租」，繁體中文介面文字銳利。", "expected_text": "本月支出", "script": "hant", "pair_of": "T2I-CJK-110"}
+{"id": "T2I-CJK-011", "category": "ui", "prompt": "電腦螢幕上的影片剪輯軟體介面，時間軸下方有三條軌道，右側面板按鈕分別標示「匯入素材」「套用轉場」「輸出影片」，中文字型清晰不糊。", "expected_text": "匯入素材", "script": "hant", "pair_of": "T2I-CJK-111"}
+{"id": "T2I-CJK-012", "category": "menu", "prompt": "咖啡館黑板菜單，粉筆字分欄排列，第一欄標題「手沖咖啡」，品項「耶加雪菲」「瓜地馬拉」「肯亞」，價格用阿拉伯數字，黑板邊有粉筆畫咖啡豆。", "expected_text": "手沖咖啡", "script": "hant", "pair_of": "T2I-CJK-112"}
+{"id": "T2I-CJK-013", "category": "menu", "prompt": "牛肉麵店牆上菜單，紅底黃字壓克力板，主標「紅燒牛肉麵」，下面小字「大碗」「小碗」「加酸菜」，字距平均且全部使用繁體中文。", "expected_text": "紅燒牛肉麵", "script": "hant", "pair_of": "T2I-CJK-113"}
+{"id": "T2I-CJK-014", "category": "poster", "prompt": "展覽主視覺海報，白色牆面掛著大型書法裝置，海報底部印著展期「2026.12.05－2027.01.10」與標題「字的重量」，字體端正可讀。", "expected_text": "字的重量", "script": "hant", "pair_of": "T2I-CJK-114"}
+{"id": "T2I-CJK-015", "category": "sign", "prompt": "九份山城石階旁的木製路牌，箭頭指向右方，牌上刻「觀景台」「茶坊」「老街出口」三行字，霧氣中仍保持刻字清楚。", "expected_text": "觀景台", "script": "hant", "pair_of": "T2I-CJK-115"}
+{"id": "T2I-CJK-016", "category": "newspaper", "prompt": "桌上攤開的繁體中文報紙頭版，標題大字寫「城市綠帶正式啟用」，副標「串連十二座公園」，版面上有照片與直排欄位，文字銳利。", "expected_text": "城市綠帶正式啟用", "script": "hant", "pair_of": "T2I-CJK-116"}
+{"id": "T2I-CJK-017", "category": "ticket", "prompt": "高鐵車票平放在木桌上，藍白配色票面上印「台北 → 左營」，下方欄位「車廂 08」「座位 12A」，票券邊緣有細密防偽紋。", "expected_text": "台北 → 左營", "script": "hant", "pair_of": "T2I-CJK-117"}
+{"id": "T2I-CJK-018", "category": "sticker", "prompt": "筆電上貼滿旅行貼紙，最大一張圓形貼紙是玉山插畫，中央手寫感字樣「一起去爬山」，旁邊小貼紙寫「慢慢走」，所有中文字完整。", "expected_text": "一起去爬山", "script": "hant", "pair_of": "T2I-CJK-118"}
+{"id": "T2I-CJK-019", "category": "poster", "prompt": "路跑活動宣傳圖，清晨河濱公園跑者剪影，上方橫幅標語「為自己跑一段」，下方資訊列「全程十公里・限額兩千名」，繁體中文排版端正。", "expected_text": "為自己跑一段", "script": "hant", "pair_of": "T2I-CJK-119"}
+{"id": "T2I-CJK-020", "category": "packaging", "prompt": "鳳梨酥外包裝紙盒，暖黃底色配紅色窗花圖案，正面以隸書風格印「金鑽鳳梨酥」，側面標示「十二入・奶蛋素」，攝影棚柔光。", "expected_text": "金鑽鳳梨酥", "script": "hant", "pair_of": "T2I-CJK-120"}
+{"id": "T2I-CJK-021", "category": "sign", "prompt": "捷運站內指標吊牌，深藍底白字，箭頭向右，寫著「出口 4・圖書館」，另一面向下寫「轉乘公車」，字體為無襯線黑體且邊緣清晰。", "expected_text": "出口 4・圖書館", "script": "hant", "pair_of": "T2I-CJK-121"}
+{"id": "T2I-CJK-022", "category": "receipt", "prompt": "傳統市場收銀台上的手寫收據，藍色原子筆字跡列出「青江菜 35」「番茄 60」「雞蛋 48」，最下方寫「合計 143」，數字與繁體品名都可辨識。", "expected_text": "合計 143", "script": "hant", "pair_of": "T2I-CJK-122"}
+{"id": "T2I-CJK-023", "category": "banner", "prompt": "校園運動會紅布條掛在司令台上方，白色大字寫「第五十二屆校慶運動會」，左右各有小字「健康」「團結」，布條自然下垂有皺摺。", "expected_text": "第五十二屆校慶運動會", "script": "hant", "pair_of": "T2I-CJK-123"}
+{"id": "T2I-CJK-024", "category": "poster", "prompt": "獨立書店活動海報，米色紙感背景，書堆插畫旁用打字機字型印「夜讀計畫」，底部小字「每週五晚上七點・免費入座」，整體安靜溫暖。", "expected_text": "夜讀計畫", "script": "hant", "pair_of": "T2I-CJK-124"}
+{"id": "T2I-CJK-025", "category": "newspaper", "prompt": "早報頭版平拍，報頭紅色「山城日報」，主標題以粗黑體印「捷運通車改寫山城天際線」，配車站實景照片，繁體中文銳利無糊邊。", "expected_text": "捷運通車改寫山城天際線", "script": "hant", "pair_of": "T2I-CJK-125"}
+{"id": "T2I-CJK-026", "category": "newspaper", "prompt": "財經報紙版面特寫，版眉小字「財經焦點」，主標題黑體大字「晶圓龍頭法說登場」，下方配走勢圖，繁體中文筆畫完整。", "expected_text": "晶圓龍頭法說登場", "script": "hant", "pair_of": "T2I-CJK-126"}
+{"id": "T2I-CJK-027", "category": "ticket", "prompt": "電影票根特寫，深藍票面印著「午夜場：星海旅人」，角落有場次編號與撕角線，繁體中文清晰可讀。", "expected_text": "午夜場：星海旅人", "script": "hant", "pair_of": "T2I-CJK-127"}
+{"id": "T2I-CJK-028", "category": "ticket", "prompt": "演唱會門票平放在牛仔外套上，防偽底紋中央大字「夏日海洋音樂祭」，副標小字「戶外場」，繁體中文不得缺筆。", "expected_text": "夏日海洋音樂祭", "script": "hant", "pair_of": "T2I-CJK-128"}
+{"id": "T2I-CJK-029", "category": "sticker", "prompt": "筆電上蓋貼滿貼紙，正中一枚圓形黃底貼紙以手寫感黑字寫「工程師的浪漫」，邊緣微翹，每個字清楚可辨。", "expected_text": "工程師的浪漫", "script": "hant", "pair_of": "T2I-CJK-129"}
+{"id": "T2I-CJK-030", "category": "packaging", "prompt": "玻璃醬油瓶商品攝影，牛皮紙標籤以黑色楷體印「純釀造醬油」，下方小字「一百八十天熟成」，繁體中文印刷銳利。", "expected_text": "純釀造醬油", "script": "hant", "pair_of": "T2I-CJK-130"}
+{"id": "T2I-CJK-031", "category": "packaging", "prompt": "透明冷泡茶瓶身特寫，瓶身直印白色細明體「冷萃四季春」，背景是模糊茶園綠意，繁體中文不可變形。", "expected_text": "冷萃四季春", "script": "hant", "pair_of": "T2I-CJK-131"}
+{"id": "T2I-CJK-032", "category": "receipt", "prompt": "超商收據攤平特寫，明細第一行印「冰美式咖啡」，下方是數量與金額欄，熱感印字略淡但繁體中文仍可辨讀。", "expected_text": "冰美式咖啡", "script": "hant", "pair_of": "T2I-CJK-132"}
+{"id": "T2I-CJK-033", "category": "receipt", "prompt": "餐廳木夾板上的結帳單，底部以圓體印「謝謝光臨」，上方是餐點明細，繁體中文清晰。", "expected_text": "謝謝光臨", "script": "hant", "pair_of": "T2I-CJK-133"}
+{"id": "T2I-CJK-034", "category": "banner", "prompt": "廟會遶境隊伍前的紅色布條，金色大字「遶境平安」隨風微微皺摺，背景是鑼鼓與香火，繁體中文完整不缺筆。", "expected_text": "遶境平安", "script": "hant", "pair_of": "T2I-CJK-134"}
+{"id": "T2I-CJK-035", "category": "calendar", "prompt": "桌上型月曆翻開立在辦公桌，頂部紅色粗體印「2027年1月」，下方是整齊日期格，數字與國字皆清晰。", "expected_text": "2027年1月", "script": "hant", "pair_of": "T2I-CJK-135"}
+{"id": "T2I-CJK-036", "category": "label", "prompt": "手工果醬玻璃罐貼標特寫，米白標籤以深紅手寫感字體印「慢火草莓果醬」，罐內果醬顏色飽滿，繁體中文可讀。", "expected_text": "慢火草莓果醬", "script": "hant", "pair_of": "T2I-CJK-136"}
+{"id": "T2I-CJK-037", "category": "coupon", "prompt": "速食店優惠券平拍，鋸齒邊框內大字紅底白字「買一送一」，下方小字「限時優惠」，繁體中文銳利。", "expected_text": "買一送一", "script": "hant", "pair_of": "T2I-CJK-137"}
+{"id": "T2I-CJK-038", "category": "map", "prompt": "夜市入口的木製導覽立牌地圖，黃色區塊標示「美食區」、藍色區塊標示「遊戲區」，燈泡串照明下字體清楚。", "expected_text": "美食區", "script": "hant", "pair_of": "T2I-CJK-138"}
+{"id": "T2I-CJK-039", "category": "ui", "prompt": "深色模式記帳 App 畫面，頂部卡片以白色粗體顯示「本週結餘」，下方是圓餅圖與分類列表，繁體中文介面文字清晰。", "expected_text": "本週結餘", "script": "hant", "pair_of": "T2I-CJK-139"}
+{"id": "T2I-CJK-040", "category": "ui", "prompt": "捷運月台上的電子看板，黑底以綠色 LED 風格字顯示「列車即將進站」，下方跑馬燈略過，繁體中文點陣清晰。", "expected_text": "列車即將進站", "script": "hant", "pair_of": "T2I-CJK-140"}
+{"id": "T2I-CJK-041", "category": "menu", "prompt": "拉麵店掛牆木牌菜單，直排墨書「特製豚骨拉麵」，木紋與毛筆字跡自然，直排繁體中文順序正確。", "expected_text": "特製豚骨拉麵", "script": "hant", "pair_of": "T2I-CJK-141"}
+{"id": "T2I-CJK-042", "category": "menu", "prompt": "小吃店門口手寫黑板，白色粉筆字寫「今日例湯：苦瓜排骨」，粉筆顆粒感自然但每個字可辨。", "expected_text": "今日例湯：苦瓜排骨", "script": "hant", "pair_of": "T2I-CJK-142"}
+{"id": "T2I-CJK-043", "category": "poster", "prompt": "社區大學招生海報，春天花草邊框，中央圓體大字「春季班熱烈報名中」，下方列課程小字，繁體中文端正。", "expected_text": "春季班熱烈報名中", "script": "hant", "pair_of": "T2I-CJK-143"}
+{"id": "T2I-CJK-044", "category": "sign", "prompt": "巷弄快剪理髮店，旋轉燈旁壓克力招牌以紅色標楷體寫「快剪一百元」，白底紅字對比強烈，繁體中文完整。", "expected_text": "快剪一百元", "script": "hant", "pair_of": "T2I-CJK-144"}
+{"id": "T2I-CJK-045", "category": "book_cover", "prompt": "懸疑小說書籍封面，霧氣中的無人車站剪影，書名以直排細黑體印「霧中車站」，排版留白講究，繁體中文清晰。", "expected_text": "霧中車站", "script": "hant", "pair_of": "T2I-CJK-145"}
+{"id": "T2I-CJK-046", "category": "product", "prompt": "霧面運動水壺產品照，瓶身以雷射雕刻感字體印「堅持到底」，水珠附著瓶身，繁體中文刻字銳利。", "expected_text": "堅持到底", "script": "hant", "pair_of": "T2I-CJK-146"}
+{"id": "T2I-CJK-047", "category": "sign", "prompt": "傳統市場蔬菜攤，紅色壓克力價目牌插在菜堆上寫「現摘高麗菜」，塑膠袋與水珠點綴，繁體中文清楚。", "expected_text": "現摘高麗菜", "script": "hant", "pair_of": "T2I-CJK-147"}
+{"id": "T2I-CJK-048", "category": "poster", "prompt": "畢業典禮舞台背板，藍白氣球拱門下以金色立體字寫「青春啟航」，兩側小字「二〇二七級」，繁體中文工整。", "expected_text": "青春啟航", "script": "hant", "pair_of": "T2I-CJK-148"}
+{"id": "T2I-CJK-049", "category": "poster", "prompt": "社區管樂團音樂會海報，深綠舞台布幕前一把長號特寫，標題以金色襯線體橫排「仲夏夜管樂」，下方小字「免費入場・自由入座」，繁體中文端正。", "expected_text": "仲夏夜管樂", "script": "hant", "pair_of": "T2I-CJK-149"}
+{"id": "T2I-CJK-050", "category": "poster", "prompt": "兒童劇團演出海報，天空藍背景畫著紙飛機與雲朵，中央圓角字卡寫「飛越想像力」，角落小字「親子同樂場」，繁體中文活潑但清晰。", "expected_text": "飛越想像力", "script": "hant", "pair_of": "T2I-CJK-150"}
+{"id": "T2I-CJK-051", "category": "poster", "prompt": "攝影展海報，黑白街景照片牆，右下角紅色印章風格字「巷弄時光」，左下角展期「2027.03.14－04.26」，繁體中文工整。", "expected_text": "巷弄時光", "script": "hant", "pair_of": "T2I-CJK-151"}
+{"id": "T2I-CJK-052", "category": "sign", "prompt": "老街茶館門口，木框玻璃門上貼著金色割字「奉茶」，門把掛小木牌寫「營業中」，午後陽光斜照，繁體中文清楚。", "expected_text": "營業中", "script": "hant", "pair_of": "T2I-CJK-152"}
+{"id": "T2I-CJK-053", "category": "sign", "prompt": "大學校門口石碑，校訓以陰刻篆書刻「誠樸精勤」，石面有歲月痕跡但字跡清晰可辨，繁體中文不缺筆。", "expected_text": "誠樸精勤", "script": "hant", "pair_of": "T2I-CJK-153"}
+{"id": "T2I-CJK-054", "category": "sign", "prompt": "百貨公司週年慶，中庭吊掛紅色直幅，白字直排寫「感恩回饋全面五折起」，燈光明亮，直排繁體中文順序正確。", "expected_text": "感恩回饋全面五折起", "script": "hant", "pair_of": "T2I-CJK-154"}
+{"id": "T2I-CJK-055", "category": "ui", "prompt": "平板上的語言學習 App 畫面，每日任務卡片寫「今日單字」，進度條旁標「已完成 80%」，按鈕「開始複習」，繁體中文介面銳利。", "expected_text": "今日單字", "script": "hant", "pair_of": "T2I-CJK-155"}
+{"id": "T2I-CJK-056", "category": "ui", "prompt": "智慧手錶螢幕特寫，運動錶面顯示「本日步數」，中央大數字 8,432，下方小字「目標一萬步」，繁體中文在小螢幕上仍清晰。", "expected_text": "本日步數", "script": "hant", "pair_of": "T2I-CJK-156"}
+{"id": "T2I-CJK-057", "category": "ui", "prompt": "筆電螢幕上的信件軟體，收件匣標題列顯示「未讀信件 3 封」，側欄資料夾標示「重要」「待辦」，繁體中文字型清晰。", "expected_text": "未讀信件 3 封", "script": "hant", "pair_of": "T2I-CJK-157"}
+{"id": "T2I-CJK-058", "category": "menu", "prompt": "日式定食屋菜單板，木框黑板以白漆字寫「今日定食：照燒鮭魚」，下方附「味噌湯・白飯」，繁體中文清楚。", "expected_text": "今日定食：照燒鮭魚", "script": "hant", "pair_of": "T2I-CJK-158"}
+{"id": "T2I-CJK-059", "category": "menu", "prompt": "冰果室牆上壓克力菜單，黃底紅字直排「芒果雪花冰」，旁列「紅豆」「煉乳」配料小字，直排繁體中文順序正確。", "expected_text": "芒果雪花冰", "script": "hant", "pair_of": "T2I-CJK-159"}
+{"id": "T2I-CJK-060", "category": "menu", "prompt": "手搖飲店吧台前吊牌菜單，綠底白字主標「招牌翡翠綠茶」，下方小字「去冰」「微糖」「加珍珠」，繁體中文印刷清晰。", "expected_text": "招牌翡翠綠茶", "script": "hant", "pair_of": "T2I-CJK-160"}
+{"id": "T2I-CJK-061", "category": "product", "prompt": "陶瓷馬克杯商品照，米白杯身以青花風格印「山霧之間」，杯口有金色描邊，背景柔光，繁體中文釉面字清晰。", "expected_text": "山霧之間", "script": "hant", "pair_of": "T2I-CJK-161"}
+{"id": "T2I-CJK-062", "category": "product", "prompt": "蜂蜜玻璃罐產品攝影，木蓋上貼牛皮紙吊牌寫「台東龍眼蜜」，吊牌角落小字「2026 冬採」，繁體中文可讀。", "expected_text": "台東龍眼蜜", "script": "hant", "pair_of": "T2I-CJK-162"}
+{"id": "T2I-CJK-063", "category": "product", "prompt": "帆布袋商品平拍，原色帆布上以深藍絹印「慢慢生活」，袋口縫線整齊，繁體中文印刷不暈染。", "expected_text": "慢慢生活", "script": "hant", "pair_of": "T2I-CJK-163"}
+{"id": "T2I-CJK-064", "category": "book_cover", "prompt": "散文集書封設計，淺灰底一片銀杏葉，書名以細黑體橫排「時間的褶痕」，書腰紅字「年度散文選」，繁體中文優雅清晰。", "expected_text": "時間的褶痕", "script": "hant", "pair_of": "T2I-CJK-164"}
+{"id": "T2I-CJK-065", "category": "book_cover", "prompt": "科普書封面，深藍星空與軌道線，書名白色粗體「宇宙如何運作」，副標小字「給好奇者的物理課」，繁體中文銳利。", "expected_text": "宇宙如何運作", "script": "hant", "pair_of": "T2I-CJK-165"}
+{"id": "T2I-CJK-066", "category": "book_cover", "prompt": "童書封面，溫暖黃底畫著戴帽子的貓，書名圓體大字「貓咪郵差」，下方小字「注音版」，繁體中文清楚。", "expected_text": "貓咪郵差", "script": "hant", "pair_of": "T2I-CJK-166"}
+{"id": "T2I-CJK-067", "category": "newspaper", "prompt": "晨報財經版平拍，主標黑體「台股再創新高」，副標「半導體領軍上攻」，旁配股市照片，繁體中文印刷銳利。", "expected_text": "台股再創新高", "script": "hant", "pair_of": "T2I-CJK-167"}
+{"id": "T2I-CJK-068", "category": "newspaper", "prompt": "地方報紙社區版，版頭綠色小字「社區瞭望」，主標「老樹醫生守護百年榕」，配樹木照片，繁體中文清楚。", "expected_text": "老樹醫生守護百年榕", "script": "hant", "pair_of": "T2I-CJK-168"}
+{"id": "T2I-CJK-069", "category": "newspaper", "prompt": "晚報頭版特寫，主標題紅黑對比「暴雨警報解除」，副標「各地交通恢復正常」，版面直排欄位整齊，繁體中文可讀。", "expected_text": "暴雨警報解除", "script": "hant", "pair_of": "T2I-CJK-169"}
+{"id": "T2I-CJK-070", "category": "ticket", "prompt": "火車對號列車車票平拍，票面印「自強號 167 次」，起訖欄「台中 → 花蓮」，座位欄「7 車 15A」，繁體中文與數字皆清晰。", "expected_text": "台中 → 花蓮", "script": "hant", "pair_of": "T2I-CJK-170"}
+{"id": "T2I-CJK-071", "category": "ticket", "prompt": "美術館門票特寫，霧面紙卡印「常設展入場券」，右下小字「全票 250 元」，邊緣有壓紋，繁體中文清楚。", "expected_text": "常設展入場券", "script": "hant", "pair_of": "T2I-CJK-171"}
+{"id": "T2I-CJK-072", "category": "ticket", "prompt": "棒球賽門票放在球帽上，票面大字「例行賽：龍象大戰」，下方小字「內野下區」，防偽底紋細緻，繁體中文清晰。", "expected_text": "例行賽：龍象大戰", "script": "hant", "pair_of": "T2I-CJK-172"}
+{"id": "T2I-CJK-073", "category": "sticker", "prompt": "安全帽上貼著圓形貼紙，白底紅邊中央手寫感字「慢活騎士」，貼紙邊緣微反光，繁體中文完整。", "expected_text": "慢活騎士", "script": "hant", "pair_of": "T2I-CJK-173"}
+{"id": "T2I-CJK-074", "category": "sticker", "prompt": "行李箱佈滿旅遊貼紙，最大一張橢圓形貼紙畫著燈塔，下方印「海角七號」，旁邊小貼紙寫「出發」，繁體中文清楚。", "expected_text": "海角七號", "script": "hant", "pair_of": "T2I-CJK-174"}
+{"id": "T2I-CJK-075", "category": "sticker", "prompt": "手帳本頁面上的裝飾貼紙，長條形牛皮紙貼紙印「今日也要加油」，旁邊小花貼紙點綴，繁體中文端正。", "expected_text": "今日也要加油", "script": "hant", "pair_of": "T2I-CJK-175"}
+{"id": "T2I-CJK-076", "category": "packaging", "prompt": "咖啡豆鋁箔袋包裝，霧黑袋身燙銀字「衣索比亞・日曬」，側邊小字「中淺焙 200g」，繁體中文印刷精細。", "expected_text": "衣索比亞・日曬", "script": "hant", "pair_of": "T2I-CJK-176"}
+{"id": "T2I-CJK-077", "category": "packaging", "prompt": "蛋捲鐵盒包裝，復古紅底配金色邊框，盒面以隸書印「手工蛋捲」，側面標示「原味・十支裝」，繁體中文端正。", "expected_text": "手工蛋捲", "script": "hant", "pair_of": "T2I-CJK-177"}
+{"id": "T2I-CJK-078", "category": "packaging", "prompt": "洗衣精補充包，藍白袋身正面大字「抗菌配方」，下方小字「無添加螢光劑」，繁體中文清楚。", "expected_text": "抗菌配方", "script": "hant", "pair_of": "T2I-CJK-178"}
+{"id": "T2I-CJK-079", "category": "receipt", "prompt": "藥局收據攤平特寫，明細第一行印「維他命C發泡錠」，下方金額欄與日期「2027-01-05」，熱感印字略淡但可辨，繁體中文清楚。", "expected_text": "維他命C發泡錠", "script": "hant", "pair_of": "T2I-CJK-179"}
+{"id": "T2I-CJK-080", "category": "receipt", "prompt": "文具店收據平拍，明細印「鋼筆」「墨水」「筆記本」，底部圓體字「發票已開立」，繁體中文清晰。", "expected_text": "發票已開立", "script": "hant", "pair_of": "T2I-CJK-180"}
+{"id": "T2I-CJK-081", "category": "receipt", "prompt": "停車場繳費收據特寫，票面上半印「停車費繳費證明」，下方時段欄「09:30－12:15」，繁體中文與數字清楚。", "expected_text": "停車費繳費證明", "script": "hant", "pair_of": "T2I-CJK-181"}
+{"id": "T2I-CJK-082", "category": "banner", "prompt": "里民活動中心門口紅布條，白字寫「重陽敬老聯歡會」，布條兩端用繩子拉緊微有弧度，繁體中文清楚。", "expected_text": "重陽敬老聯歡會", "script": "hant", "pair_of": "T2I-CJK-182"}
+{"id": "T2I-CJK-083", "category": "banner", "prompt": "建案接待中心外牆帆布廣告，大圖輸出白字寫「河岸首席・靜巷宅」，下方小字「預約賞屋」，繁體中文印刷清晰。", "expected_text": "河岸首席・靜巷宅", "script": "hant", "pair_of": "T2I-CJK-183"}
+{"id": "T2I-CJK-084", "category": "banner", "prompt": "畢業季校園圍牆掛著藍布布條，黃字寫「祝福畢業生前程似錦」，字體為粗黑體，遠距離仍清楚可辨。", "expected_text": "祝福畢業生前程似錦", "script": "hant", "pair_of": "T2I-CJK-184"}
+{"id": "T2I-CJK-085", "category": "calendar", "prompt": "傳統撕頁日曆掛在廚房牆上，頂部印「民國116年」，當日頁大字「15」，下方小字「宜祭祀・嫁娶」，繁體中文清楚。", "expected_text": "民國116年", "script": "hant", "pair_of": "T2I-CJK-185"}
+{"id": "T2I-CJK-086", "category": "calendar", "prompt": "辦公桌電子月曆螢幕，標題列顯示「2027年6月」，假日以紅色標註，字體為清晰黑體，繁體中文無糊邊。", "expected_text": "2027年6月", "script": "hant", "pair_of": "T2I-CJK-186"}
+{"id": "T2I-CJK-087", "category": "calendar", "prompt": "手帳週計畫頁攤開，頂端手寫字「五月第三週」，格線內排程整齊，繁體中文手寫字跡可辨。", "expected_text": "五月第三週", "script": "hant", "pair_of": "T2I-CJK-187"}
+{"id": "T2I-CJK-088", "category": "label", "prompt": "精油小棕瓶標籤特寫，米白標籤以綠色細字印「薰衣草精油」，下方小字「10ml・法國產」，繁體中文清晰。", "expected_text": "薰衣草精油", "script": "hant", "pair_of": "T2I-CJK-188"}
+{"id": "T2I-CJK-089", "category": "label", "prompt": "手工皂包裝貼紙，牛皮紙色標籤中央印章風格字「左手香手工皂」，角落小字「無香精」，繁體中文端正。", "expected_text": "左手香手工皂", "script": "hant", "pair_of": "T2I-CJK-189"}
+{"id": "T2I-CJK-090", "category": "label", "prompt": "藥罐標籤特寫，白底標籤印「每日一次・飯後服用」，上方藥名欄留白，紅色警示字清楚，繁體中文可讀。", "expected_text": "每日一次・飯後服用", "script": "hant", "pair_of": "T2I-CJK-190"}
+{"id": "T2I-CJK-091", "category": "coupon", "prompt": "百貨週年慶折價券平拍，鋸齒邊紅底白字印「滿千送百」，下方小字「限量發行」，繁體中文銳利。", "expected_text": "滿千送百", "script": "hant", "pair_of": "T2I-CJK-191"}
+{"id": "T2I-CJK-092", "category": "coupon", "prompt": "咖啡廳集點卡平拍，卡片上方印「集滿十點換一杯」，下方十個空白圓格，繁體中文清楚。", "expected_text": "集滿十點換一杯", "script": "hant", "pair_of": "T2I-CJK-192"}
+{"id": "T2I-CJK-093", "category": "coupon", "prompt": "停車場折價券特寫，黃底黑字印「平日停車半價」，角落小字「限當日使用」，繁體中文印刷清晰。", "expected_text": "平日停車半價", "script": "hant", "pair_of": "T2I-CJK-193"}
+{"id": "T2I-CJK-094", "category": "map", "prompt": "捷運站出口地圖燈箱，藍色區塊標「轉乘公車站」，紅色圓點標「您現在位置」，繁體中文圖例清晰。", "expected_text": "您現在位置", "script": "hant", "pair_of": "T2I-CJK-194"}
+{"id": "T2I-CJK-095", "category": "map", "prompt": "登山步道入口導覽圖木牌，綠色路線標「主峰步道 3.2K」，紅色標「休憩涼亭」，繁體中文刻在牌上清楚。", "expected_text": "主峰步道 3.2K", "script": "hant", "pair_of": "T2I-CJK-195"}
+{"id": "T2I-CJK-096", "category": "map", "prompt": "百貨公司樓層導覽立牌，各樓層色塊旁標「美食街」「女裝」「兒童天地」，指標箭頭清楚，繁體中文銳利。", "expected_text": "兒童天地", "script": "hant", "pair_of": "T2I-CJK-196"}
+{"id": "T2I-CJK-097", "category": "poster", "prompt": "馬拉松賽事主視覺海報，晨曦中的跨海大橋跑者剪影，上方白字橫幅「迎風而起」，底部資訊列「2027 春季場・名額三千」，繁體中文排版穩重。", "expected_text": "迎風而起", "script": "hant", "pair_of": "T2I-CJK-197"}
+{"id": "T2I-CJK-098", "category": "sign", "prompt": "傳統麵店騎樓，鐵捲門半開，門口立著手寫木牌「本日公休」，旁邊小字「明日正常營業」，字跡樸實清楚。", "expected_text": "本日公休", "script": "hant", "pair_of": "T2I-CJK-198"}
+{"id": "T2I-CJK-099", "category": "ui", "prompt": "電視新聞台畫面截圖，下方跑馬燈白底紅字「即時快訊」，主播台右下角台標小字，繁體中文新聞字體銳利。", "expected_text": "即時快訊", "script": "hant", "pair_of": "T2I-CJK-199"}
+{"id": "T2I-CJK-100", "category": "menu", "prompt": "港式茶餐廳玻璃門上的菜單貼紙，紅字寫「今日特價：乾炒牛河」，下方小字「附例湯一碗」，繁體中文可讀。", "expected_text": "今日特價：乾炒牛河", "script": "hant", "pair_of": "T2I-CJK-200"}
+{"id": "T2I-CJK-101", "category": "poster", "prompt": "电影海报，深蓝夜色背景，一名侦探站在雨中的骑楼下，画面中央以粗黑体直排写着「夜雨侦探」，副标「真相只在黎明前」，简体中文必须清晰可读。", "expected_text": "夜雨侦探", "script": "hans", "pair_of": "T2I-CJK-001"}
+{"id": "T2I-CJK-102", "category": "poster", "prompt": "音乐节海报，夕阳色渐层与纸张纹理，舞台剪影在下方，标题用大手笔书法字写「山海音乐节」，角落小字「2026 冬季场」，简体中文笔画完整。", "expected_text": "山海音乐节", "script": "hans", "pair_of": "T2I-CJK-002"}
+{"id": "T2I-CJK-103", "category": "sign", "prompt": "台北夜市巷弄实景，红色霓虹灯招牌从铁皮屋伸出，招牌上直排写「蚵仔煎大王」，下方小灯箱写「现点现做」，雨后地面反射招牌文字。", "expected_text": "蚵仔煎大王", "script": "hans", "pair_of": "T2I-CJK-003"}
+{"id": "T2I-CJK-104", "category": "sign", "prompt": "老中药房门面，木质牌匾以金色楷书刻着「仁心堂药行」，两侧红灯笼各写「参」「茸」，玻璃柜内摆满药罐，简体中文不得缺笔。", "expected_text": "仁心堂药行", "script": "hans", "pair_of": "T2I-CJK-004"}
+{"id": "T2I-CJK-105", "category": "sign", "prompt": "巷口豆浆店清晨开门，手写白板立在门口，用黑色马克笔写「今日特餐：咸豆浆＋蛋饼」，字迹自然但每个字清楚可辨。", "expected_text": "今日特餐：咸豆浆＋蛋饼", "script": "hans", "pair_of": "T2I-CJK-005"}
+{"id": "T2I-CJK-106", "category": "product", "prompt": "茶叶礼盒商品摄影，雾面米白盒身，正面以烫金细明体印「阿里山高山乌龙」，侧边小字「海拔一千二百公尺」，背景是柔光茶园。", "expected_text": "阿里山高山乌龙", "script": "hans", "pair_of": "T2I-CJK-006"}
+{"id": "T2I-CJK-107", "category": "product", "prompt": "手工酱油玻璃瓶标签特写，牛皮纸标签中央用红色印章风格写「古法酿造」，下方黑字「纯黑豆・二年熟成」，瓶身反射暖色棚灯。", "expected_text": "古法酿造", "script": "hans", "pair_of": "T2I-CJK-007"}
+{"id": "T2I-CJK-108", "category": "book_cover", "prompt": "长篇小说书封设计，雾蓝色海面与远方灯塔，书名以优雅宋体横排「潮汐带走的名字」，作者栏小字「林晚晴 著」，整体留白干净。", "expected_text": "潮汐带走的名字", "script": "hans", "pair_of": "T2I-CJK-008"}
+{"id": "T2I-CJK-109", "category": "book_cover", "prompt": "推理小说书封，黑底配上红色雨伞插在雪地，书名直排白色粗体「雪停之前」，腰封黄字写「本格派年度代表作」。", "expected_text": "雪停之前", "script": "hans", "pair_of": "T2I-CJK-009"}
+{"id": "T2I-CJK-110", "category": "ui", "prompt": "手机 App 截屏样机，深色系记账界面，顶部标题列显示「本月支出」，主要按钮写「添加一笔」，圆饼图旁标签「餐饮」「交通」「房租」，简体中文界面文字锐利。", "expected_text": "本月支出", "script": "hans", "pair_of": "T2I-CJK-010"}
+{"id": "T2I-CJK-111", "category": "ui", "prompt": "电脑屏幕上的视频剪辑软件界面，时间轴下方有三条轨道，右侧面板按钮分别标示「导入素材」「套用转场」「输出视频」，中文字体清晰不糊。", "expected_text": "导入素材", "script": "hans", "pair_of": "T2I-CJK-011"}
+{"id": "T2I-CJK-112", "category": "menu", "prompt": "咖啡馆黑板菜单，粉笔字分栏排列，第一栏标题「手冲咖啡」，品项「耶加雪菲」「危地马拉」「肯尼亚」，价格用阿拉伯数字，黑板边有粉笔画咖啡豆。", "expected_text": "手冲咖啡", "script": "hans", "pair_of": "T2I-CJK-012"}
+{"id": "T2I-CJK-113", "category": "menu", "prompt": "牛肉面店墙上菜单，红底黄字压克力板，主标「红烧牛肉面」，下面小字「大碗」「小碗」「加酸菜」，字距平均且全部使用简体中文。", "expected_text": "红烧牛肉面", "script": "hans", "pair_of": "T2I-CJK-013"}
+{"id": "T2I-CJK-114", "category": "poster", "prompt": "展览主视觉海报，白色墙面挂着大型书法装置，海报底部印着展期「2026.12.05－2027.01.10」与标题「字的重量」，字体端正可读。", "expected_text": "字的重量", "script": "hans", "pair_of": "T2I-CJK-014"}
+{"id": "T2I-CJK-115", "category": "sign", "prompt": "九份山城石阶旁的木制路牌，箭头指向右方，牌上刻「观景台」「茶坊」「老街出口」三行字，雾气中仍保持刻字清楚。", "expected_text": "观景台", "script": "hans", "pair_of": "T2I-CJK-015"}
+{"id": "T2I-CJK-116", "category": "newspaper", "prompt": "桌上摊开的简体中文报纸头版，标题大字写「城市绿带正式启用」，副标「串连十二座公园」，版面上有照片与直排栏位，文字锐利。", "expected_text": "城市绿带正式启用", "script": "hans", "pair_of": "T2I-CJK-016"}
+{"id": "T2I-CJK-117", "category": "ticket", "prompt": "高铁车票平放在木桌上，蓝白配色票面上印「台北 → 左营」，下方栏位「车厢 08」「座位 12A」，票券边缘有细密防伪纹。", "expected_text": "台北 → 左营", "script": "hans", "pair_of": "T2I-CJK-017"}
+{"id": "T2I-CJK-118", "category": "sticker", "prompt": "笔电上贴满旅行贴纸，最大一张圆形贴纸是玉山插画，中央手写感字样「一起去爬山」，旁边小贴纸写「慢慢走」，所有中文字完整。", "expected_text": "一起去爬山", "script": "hans", "pair_of": "T2I-CJK-018"}
+{"id": "T2I-CJK-119", "category": "poster", "prompt": "路跑活动宣传图，清晨河滨公园跑者剪影，上方横幅标语「为自己跑一段」，下方信息列「全程十公里・限额两千名」，简体中文排版端正。", "expected_text": "为自己跑一段", "script": "hans", "pair_of": "T2I-CJK-019"}
+{"id": "T2I-CJK-120", "category": "packaging", "prompt": "凤梨酥外包装纸盒，暖黄底色配红色窗花图案，正面以隶书风格印「金钻凤梨酥」，侧面标示「十二入・奶蛋素」，摄影棚柔光。", "expected_text": "金钻凤梨酥", "script": "hans", "pair_of": "T2I-CJK-020"}
+{"id": "T2I-CJK-121", "category": "sign", "prompt": "捷运站内指针吊牌，深蓝底白字，箭头向右，写着「出口 4・图书馆」，另一面向下写「转乘公车」，字体为无衬线黑体且边缘清晰。", "expected_text": "出口 4・图书馆", "script": "hans", "pair_of": "T2I-CJK-021"}
+{"id": "T2I-CJK-122", "category": "receipt", "prompt": "传统市场收银台上的手写收据，蓝色原子笔字迹列出「青江菜 35」「番茄 60」「鸡蛋 48」，最下方写「合计 143」，数字与简体品名都可辨识。", "expected_text": "合计 143", "script": "hans", "pair_of": "T2I-CJK-022"}
+{"id": "T2I-CJK-123", "category": "banner", "prompt": "校园运动会红布条挂在司令台上方，白色大字写「第五十二届校庆运动会」，左右各有小字「健康」「团结」，布条自然下垂有皱折。", "expected_text": "第五十二届校庆运动会", "script": "hans", "pair_of": "T2I-CJK-023"}
+{"id": "T2I-CJK-124", "category": "poster", "prompt": "独立书店活动海报，米色纸感背景，书堆插画旁用打字机字体印「夜读计划」，底部小字「每周五晚上七点・免费入座」，整体安静温暖。", "expected_text": "夜读计划", "script": "hans", "pair_of": "T2I-CJK-024"}
+{"id": "T2I-CJK-125", "category": "newspaper", "prompt": "早报头版平拍，报头红色「山城日报」，主标题以粗黑体印「捷运通车改写山城天际线」，配车站实景照片，简体中文锐利无糊边。", "expected_text": "捷运通车改写山城天际线", "script": "hans", "pair_of": "T2I-CJK-025"}
+{"id": "T2I-CJK-126", "category": "newspaper", "prompt": "财经报纸版面特写，版眉小字「财经焦点」，主标题黑体大字「晶圆龙头法说登场」，下方配走势图，简体中文笔画完整。", "expected_text": "晶圆龙头法说登场", "script": "hans", "pair_of": "T2I-CJK-026"}
+{"id": "T2I-CJK-127", "category": "ticket", "prompt": "电影票根特写，深蓝票面印着「午夜场：星海旅人」，角落有场次编号与撕角线，简体中文清晰可读。", "expected_text": "午夜场：星海旅人", "script": "hans", "pair_of": "T2I-CJK-027"}
+{"id": "T2I-CJK-128", "category": "ticket", "prompt": "演唱会门票平放在牛仔外套上，防伪底纹中央大字「夏日海洋音乐祭」，副标小字「户外场」，简体中文不得缺笔。", "expected_text": "夏日海洋音乐祭", "script": "hans", "pair_of": "T2I-CJK-028"}
+{"id": "T2I-CJK-129", "category": "sticker", "prompt": "笔电上盖贴满贴纸，正中一枚圆形黄底贴纸以手写感黑字写「工程师的浪漫」，边缘微翘，每个字清楚可辨。", "expected_text": "工程师的浪漫", "script": "hans", "pair_of": "T2I-CJK-029"}
+{"id": "T2I-CJK-130", "category": "packaging", "prompt": "玻璃酱油瓶商品摄影，牛皮纸标签以黑色楷体印「纯酿造酱油」，下方小字「一百八十天熟成」，简体中文印刷锐利。", "expected_text": "纯酿造酱油", "script": "hans", "pair_of": "T2I-CJK-030"}
+{"id": "T2I-CJK-131", "category": "packaging", "prompt": "透明冷泡茶瓶身特写，瓶身直印白色细明体「冷萃四季春」，背景是模糊茶园绿意，简体中文不可变形。", "expected_text": "冷萃四季春", "script": "hans", "pair_of": "T2I-CJK-031"}
+{"id": "T2I-CJK-132", "category": "receipt", "prompt": "超商收据摊平特写，明细第一行印「冰美式咖啡」，下方是数量与金额栏，热感印字略淡但简体中文仍可辨读。", "expected_text": "冰美式咖啡", "script": "hans", "pair_of": "T2I-CJK-032"}
+{"id": "T2I-CJK-133", "category": "receipt", "prompt": "餐厅木夹板上的结账单，底部以圆体印「谢谢光临」，上方是餐点明细，简体中文清晰。", "expected_text": "谢谢光临", "script": "hans", "pair_of": "T2I-CJK-033"}
+{"id": "T2I-CJK-134", "category": "banner", "prompt": "庙会绕境队伍前的红色布条，金色大字「绕境平安」随风微微皱折，背景是锣鼓与香火，简体中文完整不缺笔。", "expected_text": "绕境平安", "script": "hans", "pair_of": "T2I-CJK-034"}
+{"id": "T2I-CJK-135", "category": "calendar", "prompt": "桌面型月历翻开立在办公桌，顶部红色粗体印「2027年1月」，下方是整齐日期格，数字与国字皆清晰。", "expected_text": "2027年1月", "script": "hans", "pair_of": "T2I-CJK-135"}
+{"id": "T2I-CJK-136", "category": "label", "prompt": "手工果酱玻璃罐贴标特写，米白标签以深红手写感字体印「慢火草莓果酱」，罐内果酱颜色饱满，简体中文可读。", "expected_text": "慢火草莓果酱", "script": "hans", "pair_of": "T2I-CJK-036"}
+{"id": "T2I-CJK-137", "category": "coupon", "prompt": "速食店优惠券平拍，锯齿边框内大字红底白字「买一送一」，下方小字「限时优惠」，简体中文锐利。", "expected_text": "买一送一", "script": "hans", "pair_of": "T2I-CJK-037"}
+{"id": "T2I-CJK-138", "category": "map", "prompt": "夜市入口的木制导览立牌地图，黄色区块标示「美食区」、蓝色区块标示「游戏区」，灯泡串照明下字体清楚。", "expected_text": "美食区", "script": "hans", "pair_of": "T2I-CJK-038"}
+{"id": "T2I-CJK-139", "category": "ui", "prompt": "深色模式记账 App 画面，顶部卡片以白色粗体显示「本周结余」，下方是圆饼图与分类列表，简体中文界面文字清晰。", "expected_text": "本周结余", "script": "hans", "pair_of": "T2I-CJK-039"}
+{"id": "T2I-CJK-140", "category": "ui", "prompt": "捷运月台上的电子看板，黑底以绿色 LED 风格字显示「列车即将进站」，下方跑马灯略过，简体中文点阵清晰。", "expected_text": "列车即将进站", "script": "hans", "pair_of": "T2I-CJK-040"}
+{"id": "T2I-CJK-141", "category": "menu", "prompt": "拉面店挂墙木牌菜单，直排墨书「特制豚骨拉面」，木纹与毛笔字迹自然，直排简体中文顺序正确。", "expected_text": "特制豚骨拉面", "script": "hans", "pair_of": "T2I-CJK-041"}
+{"id": "T2I-CJK-142", "category": "menu", "prompt": "小吃店门口手写黑板，白色粉笔字写「今日例汤：苦瓜排骨」，粉笔颗粒感自然但每个字可辨。", "expected_text": "今日例汤：苦瓜排骨", "script": "hans", "pair_of": "T2I-CJK-042"}
+{"id": "T2I-CJK-143", "category": "poster", "prompt": "社区大学招生海报，春天花草边框，中央圆体大字「春季班热烈报名中」，下方列课程小字，简体中文端正。", "expected_text": "春季班热烈报名中", "script": "hans", "pair_of": "T2I-CJK-043"}
+{"id": "T2I-CJK-144", "category": "sign", "prompt": "巷弄快剪理发店，旋转灯旁压克力招牌以红色标楷体写「快剪一百元」，白底红字对比强烈，简体中文完整。", "expected_text": "快剪一百元", "script": "hans", "pair_of": "T2I-CJK-044"}
+{"id": "T2I-CJK-145", "category": "book_cover", "prompt": "悬疑小说书籍封面，雾气中的无人车站剪影，书名以直排细黑体印「雾中车站」，排版留白讲究，简体中文清晰。", "expected_text": "雾中车站", "script": "hans", "pair_of": "T2I-CJK-045"}
+{"id": "T2I-CJK-146", "category": "product", "prompt": "雾面运动水壶产品照，瓶身以激光雕刻感字体印「坚持到底」，水珠附着瓶身，简体中文刻字锐利。", "expected_text": "坚持到底", "script": "hans", "pair_of": "T2I-CJK-046"}
+{"id": "T2I-CJK-147", "category": "sign", "prompt": "传统市场蔬菜摊，红色压克力价目牌插在菜堆上写「现摘高丽菜」，塑料袋与水珠点缀，简体中文清楚。", "expected_text": "现摘高丽菜", "script": "hans", "pair_of": "T2I-CJK-047"}
+{"id": "T2I-CJK-148", "category": "poster", "prompt": "毕业典礼舞台背板，蓝白气球拱门下以金色立体字写「青春启航」，两侧小字「二〇二七级」，简体中文工整。", "expected_text": "青春启航", "script": "hans", "pair_of": "T2I-CJK-048"}
+{"id": "T2I-CJK-149", "category": "poster", "prompt": "社区管乐团音乐会海报，深绿舞台布幕前一把长号特写，标题以金色衬线体横排「仲夏夜管乐」，下方小字「免费入场・自由入座」，简体中文端正。", "expected_text": "仲夏夜管乐", "script": "hans", "pair_of": "T2I-CJK-049"}
+{"id": "T2I-CJK-150", "category": "poster", "prompt": "儿童剧团演出海报，天空蓝背景画着纸飞机与云朵，中央圆角字卡写「飞越想像力」，角落小字「亲子同乐场」，简体中文活泼但清晰。", "expected_text": "飞越想像力", "script": "hans", "pair_of": "T2I-CJK-050"}
+{"id": "T2I-CJK-151", "category": "poster", "prompt": "摄影展海报，黑白街景照片墙，右下角红色印章风格字「巷弄时光」，左下角展期「2027.03.14－04.26」，简体中文工整。", "expected_text": "巷弄时光", "script": "hans", "pair_of": "T2I-CJK-051"}
+{"id": "T2I-CJK-152", "category": "sign", "prompt": "老街茶馆门口，木框玻璃门上贴着金色割字「奉茶」，门把挂小木牌写「营业中」，午后阳光斜照，简体中文清楚。", "expected_text": "营业中", "script": "hans", "pair_of": "T2I-CJK-052"}
+{"id": "T2I-CJK-153", "category": "sign", "prompt": "大学校门口石碑，校训以阴刻篆书刻「诚朴精勤」，石面有岁月痕迹但字迹清晰可辨，简体中文不缺笔。", "expected_text": "诚朴精勤", "script": "hans", "pair_of": "T2I-CJK-053"}
+{"id": "T2I-CJK-154", "category": "sign", "prompt": "百货公司周年庆，中庭吊挂红色直幅，白字直排写「感恩回馈全面五折起」，灯光明亮，直排简体中文顺序正确。", "expected_text": "感恩回馈全面五折起", "script": "hans", "pair_of": "T2I-CJK-054"}
+{"id": "T2I-CJK-155", "category": "ui", "prompt": "平板上的语言学习 App 画面，每日任务卡片写「今日单字」，进度条旁标「已完成 80%」，按钮「开始复习」，简体中文界面锐利。", "expected_text": "今日单字", "script": "hans", "pair_of": "T2I-CJK-055"}
+{"id": "T2I-CJK-156", "category": "ui", "prompt": "智能手表屏幕特写，运动表面显示「本日步数」，中央大数字 8,432，下方小字「目标一万步」，简体中文在小屏幕上仍清晰。", "expected_text": "本日步数", "script": "hans", "pair_of": "T2I-CJK-056"}
+{"id": "T2I-CJK-157", "category": "ui", "prompt": "笔电屏幕上的信件软件，收件匣标题列显示「未读信件 3 封」，侧栏文件夹标示「重要」「待办」，简体中文字体清晰。", "expected_text": "未读信件 3 封", "script": "hans", "pair_of": "T2I-CJK-057"}
+{"id": "T2I-CJK-158", "category": "menu", "prompt": "日式定食屋菜单板，木框黑板以白漆字写「今日定食：照烧鲑鱼」，下方附「味噌汤・白饭」，简体中文清楚。", "expected_text": "今日定食：照烧鲑鱼", "script": "hans", "pair_of": "T2I-CJK-058"}
+{"id": "T2I-CJK-159", "category": "menu", "prompt": "冰果室墙上压克力菜单，黄底红字直排「芒果雪花冰」，旁列「红豆」「炼乳」配料小字，直排简体中文顺序正确。", "expected_text": "芒果雪花冰", "script": "hans", "pair_of": "T2I-CJK-059"}
+{"id": "T2I-CJK-160", "category": "menu", "prompt": "手摇饮店吧台前吊牌菜单，绿底白字主标「招牌翡翠绿茶」，下方小字「去冰」「微糖」「加珍珠」，简体中文印刷清晰。", "expected_text": "招牌翡翠绿茶", "script": "hans", "pair_of": "T2I-CJK-060"}
+{"id": "T2I-CJK-161", "category": "product", "prompt": "陶瓷马克杯商品照，米白杯身以青花风格印「山雾之间」，杯口有金色描边，背景柔光，简体中文釉面字清晰。", "expected_text": "山雾之间", "script": "hans", "pair_of": "T2I-CJK-061"}
+{"id": "T2I-CJK-162", "category": "product", "prompt": "蜂蜜玻璃罐产品摄影，木盖上贴牛皮纸吊牌写「台东龙眼蜜」，吊牌角落小字「2026 冬采」，简体中文可读。", "expected_text": "台东龙眼蜜", "script": "hans", "pair_of": "T2I-CJK-062"}
+{"id": "T2I-CJK-163", "category": "product", "prompt": "帆布袋商品平拍，原色帆布上以深蓝绢印「慢慢生活」，袋口缝线整齐，简体中文印刷不晕染。", "expected_text": "慢慢生活", "script": "hans", "pair_of": "T2I-CJK-063"}
+{"id": "T2I-CJK-164", "category": "book_cover", "prompt": "散文集书封设计，浅灰底一片银杏叶，书名以细黑体横排「时间的褶痕」，书腰红字「年度散文选」，简体中文优雅清晰。", "expected_text": "时间的褶痕", "script": "hans", "pair_of": "T2I-CJK-064"}
+{"id": "T2I-CJK-165", "category": "book_cover", "prompt": "科普书封面，深蓝星空与轨道线，书名白色粗体「宇宙如何运作」，副标小字「给好奇者的物理课」，简体中文锐利。", "expected_text": "宇宙如何运作", "script": "hans", "pair_of": "T2I-CJK-065"}
+{"id": "T2I-CJK-166", "category": "book_cover", "prompt": "童书封面，温暖黄底画着戴帽子的猫，书名圆体大字「猫咪邮差」，下方小字「注音版」，简体中文清楚。", "expected_text": "猫咪邮差", "script": "hans", "pair_of": "T2I-CJK-066"}
+{"id": "T2I-CJK-167", "category": "newspaper", "prompt": "晨报财经版平拍，主标黑体「台股再创新高」，副标「半导体领军上攻」，旁配股市照片，简体中文印刷锐利。", "expected_text": "台股再创新高", "script": "hans", "pair_of": "T2I-CJK-067"}
+{"id": "T2I-CJK-168", "category": "newspaper", "prompt": "地方报纸社区版，版头绿色小字「社区瞭望」，主标「老树医生守护百年榕」，配树木照片，简体中文清楚。", "expected_text": "老树医生守护百年榕", "script": "hans", "pair_of": "T2I-CJK-068"}
+{"id": "T2I-CJK-169", "category": "newspaper", "prompt": "晚报头版特写，主标题红黑对比「暴雨警报解除」，副标「各地交通恢复正常」，版面直排栏位整齐，简体中文可读。", "expected_text": "暴雨警报解除", "script": "hans", "pair_of": "T2I-CJK-069"}
+{"id": "T2I-CJK-170", "category": "ticket", "prompt": "火车对号列车车票平拍，票面印「自强号 167 次」，起讫栏「台中 → 花莲」，座位栏「7 车 15A」，简体中文与数字皆清晰。", "expected_text": "台中 → 花莲", "script": "hans", "pair_of": "T2I-CJK-070"}
+{"id": "T2I-CJK-171", "category": "ticket", "prompt": "美术馆门票特写，雾面纸卡印「常设展入场券」，右下小字「全票 250 元」，边缘有压纹，简体中文清楚。", "expected_text": "常设展入场券", "script": "hans", "pair_of": "T2I-CJK-071"}
+{"id": "T2I-CJK-172", "category": "ticket", "prompt": "棒球赛门票放在球帽上，票面大字「例行赛：龙象大战」，下方小字「内野下区」，防伪底纹细致，简体中文清晰。", "expected_text": "例行赛：龙象大战", "script": "hans", "pair_of": "T2I-CJK-072"}
+{"id": "T2I-CJK-173", "category": "sticker", "prompt": "安全帽上贴着圆形贴纸，白底红边中央手写感字「慢活骑士」，贴纸边缘微反光，简体中文完整。", "expected_text": "慢活骑士", "script": "hans", "pair_of": "T2I-CJK-073"}
+{"id": "T2I-CJK-174", "category": "sticker", "prompt": "行李箱布满旅游贴纸，最大一张椭圆形贴纸画着灯塔，下方印「海角七号」，旁边小贴纸写「出发」，简体中文清楚。", "expected_text": "海角七号", "script": "hans", "pair_of": "T2I-CJK-074"}
+{"id": "T2I-CJK-175", "category": "sticker", "prompt": "手账本页面上的装饰贴纸，长条形牛皮纸贴纸印「今日也要加油」，旁边小花贴纸点缀，简体中文端正。", "expected_text": "今日也要加油", "script": "hans", "pair_of": "T2I-CJK-075"}
+{"id": "T2I-CJK-176", "category": "packaging", "prompt": "咖啡豆铝箔袋包装，雾黑袋身烫银字「埃塞俄比亚・日晒」，侧边小字「中浅焙 200g」，简体中文印刷精细。", "expected_text": "埃塞俄比亚・日晒", "script": "hans", "pair_of": "T2I-CJK-076"}
+{"id": "T2I-CJK-177", "category": "packaging", "prompt": "蛋卷铁盒包装，复古红底配金色边框，盒面以隶书印「手工蛋卷」，侧面标示「原味・十支装」，简体中文端正。", "expected_text": "手工蛋卷", "script": "hans", "pair_of": "T2I-CJK-077"}
+{"id": "T2I-CJK-178", "category": "packaging", "prompt": "洗衣精补充包，蓝白袋身正面大字「抗菌配方」，下方小字「无添加萤光剂」，简体中文清楚。", "expected_text": "抗菌配方", "script": "hans", "pair_of": "T2I-CJK-078"}
+{"id": "T2I-CJK-179", "category": "receipt", "prompt": "药局收据摊平特写，明细第一行印「维他命C发泡锭」，下方金额栏与日期「2027-01-05」，热感印字略淡但可辨，简体中文清楚。", "expected_text": "维他命C发泡锭", "script": "hans", "pair_of": "T2I-CJK-079"}
+{"id": "T2I-CJK-180", "category": "receipt", "prompt": "文具店收据平拍，明细印「钢笔」「墨水」「笔记本」，底部圆体字「发票已开立」，简体中文清晰。", "expected_text": "发票已开立", "script": "hans", "pair_of": "T2I-CJK-080"}
+{"id": "T2I-CJK-181", "category": "receipt", "prompt": "停车场缴费收据特写，票面上半印「停车费缴费证明」，下方时段栏「09:30－12:15」，简体中文与数字清楚。", "expected_text": "停车费缴费证明", "script": "hans", "pair_of": "T2I-CJK-081"}
+{"id": "T2I-CJK-182", "category": "banner", "prompt": "里民活动中心门口红布条，白字写「重阳敬老联欢会」，布条两端用绳子拉紧微有弧度，简体中文清楚。", "expected_text": "重阳敬老联欢会", "script": "hans", "pair_of": "T2I-CJK-082"}
+{"id": "T2I-CJK-183", "category": "banner", "prompt": "建案接待中心外墙帆布广告，大图输出白字写「河岸首席・静巷宅」，下方小字「预约赏屋」，简体中文印刷清晰。", "expected_text": "河岸首席・静巷宅", "script": "hans", "pair_of": "T2I-CJK-083"}
+{"id": "T2I-CJK-184", "category": "banner", "prompt": "毕业季校园围墙挂着蓝布布条，黄字写「祝福毕业生前程似锦」，字体为粗黑体，远距离仍清楚可辨。", "expected_text": "祝福毕业生前程似锦", "script": "hans", "pair_of": "T2I-CJK-084"}
+{"id": "T2I-CJK-185", "category": "calendar", "prompt": "传统撕页日历挂在厨房墙上，顶部印「民国116年」，当日页大字「15」，下方小字「宜祭祀・嫁娶」，简体中文清楚。", "expected_text": "民国116年", "script": "hans", "pair_of": "T2I-CJK-085"}
+{"id": "T2I-CJK-186", "category": "calendar", "prompt": "办公桌电子月历屏幕，标题列显示「2027年6月」，假日以红色标注，字体为清晰黑体，简体中文无糊边。", "expected_text": "2027年6月", "script": "hans", "pair_of": "T2I-CJK-086"}
+{"id": "T2I-CJK-187", "category": "calendar", "prompt": "手账周计划页摊开，顶端手写字「五月第三周」，格线内调度整齐，简体中文手写字迹可辨。", "expected_text": "五月第三周", "script": "hans", "pair_of": "T2I-CJK-087"}
+{"id": "T2I-CJK-188", "category": "label", "prompt": "精油小棕瓶标签特写，米白标签以绿色细字印「薰衣草精油」，下方小字「10ml・法国产」，简体中文清晰。", "expected_text": "薰衣草精油", "script": "hans", "pair_of": "T2I-CJK-088"}
+{"id": "T2I-CJK-189", "category": "label", "prompt": "手工皂包装贴纸，牛皮纸色标签中央印章风格字「左手香手工皂」，角落小字「无香精」，简体中文端正。", "expected_text": "左手香手工皂", "script": "hans", "pair_of": "T2I-CJK-089"}
+{"id": "T2I-CJK-190", "category": "label", "prompt": "药罐标签特写，白底标签印「每日一次・饭后服用」，上方药名栏留白，红色警示字清楚，简体中文可读。", "expected_text": "每日一次・饭后服用", "script": "hans", "pair_of": "T2I-CJK-090"}
+{"id": "T2I-CJK-191", "category": "coupon", "prompt": "百货周年庆折价券平拍，锯齿边红底白字印「满千送百」，下方小字「限量发行」，简体中文锐利。", "expected_text": "满千送百", "script": "hans", "pair_of": "T2I-CJK-091"}
+{"id": "T2I-CJK-192", "category": "coupon", "prompt": "咖啡厅集点卡平拍，卡片上方印「集满十点换一杯」，下方十个空白圆格，简体中文清楚。", "expected_text": "集满十点换一杯", "script": "hans", "pair_of": "T2I-CJK-092"}
+{"id": "T2I-CJK-193", "category": "coupon", "prompt": "停车场折价券特写，黄底黑字印「平日停车半价」，角落小字「限当日使用」，简体中文印刷清晰。", "expected_text": "平日停车半价", "script": "hans", "pair_of": "T2I-CJK-093"}
+{"id": "T2I-CJK-194", "category": "map", "prompt": "捷运站出口地图灯箱，蓝色区块标「转乘公车站」，红色圆点标「您现在位置」，简体中文图例清晰。", "expected_text": "您现在位置", "script": "hans", "pair_of": "T2I-CJK-094"}
+{"id": "T2I-CJK-195", "category": "map", "prompt": "登山步道入口导览图木牌，绿色路线标「主峰步道 3.2K」，红色标「休憩凉亭」，简体中文刻在牌上清楚。", "expected_text": "主峰步道 3.2K", "script": "hans", "pair_of": "T2I-CJK-095"}
+{"id": "T2I-CJK-196", "category": "map", "prompt": "百货公司楼层导览立牌，各楼层色块旁标「美食街」「女装」「儿童天地」，指针箭头清楚，简体中文锐利。", "expected_text": "儿童天地", "script": "hans", "pair_of": "T2I-CJK-096"}
+{"id": "T2I-CJK-197", "category": "poster", "prompt": "马拉松赛事主视觉海报，晨曦中的跨海大桥跑者剪影，上方白字横幅「迎风而起」，底部信息列「2027 春季场・名额三千」，简体中文排版稳重。", "expected_text": "迎风而起", "script": "hans", "pair_of": "T2I-CJK-097"}
+{"id": "T2I-CJK-198", "category": "sign", "prompt": "传统面店骑楼，铁卷门半开，门口立着手写木牌「本日公休」，旁边小字「明日正常营业」，字迹朴实清楚。", "expected_text": "本日公休", "script": "hans", "pair_of": "T2I-CJK-098"}
+{"id": "T2I-CJK-199", "category": "ui", "prompt": "电视新闻台画面截屏，下方跑马灯白底红字「实时快讯」，主播台右下角台标小字，简体中文新闻字体锐利。", "expected_text": "实时快讯", "script": "hans", "pair_of": "T2I-CJK-099"}
+{"id": "T2I-CJK-200", "category": "menu", "prompt": "港式茶餐厅玻璃门上的菜单贴纸，红字写「今日特价：干炒牛河」，下方小字「附例汤一碗」，简体中文可读。", "expected_text": "今日特价：干炒牛河", "script": "hans", "pair_of": "T2I-CJK-100"}
