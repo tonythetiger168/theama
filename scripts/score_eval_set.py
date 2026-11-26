@@ -78,9 +78,13 @@ def main() -> int:
 
     # Resume: keep prior successful rows for this reward model, compact the
     # file (dropping error rows so they are retried), score only the rest.
+    # --no-resume re-scores from scratch: the existing file is truncated
+    # (not appended to), so re-runs never accumulate duplicate rows that
+    # downstream profilers (scores_stats) would flag.
     kept: dict[str, dict] = {}
-    if out_path.exists() and not args.no_resume:
-        kept = load_successful_scores(out_path, reward=args.reward)
+    if out_path.exists():
+        if not args.no_resume:
+            kept = load_successful_scores(out_path, reward=args.reward)
         with out_path.open("w") as fh:
             for row in kept.values():
                 fh.write(json.dumps(row) + "\n")
