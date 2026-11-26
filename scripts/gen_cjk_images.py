@@ -10,7 +10,10 @@ Local GPU usage:
     python scripts/gen_cjk_images.py --model ming-image-design --out eval_out/m7a/ming
 
 Resumable: existing readable PNGs in --out are skipped, so a crashed run
-continues where it stopped. Exit code is nonzero unless every prompt in the
+continues where it stopped. A prompt whose generation raises is logged to
+stderr and skipped (the run keeps mining the rest); the final gate lists it
+under ``failed`` and the exit code stays nonzero until a rerun lands its PNG.
+Exit code is nonzero unless every prompt in the
 eval set produced a readable PNG. Rows and the final gate use the strict
 loader in ``theama.image`` (the same schema CI validates).
 
@@ -160,9 +163,15 @@ def main() -> int:
         # pipelines, so only pass what the loaded pipeline accepts.
         if "guidance_scale" in pipe_signature(pipe):
             kwargs["guidance_scale"] = guidance
-        image = pipe(**kwargs).images[0]
         target = out_dir / f"{row.id}.png"
-        image.save(target)
+        try:
+            image = pipe(**kwargs).images[0]
+            image.save(target)
+        except Exception as exc:  # keep mining; the final gate reports the row
+            print(f"[fail] {row.id}: {exc}", file=sys.stderr)
+            if target.exists():
+                target.unlink()  # drop any partial write from the failed call
+            continue
         rec = {
             "id": row.id,
             "model": args.model,
