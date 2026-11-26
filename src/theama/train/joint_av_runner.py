@@ -299,7 +299,7 @@ class JointAVRunner:
     # -- logging/checkpoints ----------------------------------------------------
 
     def _log(self, record: dict) -> None:
-        with self._metrics_path.open("a", encoding="utf-8") as fh:
+        with self._metrics_path.open("a") as fh:
             fh.write(json.dumps(record, sort_keys=True) + "\n")
 
     def _save(self, step: int, *, tag: str | None = None) -> str:
