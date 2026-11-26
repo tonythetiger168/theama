@@ -72,6 +72,9 @@ def audio_dit_kwargs(audio_cfg: dict) -> dict:
         "video_dim": int(audio_cfg["video_dim"]),
         "bridge_every": int(audio_cfg["bridge_every"]),
         "latent_dim": int(audio_cfg["latent_dim"]),
+        # required for wan_blocks (un-normalised Wan hidden states, issue #4);
+        # keep False on the latent-grid path
+        "norm_video_kv": bool(audio_cfg.get("norm_video_kv", False)),
     }
 
 
@@ -296,7 +299,7 @@ class JointAVRunner:
     # -- logging/checkpoints ----------------------------------------------------
 
     def _log(self, record: dict) -> None:
-        with self._metrics_path.open("a") as fh:
+        with self._metrics_path.open("a", encoding="utf-8") as fh:
             fh.write(json.dumps(record, sort_keys=True) + "\n")
 
     def _save(self, step: int, *, tag: str | None = None) -> str:
