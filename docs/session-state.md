@@ -82,7 +82,7 @@ Claude 執行（runbook §0 開 pod SOP 落地；issue #4 internal smoke 契約 
   第二閘皆乾淨。授權紅線未碰。watchlist 未到點未查（下次 pass-57±）。
 - 2026-11-26 pass 55 @ 5f4bb7a0（本 session）— ③ M6 Avatar 骨架契約測試：
   tests/test_m6_avatar_skeletons.py +17——theama.avatar 三模組（identity／
-  audio_drive／streaming）為 src 最後零覆蓋且具可用零覆蓋且具可用邏輯的模組。鎖定：
+  audio_drive／streaming）為 src 最後零覆蓋且具可用邏輯的模組。鎖定：
   IdentityBank 六（default/None 空表、register→swap 同物件 roundtrip、
   unknown KeyError 帶名、overwrite、entries 獨立）＋IdentityEncoder 二
   （預設 512→1024 shape、custom dim＋float64 dtype 跟隨）＋AudioDrive 五
