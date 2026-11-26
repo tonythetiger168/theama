@@ -373,12 +373,21 @@
   （Theama Film 自產 4K/30s 帶音訊樣本回流）＋CJK 簡中優先＋開放
   授權差異化。
   2026-11-26 第二筆補記（交付格式拍板）：**HDR＋AV1 提前至 M4 交付**
-  並列為獨立賣點——現無任何生成模型交付 10-bit HDR10/HLG＋AV1
-  （Wan 3.0 鎖 1080P 8-bit、H3 鎖 2K 8-bit、Seedance 2.5 8-bit SDR）；
+  並列為獨立賣點——真 HDR（HDR10/HLG）與 AV1＋HLS 封裝仍無人交付
+  （Wan 3.0 鎖 1080P 8-bit、H3 鎖 2K 8-bit）；
   新增 **HLS 分發層**——fMP4/CMAF segment＋master .m3u8 自適應階梯
   （4K HDR AV1 → 1080p HEVC → 720p/480p H.264，HEVC 層為 Safari
   fallback 屬必需，同批 segment 兼出 DASH）；Avatar 實時線（M6b）
   不走標準 HLS，採 LL-HLS 或 WebRTC。
+  2026-11-26 第三筆補記（**Seedance 2.5 4K 上線，規格差異化修正**，
+  依使用者通報查證）：**即梦於 2026-11-13 正式上線 Seedance 2.5
+  4K**——原生 3840×2160、30 秒、**10-bit BT.709（SDR，非 HDR10/HLG）**、
+  六種畫幅、480P 樣片→4K 正片 Draft 模式，限時價低至 ¥0.15/秒
+  （智東西／騰訊新聞 2026-11-18/19 實測，B 級多源一致）。修正前記：
+  「4K＋10-bit 孤峰」說法作廢；仍成立的差異化為 ① **真 HDR**
+  （HDR10/HLG——Seedance 4K 僅 BT.709 SDR）② **AV1/HEVC＋HLS
+  fMP4/CMAF 分發包** ③ **開放權重本地部署** ④ **8K（M4b）**。M5
+  驗收 (4) 語意同步調整（見 training-plan.md）。
 
 ## 發布策略
 
