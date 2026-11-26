@@ -132,7 +132,7 @@
 {"id": "T2I-CJK-132", "category": "receipt", "prompt": "超商收据摊平特写，明细第一行印「冰美式咖啡」，下方是数量与金额栏，热感印字略淡但简体中文仍可辨读。", "expected_text": "冰美式咖啡", "script": "hans", "pair_of": "T2I-CJK-032"}
 {"id": "T2I-CJK-133", "category": "receipt", "prompt": "餐厅木夹板上的结账单，底部以圆体印「谢谢光临」，上方是餐点明细，简体中文清晰。", "expected_text": "谢谢光临", "script": "hans", "pair_of": "T2I-CJK-033"}
 {"id": "T2I-CJK-134", "category": "banner", "prompt": "庙会绕境队伍前的红色布条，金色大字「绕境平安」随风微微皱折，背景是锣鼓与香火，简体中文完整不缺笔。", "expected_text": "绕境平安", "script": "hans", "pair_of": "T2I-CJK-034"}
-{"id": "T2I-CJK-135", "category": "calendar", "prompt": "桌面型月历翻开立在办公桌，顶部红色粗体印「2027年1月」，下方是整齐日期格，数字与国字皆清晰。", "expected_text": "2027年1月", "script": "hans", "pair_of": "T2I-CJK-135"}
+{"id": "T2I-CJK-135", "category": "calendar", "prompt": "桌面型月历翻开立在办公桌，顶部红色粗体印「2027年1月」，下方是整齐日期格，数字与国字皆清晰。", "expected_text": "2027年1月", "script": "hans", "pair_of": "T2I-CJK-035"}
 {"id": "T2I-CJK-136", "category": "label", "prompt": "手工果酱玻璃罐贴标特写，米白标签以深红手写感字体印「慢火草莓果酱」，罐内果酱颜色饱满，简体中文可读。", "expected_text": "慢火草莓果酱", "script": "hans", "pair_of": "T2I-CJK-036"}
 {"id": "T2I-CJK-137", "category": "coupon", "prompt": "速食店优惠券平拍，锯齿边框内大字红底白字「买一送一」，下方小字「限时优惠」，简体中文锐利。", "expected_text": "买一送一", "script": "hans", "pair_of": "T2I-CJK-037"}
 {"id": "T2I-CJK-138", "category": "map", "prompt": "夜市入口的木制导览立牌地图，黄色区块标示「美食区」、蓝色区块标示「游戏区」，灯泡串照明下字体清楚。", "expected_text": "美食区", "script": "hans", "pair_of": "T2I-CJK-038"}
