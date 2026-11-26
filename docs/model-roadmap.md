@@ -69,7 +69,7 @@
   若最終開權重且授權相容，列為骨幹再評估觸發點；續盯 Model Studio 新模型
   列表、Wan-AI HF、Wan-Video GitHub。
   2026-11-25 第五輪覆核：11 月窗口進入最後一週，中英文檢索仍無發布
-  公告或公告或權重，維持「未發布、續盯」；Wan 3.x API-only 多方來源
+  公告或權重，維持「未發布、續盯」；Wan 3.x API-only 多方來源
   （2026-11 上旬至中旬的獨立核查）一致，無變化。
   2026-11-25 第六輪覆核：11 月窗口剩最後五天，中英文檢索仍僅見
   2026-09-22 雲棲預告原文的轉載，無發布公告或權重；Wan 3.x API-only
@@ -295,7 +295,7 @@
   靜態塌陷（3.3 vs SFT 4.10），結論是 MLLM 高層判決必須配低層感知／
   光流約束。對 M6a 唇形＋表情 reward 組合與防 hacking 設計是直接參考；
   授權／權重未核實，觀察。Omni-RL Judge 本輪再查仍僅 ResearchGate
-  條目（2026-11-15），arXiv id 未補上，維持觀察。Wan-Animate-2 repo
+  條目（2026-11-15），arXiv id 未未補上，維持觀察。Wan-Animate-2 repo
   id／Wan 3.x API-only／阿里下一代模型未發布／Qwen-Image 紅線，本輪
   覆核無變化。repo 健康：CI.yml 仍未上傳、issues 0；沙箱執行環境與
   專案記憶 mount 本輪仍不可用，維持 docs-only。
