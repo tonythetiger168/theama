@@ -148,6 +148,9 @@ def run_wan_smoke(
         video_dim=bridge_video_dim,
         bridge_every=1,
         latent_dim=audio_latent_dim,
+        # wan_blocks feeds un-normalised Wan hidden states to the bridges
+        # (issue #4 red flag); the latent-grid path stays on raw latents.
+        norm_video_kv=bridge_location == "wan_blocks",
     ).to(device=dev, dtype=dtype)
     video.to(dev)
     trainer = JointAVTrainer(
