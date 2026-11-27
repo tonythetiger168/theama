@@ -49,7 +49,6 @@ HEVC/AV1 提前至 M4 交付（獨立賣點）＋ HLS fMP4/CMAF 分發層
 modality-aware CFG 的訓練半邊）**＋ **M4 DASH manifest 兼出落地
 （pass 33 對帳驗證側：inference/dash.py＋scripts/package_dash.py——
 同批 fMP4/CMAF segment 兼出 DASH、零重編碼、manifest 本體 ffprobe
-驗ffprobe
 驗證不過不交付）**＋ **runbook §5.1/§5.2 接入 joint-cache
 預檢閘 check_joint_latents（pass 37 本 session：燒 GPU 前攔
 dropped 列／壞 .pt）**＋ **scores.jsonl 剖析器 scores_stats
