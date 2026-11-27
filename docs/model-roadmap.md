@@ -199,7 +199,7 @@
   專攻 UI／資訊圖／海報等**文字密集型設計**的 T2I：原生 RGBA、12 steps
   CFG 1.0、2048²，另有 Design-Layer 圖層拆解姊妹模型（同 MIT）。
   Artificial Analysis：UI/UX Design 類開權重第一（Elo 1082，全類 17/81），
-  Layout 與 Text Rendering 均為開均為開權重第一；總榜中段（約 45/160）。
+  Layout 與 Text Rendering 均為開權重第一；總榜中段（約 45/160）。
   對本專案的意義：M7a 除 Qwen-Image-2512（品質）＋ Z-Image Turbo（快速）
   之外的第三條合法授權路徑候選，其強項（文字渲染）正是 cjk_t2i_v1 seed
   的量測目標。保留事項：官方驗證配置為單卡 80 GiB（文字編碼器約 34 GB，
