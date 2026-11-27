@@ -69,7 +69,7 @@
   若最終開權重且授權相容，列為骨幹再評估觸發點；續盯 Model Studio 新模型
   列表、Wan-AI HF、Wan-Video GitHub。
   2026-11-25 第五輪覆核：11 月窗口進入最後一週，中英文檢索仍無發布
-  公告或公告或權重，維持「未發布、續盯」；Wan 3.x API-only 多方來源
+  公告或權重，維持「未發布、續盯」；Wan 3.x API-only 多方來源
   （2026-11 上旬至中旬的獨立核查）一致，無變化。
   2026-11-25 第六輪覆核：11 月窗口剩最後五天，中英文檢索仍僅見
   2026-09-22 雲棲預告原文的轉載，無發布公告或權重；Wan 3.x API-only
@@ -291,7 +291,7 @@
   LoRA 後訓練驗證其 reward 可提升生成品質，惟 policy 實驗用 LTX-2（紅線模型）——
   僅取 reward 方法論參考，不碰其權重與輸出。同清單再補 **Omni-Judge**（2026，
   以 omni-modal LLM 做 text-conditioned A/V 生成的 CoT judge，覆蓋感知品質與
-  跨模態對齊維度），同列觀察，授權／權重未核實。另記上游營運訊號：
+  跨模態對齊維度），同列跨模態對齊維度），同列觀察，授權／權重未核實。另記上游營運訊號：
   Wan2.2-Animate 官方 HF Space 已 401 下線（2026-11-16 確認；ModelScope Studio
   與社群 ZeroGPU Space 仍在）——M6a 走自架權重路線，不受影響。
   Wan-Animate-2 repo id／Wan 3.x API-only／Qwen-Image 紅線三項本輪覆核無變化。
@@ -405,7 +405,7 @@
   （wan30.video 10-16／atlascloud 08-26 再核一致，「Wan 2.7 開源」
   仍屬低權威誤報）；Wan-Animate-2 repo id
   `Wan-AI/Wan2.2-Animate-2-14B`（Apache-2.0）無變化；阿里下一代
-  影片模型 11 月窗口 T-5（11-30 關閉）仍無名關閉）仍無名稱／規格／權重
+  影片模型 11 月窗口 T-5（11-30 關閉）仍無名稱／規格／權重
   （阿里 11-12 云栖官方總結稿亦未提新影片模型）；Qwen-Image
   2.1／2.1-Turbo 仍 Qwen Research License（QwenLM repo 直查），
   3.1 hosted-only「今年稍後推出」，紅線不變；GenRM-Flow 仍僅
