@@ -25,7 +25,7 @@ self-distillation 把 49→8 NFE（≈3× 加速）。評估結論（2026-11-27�
 
 1. **權重屬 H3 Model Derivative**——授權隨 H3 Community License 走：地區排除
    （美/歐/英/韓）、禁止以其 Works/Outputs 改進其他模型、AUP。HyperFlow 的
-   **權重與其生成輸出同屬 H3 衍生，一律不得進入進入專案**（與 H3 本體同條紅線）。
+   **權重與其生成輸出同屬 H3 衍生，一律不得進入專案**（與 H3 本體同條紅線）。
 2. **程式碼是 Apache-2.0**——可讀、可借鑑、可移植；引用或改寫其程式碼時
    保留其 LICENSE/NOTICE（THIRD_PARTY_NOTICES 登記）。
 3. **方法論可合法重現**：two-time conditioning (t, r) 來自 AnyFlow 論文
