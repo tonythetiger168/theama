@@ -279,7 +279,7 @@
   無權重無 model card）；2.1／2.1-Turbo 研究授權紅線不變、
   2512 仍唯一 Apache-2.0 商用線。M7a 選型不變。
   2026-11-27 第二十二輪：四項覆核無變化——releasebot
-  2026-11-18 頁 Qwen feed 仍無 image 線新貨（頁首
+  2026-11-18 頁 Qwen feed 仍無 image 線新線新貨（頁首
   Qwen3.8-Max 屬文本旗艦線；「Qwen-Image-3.0」條目仍
   2026-06-21 舊發布 hosted-only、無權重無 model card）；
   QwenLM org 最新 pushed repos 全為 code／工具線
@@ -348,7 +348,7 @@
   LoRA 後訓練驗證其 reward 可提升生成品質，惟 policy 實驗用 LTX-2（紅線模型）——
   僅取 reward 方法論參考，不碰其權重與輸出。同清單再補 **Omni-Judge**（2026，
   以 omni-modal LLM 做 text-conditioned A/V 生成的 CoT judge，覆蓋感知品質與
-  跨模態對齊維度），同列），同列觀察，授權／權重未核實。另記上游營運訊號：
+  跨模態對齊維度），同列觀察，授權／權重未核實。另記上游營運訊號：
   Wan2.2-Animate 官方 HF Space 已 401 下線（2026-11-16 確認；ModelScope Studio
   與社群 ZeroGPU Space 仍在）——M6a 走自架權重路線，不受影響。
   Wan-Animate-2 repo id／Wan 3.x API-only／Qwen-Image 紅線三項本輪覆核無變化。
@@ -413,7 +413,7 @@
   `ShareLab-SII/VA-Judger` 自 2026-08-20 起已釋出 project page、論文、
   基礎程式碼、**checkpoints 與 VA-Judger-Bench**（SFT 訓練程式碼與
   VAPref-10K 資料集仍列 to-do 未釋出）；reward model 本體為
-  Qwen3-Omni-30B-A3B-Instruct 全參微微調（visual encoder／aligner 凍結，
+  Qwen3-Omni-30B-A3B-Instruct 全參微調（visual encoder／aligner 凍結，
   8×GPU BF16 + DeepSpeed ZeRO-3），推理經 vLLM。checkpoint 授權於
   repo 檢索結果中未標示——採用前須逐卡核驗 model card；其 policy 驗證
   仍綁 LTX-2（紅線），本專案僅取 reward 方法論參考，維持觀察、不改
@@ -479,14 +479,14 @@
   **RewardDance**（reward scaling 研究：judge 換更大生成式 VLM
   的規模律與抗 hacking 魯棒性）。四者授權／權重可得性均未核實，
   VideoReward 首選不變，維持觀察、不改 P1a 配方。
-  2026-11-26 第十六輪：兩筆升級觀察。① **VA-Judger**
+  2026-11-26 第十六第十六輪：兩筆升級觀察。① **VA-Judger**
   從「授權未核實」升級為「成品已上架」——GitHub
   `ShareLab-SII/VA-Judger`（Fudan ShareLab，2026-08-20 發布
   basic code＋checkpoints＋VA-Judger-Bench；HF
   `ShareLab-SII/VA-Judger` 權重、`ShareLab-SII/VA-Judger-Bench`
   資料集）。論文 hard id 已錄（arXiv 2608.18607）；post-train
   人類偏好率 62.30% vs OmniNFT 27.63% vs 原 LTX-2 10.08%
-  （11/13 客客觀指標最佳）——紅線僅禁 LTX-2 權重／輸出，judge
+  （11/13 客觀指標最佳）——紅線僅禁 LTX-2 權重／輸出，judge
   本身授權本輪因 HF API 不可達（HTTP 000）待核，若相容列為
   M2 後訓練 A/V 偏好 reward 首選候選；底模 Qwen3-Omni-30B-A3B
   推測沿用 Qwen 系授權，以 model card 為準。② **IsoVRBench**
