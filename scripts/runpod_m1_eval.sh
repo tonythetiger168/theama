@@ -11,6 +11,12 @@
 # Writes $WORKSPACE/m1_out/{ti2v-5b/*.mp4, m1_eval_report.json, logs/}.
 # Prints M1_EVAL_SMOKE_OK only if every requested clip is a probe-valid MP4.
 # This is a generation/plumbing gate, not the VBench quality gate.
+#
+# Unattended runs: set THEAMA_SELF_TERMINATE=1 so the pod archives m1_out to
+# $WORKSPACE/pub/m1_out.tgz and deletes itself (runpodctl, $RUNPOD_POD_ID)
+# when the script exits, pass or fail. Results stay on the network volume.
+# Without this, a pod whose controller goes offline keeps billing (2026-11-26:
+# a 10.6 h run idled 16 h more and cost $15.73 against an $8 cap).
 set -euo pipefail
 
 WORKSPACE="${1:-/workspace}"
@@ -21,6 +27,22 @@ trap 'status=$?; echo "M1_EVAL_FAILED status=$status line=$LINENO" >&2; exit "$s
 mkdir -p "$WORKSPACE"
 WORKSPACE="$(cd "$WORKSPACE" && pwd)"
 export WORKSPACE
+
+self_terminate() {
+  local status=$?
+  [[ "${THEAMA_SELF_TERMINATE:-0}" == "1" ]] || return 0
+  echo "==> THEAMA_SELF_TERMINATE: archiving m1_out (exit status $status)"
+  mkdir -p "$WORKSPACE/pub"
+  tar -czf "$WORKSPACE/pub/m1_out.tgz" -C "$WORKSPACE" m1_out || true
+  sync
+  if [[ -n "${RUNPOD_POD_ID:-}" ]] && command -v runpodctl >/dev/null; then
+    echo "==> deleting pod $RUNPOD_POD_ID"
+    runpodctl remove pod "$RUNPOD_POD_ID" || echo "WARNING: self-terminate failed; delete the pod manually" >&2
+  else
+    echo "WARNING: RUNPOD_POD_ID or runpodctl missing; pod NOT deleted" >&2
+  fi
+}
+trap self_terminate EXIT
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$REPO_ROOT"
 export HF_HOME="$WORKSPACE/hf_cache"

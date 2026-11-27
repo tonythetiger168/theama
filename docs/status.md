@@ -9,7 +9,7 @@ Last updated: 2026-11-27. This file is the single entry point for any agent
 
 | Milestone | Code | GPU validation |
 |---|---|---|
-| M1 inference + eval harness | landed; VBench tolerance gate (`run_vbench.py`) pure-function + CLI CPU tests (fake-vbench injection); `gen_eval_set.py` probe_ok + resume skip/regenerate CPU tests (fake mux/pipeline injection); `inference/pipeline.py` one-shot CLI contract CPU tests (T2V/I2V branch wiring / `--seconds` frame snapping / offload+seed pass-through / argparse rejection / generation failure keeps exit non-zero without muxing, fake t2v/i2v module injection); `model/dit.py` Wan-backbone thin wrapper contract CPU tests (repo-id constants / BackboneConfig defaults incl. bf16 + MoE expert boundary 0.875 / lazy pipeline / Wan generate call conventions incl. 8n+1 frames and no_grad, fake diffusers injection) | **5-prompt generation smoke PASSED** (2026-11-26, commit `0bf42cd`: 5/5 probe-valid MP4s — H.264 1280x704/24fps/121f + silent AAC, mean 842 s/clip with CPU offload, peak 33.7 GB; full run table in PR #5); 50-prompt run + VBench ±0.02 gate pending |
+| M1 inference + eval harness | landed; VBench tolerance gate (`run_vbench.py`) pure-function + CLI CPU tests (fake-vbench injection); `gen_eval_set.py` probe_ok + resume skip/regenerate CPU tests (fake mux/pipeline injection); `inference/pipeline.py` one-shot CLI contract CPU tests (T2V/I2V branch wiring / `--seconds` frame snapping / offload+seed pass-through / argparse rejection / generation failure keeps exit non-zero without muxing, fake t2v/i2v module injection); `model/dit.py` Wan-backbone thin wrapper contract CPU tests (repo-id constants / BackboneConfig defaults incl. bf16 + MoE expert boundary 0.875 / lazy pipeline / Wan generate call conventions incl. 8n+1 frames and no_grad, fake diffusers injection) | **full 50-prompt generation run PASSED** (A40 2026-11-26, 50/50 probe-valid MP4s, mean 842 s/clip with CPU offload; see below); VBench ±0.02 gate **not run** |
 | P1a VideoReward + LoRA-DPO | landed; full preflight-gate chain: `check_scores.py` → `make_pref_pairs.py` fail-fast, `check_pairs.py` → `encode_pairs.py` fail-fast, `check_pair_latents.py` → `train_dpo.py` fail-fast; retry budgets + `pairs_stats.py` / `scores_stats.py` profilers; runbook §2 command chain wired (three gates + profilers in-chain); `gen_candidates.py` + `encode_pairs.py` + `score_eval_set.py` + `make_pref_pairs.py` + `train_dpo.py` CLI contract CPU tests (resume lazy-load tripwires / preflight refuse / flag pass-through / failure-keeps-exit-0, fake torch+diffusers injection; `score_eval_set.py --no-resume` duplicate-row regression fixed; `make_pref_pairs.py` margin / max-per-prompt / reward-filter pass-through on binary-exact scores; `train_dpo.py` preflight fails fast before the backbone import) | **not run** |
 | P1b data engine | landed: `build_av_manifest.py` → `encode_texts.py` / `encode_av_latents.py` (retry budgets on all three caches) → joint latent loader (explicit `skipped_*_row` drop reasons) → joint training runner + runbook §5; joint-cache preflight gate `check_joint_latents.py` wired into runbook §5.1/§5.2 (fails before any GPU burn on dropped rows or corrupt/non-finite `.pt`); cache profiler `joint_latents_stats.py` (shape mix / caption sharing / index coverage / join view — the read-before-GPU counterpart of the gate); `encode_texts.py` CLI contract CPU tests (resume lazy-load tripwires / exit-code contract, fake transformers/torch injection); `train_joint_av.py` `_real` CLI wiring CPU tests (arg gating / YAML config / frozen-Wan construction / joint-cache loader / RunnerConfig mapping, fake GPU/IO edges only); `check_av_manifest.py` manifest-gate CLI contract CPU tests (exit codes / indent-2 summary / `--show-errors` visibility / forbidden-source red line); gate-vs-profiler cross-consistency CPU tests (one manifest pair through both `check_joint_latents.py` and `joint_latents_stats.py`, count equalities + documented divergences locked); raw-manifest gate-vs-profiler cross-consistency CPU tests (`check_av_manifest.py` gate x `manifest_stats.py` profiler over one shared manifest: total accounting invariant, documented divergences pinned -- non-dict JSON line = schema error to the gate but bad_json_line to the profiler, forbidden+schema-defect row = schema to the gate but still red-line-counted by the profiler; clean-manifest source distributions exactly equal; profiler still exits 0 on gate-rejected manifests) | **not run** (issue #4 open) |
 | M2 audio DiT + joint A/V trainer | CPU trainer, DAC codec, external Wan adapter, internal Wan block bridges, bridge LoRA warmup, joint training runner, AV manifest data pipeline, **CFG text-conditioning dropout** (audio-stream null-condition training, default 0.0 off), **`norm_video_kv` bridge-input norm** (parameter-free per-token LayerNorm on the v2a K/V for `wan_blocks` bridges; fail-closed adapter guard; default off keeps the latent-grid path bit-identical) | **external latent-bridge real-weight contract smoke PASSED** (RTX 4090 2026-11-24; full runbook re-run on A40 2026-11-25, see below); **internal `wan_blocks` + LoRA real-weight smoke ran 2026-11-26** (commit `2e16595`, issue #4): contract PASSED (100,352 trainable, 8 grad/4 updated, Wan frozen, peak 9.54 GiB) with a loss-scale red flag — audio loss 79.0 / grad norm 94.0 (~40x external) from un-normalised Wan block hidden states feeding the v2a K/V; CPU-side fix landed (`b5321003`..`d455e3dc`); **GPU re-run pending, bridge-warmup blocked until the red flag clears** |
@@ -28,6 +28,28 @@ syntax / header contract / wiring coverage) and docs-structure tests
 (`docs/*.md` existence / no conflict markers / per-table pipe-count
 consistency / balanced code fences / session-state header schema /
 SAVE-protocol headings).
+
+## RunPod run 2026-11-26/27 (A40): full 50-prompt M1 generation
+
+| Item | Value |
+|---|---|
+| Pod | `u4one3groo1q6z`, secure, CA-MTL-1, A40 48 GB, $0.59/hr — **deleted** 2026-11-27 ~10:30 UTC (absent from pod list afterwards) |
+| Command | `bash scripts/runpod_m1_eval.sh /workspace 50` (commit `867071d`; resume skipped the 5 clips from the earlier rerun) |
+| Generation | 07:48:34Z → 18:28Z on 2026-11-26 (~10.6 h, ≈ $6.27) |
+| Total cost | **≈ $15.73** (26.7 h uptime) — **over Tony's $8 cap**. trinity went offline ~3 h in, so the 30-min checks and the 13 h hard stop never ran; the finished pod idled ~16 h |
+| Markers | `M1_EVAL_SMOKE_OK`, exit 0, summary `{"total": 50, "ok": 50, "failed": []}` |
+| Clips | 50/50 probe-valid, H.264 1280x704, 24 fps, 121 frames (5.06 s); mean **841.9 s/clip** (min 828.0, max 875.5) |
+| Peak VRAM | **not recorded**: the container restarted ~18:26Z and re-ran the script, which skipped all 50 clips and overwrote `nvidia_smi.csv` and the logs (report shows 0). The 5-clip run on the same setup peaked at 33,679 MiB |
+| Local results | `C:\Users\chien\aios\theama\results\runpod\m1-eval-50\` on trinity (`m1_out\`, `m1_out_50.tgz` 213.7 MB, `run-summary.md`; not committed). Tar also on the volume at `/workspace/pub/m1_out_50.tgz` |
+| Volume | `theama-m2` expanded 40 → **80 GB** on 2026-11-26 (Tony's choice), kept |
+
+**Lesson / fix:** a local controller must not be the only thing that stops a
+billed pod. `scripts/runpod_m1_eval.sh` now supports
+`THEAMA_SELF_TERMINATE=1`: on exit (pass or fail) it tars `m1_out` to
+`$WORKSPACE/pub/m1_out.tgz` and deletes its own pod via
+`runpodctl remove pod $RUNPOD_POD_ID`. Use it for every long unattended run,
+and launch with a start command that does not re-run the job on container
+restart.
 
 ## RunPod run 2026-11-26 (A40): M1 rerun + issue #4 internal smoke
 
@@ -183,14 +205,12 @@ reports, `dac/input.wav`, `logs/cpu_tests.log`, `logs/dac_smoke.log`,
    `theama-m2` in CA-MTL-1 for later runs to skip re-downloading weights, or
    delete it when no longer needed. A 4090 re-check is optional. Internal
    `wan_blocks` GPU acceptance remains open in step 4.
-2. **M1 GPU acceptance** on TI2V-5B — 5-prompt smoke **PASSED** 2026-11-26
-   (commit `0bf42cd`: 5/5 probe-valid MP4s, mean 842 s/clip with CPU offload,
-   peak 33.7 GB; a `numpy.ndarray.save` bug was fixed by `ecf50d60`; full run
-   table in PR #5). Remaining: all 50 prompts
-   (`bash scripts/runpod_m1_eval.sh /workspace 50` — ≈ 12 h at the observed
-   per-clip wall time; the volume has only ~5 GB free, expand or clean it
-   first), then `scripts/run_vbench.py` for the ±0.02 quality gate. Same save
-   / verify / delete-pod / keep-volume procedure as `CLAUDE.md`.
+2. **M1 GPU acceptance** on TI2V-5B — full 50-prompt generation **PASSED**
+   2026-11-26 (50/50 probe-valid, 842 s/clip; see the run section above).
+   Remaining: `scripts/run_vbench.py` on those 50 clips for the ±0.02 quality
+   gate (clips are on trinity and in `/workspace/pub/m1_out_50.tgz`). Run any
+   long pod job with `THEAMA_SELF_TERMINATE=1`. Same save / verify /
+   delete-pod / keep-volume procedure as `CLAUDE.md`.
 3. **P1a GPU run**: download VideoReward (`KlingTeam/VideoReward`, Apache-2.0),
    then the pipeline printed at the end of `scripts/runpod_bootstrap.sh`
    (candidates → `score_eval_set.py --smoke` → scores → pairs →
