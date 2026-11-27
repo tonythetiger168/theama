@@ -44,7 +44,7 @@
 
 ## Watchlist（上游釋出追蹤）
 
-最近核查：**2026-11-27**（第二十六輪）。
+最近核查：**2026-11-27**（第二十七輪）。
 
 - **Wan-Animate-2-14B**（Apache-2.0）— M6a 底座候選，已寫入
   `configs/theama_base.yaml`。repo id 已核對：`Wan-AI/Wan2.2-Animate-2-14B`
@@ -198,6 +198,12 @@
   README.md）。Wan-Animate-2 repo id 覆核無變化
   （`Wan-Video/Wan-Animate-2`，393★／Apache-2.0；
   API 直核 pushed_at 仍 2026-08-08）。骨幹續用 Wan 2.2。
+  2026-11-27 第二十七輪（每數輪抽查節奏第十抽）：Wan 3.x 仍
+  API-only 無權重（api.github.com 直核 Wan-Video org 六 repos
+  名單逐字同前無 3.x；`AlibabaCloud-Official/Wan3.0` contents
+  仍僅 LICENSE＋README.md）。Wan-Animate-2 repo id 覆核無變化
+  （`Wan-Video/Wan-Animate-2`，393★／Apache-2.0；
+  API 直核 pushed_at 仍 2026-08-08）。骨幹續用 Wan 2.2。
 - **Qwen-Image 新版** — **Qwen-Image-2.1（7B，2026-09-20）統一 T2I+編輯+原生 RGBA，
   但為 Qwen Research License（非商用）→ 紅線確認，不碰**；2.1-Turbo（2026-10-09，8-step）
   同授權。Qwen-Image-3.0 為 hosted-only。Apache-2.0 線最新仍是
@@ -307,6 +313,12 @@
   仍 2026-10-14。2.1／2.1-Turbo 研究授權紅線不變、2512
   仍唯一 Apache-2.0 商用線。M7a 選型不變。
   2026-11-27 第二十六輪：覆核無變化——QwenLM org 最新
+  pushed repos 仍全為 code／工具線（qwen-code 11-27、
+  qwen-code-action 11-26、FlashQLA 11-25、Qwen-Live-Harness
+  11-23）無 image 線新貨；Qwen-Image-2.1 repo pushed_at
+  仍 2026-10-14。2.1／2.1-Turbo 研究授權紅線不變、2512
+  仍唯一 Apache-2.0 商用線。M7a 選型不變。
+  2026-11-27 第二十七輪：覆核無變化——QwenLM org 最新
   pushed repos 仍全為 code／工具線（qwen-code 11-27、
   qwen-code-action 11-26、FlashQLA 11-25、Qwen-Live-Harness
   11-23）無 image 線新貨；Qwen-Image-2.1 repo pushed_at
@@ -611,6 +623,15 @@
   （M2／P1b A/V 偏好線）；**注意：repo 同附
   LTX-RL-VA-Judger LoRA 變體（LTX 系）——紅線不碰，
   僅用 Qwen3-Omni 主線**。
+  2026-11-27 第二十七輪：awesome-rm pushed_at 仍
+  2026-10-06T08:30:55Z（7★）、RewardVerse 仍 2026-11-04
+  （6★）無後續；GenVidCritic repo 自 11-27 08:35Z 四推後
+  無新推（commits since 查核為零）。**GenVidCritic-4B HF
+  覆核（hf-mirror.com）**：lastModified 2026-11-27T08:48Z，
+  cardData 仍未補自有 license tag（tags 無 license 項、
+  未 gated）——「建議作者補 tag」保守結論不變，採用前
+  維持觀察；VA-Judger apache-2.0 結案態覆核穩定
+  （lastModified 仍 2026-08-20）。VideoReward 首選不變。
 - **AV leaderboard（Artificial Analysis Video Arena with-audio）現況**
   （2026-11-27 即時核查更新；M5 品質目標的對標板）——**T2V w/audio**
   （11-13 快照）：Wan 3.0 第一（Elo 1175）、Utopai X（H3 post-train）
@@ -700,7 +721,7 @@
   開放權重現況差距更新：T2V 11 Elo（1164→1175，前 14）、I2V 28
   （1135→1163，前 25）、editing 41（1156→1197，前 40）。Gemini Omni
   Flash 1.2 三榜分居 editing #2／T2V #6／I2V #18（1086），hosted
-  不可蒸餾，列觀察。註：I2V 榜首 MAGI-2 與 Seedance 2.5 僅差 5 Elo
+  不可蒸不可蒸餾，列觀察。註：I2V 榜首 MAGI-2 與 Seedance 2.5 僅差 5 Elo
   且 ±14 信賴區間重疊（MAGI-2 5,943 票屬初步），次輪覆核榜首穩定性。
   2026-11-27 次輪覆核（第二十四輪順帶項）：I2V 榜首持穩——
   MAGI-2 1163±14／5,943 票逐字同前（當日上午即時頁覆核＋
@@ -743,6 +764,14 @@
   RTX 4090 驗證。與既有路線的關係：不改 P1a（LoRA-DPO 品味對齊）與
   M2 配方；few-step 蒸餾疊加在 DPO LoRA 之後，兩 adapter 型態與
   LongCat-Video-Avatar 1.6「凍結底座＋獨立 LoRA 分支組合」同構。
+  2026-11-27 第二十七輪順帶覆核：MAGI-2 flagship 開源動向
+  無變化——magi2.cc 直核仍「Not yet; Sand.ai plans to」
+  （480B 權重與技術報告未發布、無日期；MAGI-2 Preview
+  114B Apache-2.0 仍為唯一開權重線）。**AA 即時頁本側
+  連續三輪拉取失敗**（T2V／I2V 兩頁 web_open_url 皆
+  internal error），I2V 榜首新數據點再延下輪（維持 11-27
+  讀數 MAGI-2 1163±14／5,943 待驗）。紅線與蒸餾盤點
+  結論不變。
 
 ## 發布策略
 
