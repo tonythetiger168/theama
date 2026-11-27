@@ -311,7 +311,7 @@
   Qwen-Live-Harness 11-23）無 image 線。2.1／2.1-Turbo 研究授權
   紅線不變、2512 仍唯一 Apache-2.0 商用線。M7a 選型不變。
   2026-11-27 第二十五輪：覆核無變化——releasebot
-  2026-11-18 頁 Qwen feed 仍無 image 線新貨（頁首仍
+  2026-11-18 頁 Qwen feed 仍無 image 線新線新貨（頁首仍
   「Qwen-Image-3.0」2026-06-21 舊發布 hosted-only）；QwenLM org
   最新 pushed repos 仍全為 code／工具線（qwen-code 11-27、
   FlashQLA 11-27、Qwen-MM-Plugins 11-27、Qwen-Live-Delivery-
@@ -341,7 +341,7 @@
   judge）等；授權與權重可得性未逐一核實，VideoReward 仍為首選，暫不加第二把尺。
   2026-11-25 補查同清單，新增觀察 **joint audio-video reward** 線：**VA-Judger**
   （VAPref-10K 影音偏好對訓練的 A/V 聯合 judge，直接獎勵跨模態一致性而非手工拼接
-  分分維指標）與 **AVBench**（人本影音評測器，二元判決信心可轉連續分，可作 RLHF
+  分維指標）與 **AVBench**（人本影音評測器，二元判決信心可轉連續分，可作 RLHF
   reward 與資料過濾）——與 M2 原生音訊路線後續的 A/V 偏好後訓練直接相關；
   授權／權重可得性同樣未核實，列為 P1a 之後的觀察候選，現階段不改動 P1a 配方。
   同輪覆核再補三筆 A/V reward 觀察（同清單 2026-10-06 版）：**AV-GRPO**（2026，
@@ -360,7 +360,7 @@
   LoRA 後訓練驗證其 reward 可提升生成品質，惟 policy 實驗用 LTX-2（紅線模型）——
   僅取 reward 方法論參考，不碰其權重與輸出。同清單再補 **Omni-Judge**（2026，
   以 omni-modal LLM 做 text-conditioned A/V 生成的 CoT judge，覆蓋感知品質與
-  跨模態對齊維度），同列觀察，授權／權重未核實。另記上游營運訊號：
+  跨模態對齊維度），同列維度），同列觀察，授權／權重未核實。另記上游營運訊號：
   Wan2.2-Animate 官方 HF Space 已 401 下線（2026-11-16 確認；ModelScope Studio
   與社群 ZeroGPU Space 仍在）——M6a 走自架權重路線，不受影響。
   Wan-Animate-2 repo id／Wan 3.x API-only／Qwen-Image 紅線三項本輪覆核無變化。
@@ -417,7 +417,7 @@
   靜態塌陷（3.3 vs SFT 4.10），結論是 MLLM 高層判決必須配低層感知／
   光流約束。對 M6a 唇形＋表情 reward 組合與防 hacking 設計是直接參考；
   授權／權重未核實，觀察。Omni-RL Judge 本輪再查仍僅 ResearchGate
-  條目（2026-11-15），arXiv id 未補上，維持觀察。Wan-Animate-2 repo
+  條目（2026-11-15），arXiv id 未未補上，維持觀察。Wan-Animate-2 repo
   id／Wan 3.x API-only／阿里下一代模型未發布／Qwen-Image 紅線，本輪
   覆核無變化。repo 健康：CI.yml 仍未上傳、issues 0；沙箱執行環境與
   專案記憶 mount 本輪仍不可用，維持 docs-only。
@@ -752,7 +752,7 @@
   480B 權重（Higgsfield 2026-11-25 公告「open weights coming
   soon」、magi2.cc 11-26 核查仍「未發布、無日期」）——現仍
   hosted API-only 不可蒸餾，紅線與蒸餾盤點結論不變；若日後權重
-  真釋出且授權 permissive，蒸餾盤餾盤點須重開，隨 watchlist 覆核。
+  真釋出且授權 permissive，蒸餾盤點須重開，隨 watchlist 覆核。
   2026-11-27 第二十五輪順帶覆核：MAGI-2 flagship 開源動向
   無變化——magi2.cc 2026-11-27 直核（HTTP 200）仍「Not yet;
   Sand.ai plans to」（480B 權重與技術報告未發布、無日期），
