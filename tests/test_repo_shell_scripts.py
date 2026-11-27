@@ -30,6 +30,7 @@ EXPECTED = {
     "runpod_bootstrap.sh",
     "runpod_m1_eval.sh",
     "runpod_m2_smoke.sh",
+    "runpod_issue4_vbench.sh",
 }
 
 SCRIPT_REF = re.compile(r"scripts/[A-Za-z0-9_][A-Za-z0-9_.-]*\.(?:py|sh)")
