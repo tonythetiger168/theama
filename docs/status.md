@@ -1,6 +1,6 @@
 # Theama — Current status and next steps (handoff)
 
-Last updated: 2026-11-26. This file is the single entry point for any agent
+Last updated: 2026-11-27. This file is the single entry point for any agent
 (Claude, Kimi or others) continuing the work. Read it together with
 `CLAUDE.md` (RunPod M2 runbook and license boundaries),
 `docs/model-roadmap.md` and `docs/training-plan.md`.
@@ -18,11 +18,16 @@ Last updated: 2026-11-26. This file is the single entry point for any agent
 | M7a CJK T2I eval | seed v1.2 (100 prompts) at acceptance-gate size; scorer script-split (zh-Hans gate / zh-Hant parallel stats); Ming-Image-0.1-Design third path plumbed as diagnostic-only; one-click generator `gen_cjk_images.py` resume-gate + per-prompt keep-mining CPU tests (a bad prompt no longer aborts a 100-prompt run); `score_cjk_text.py` main()-level CLI contract CPU tests (tesseract preflights / resume compaction / manifest provenance backfill, zero tesseract invocation); v1.3 paired-script seed `eval/cjk_t2i_v1_3.jsonl` (200 rows — the v1.2 hant block byte-preserved plus same-semantics hans pairs with symmetric `pair_of`, so one `score_cjk_text` run yields both script tracks) + structural CPU tests | **not run** (Qwen-Image-2512 / Z-Image Turbo repro) |
 | M3+ | stage-skeleton contract CPU tests landed (`extend_30s` num_segments ceil arithmetic / `upscale_4k` DEFAULT_STAGES order + exact params / `KeyframeSpec` defaults, three entry points pinned to NotImplementedError); implementation planned | — |
 
-As of 2026-11-27 the CPU suite stands at **651 passed**; the repo is now
+As of 2026-11-27 the CPU suite stands at **662 passed**; the repo is now
 **public** (`github.com/tonythetiger168/theama`). The M5 north-star (per
 Tony 2026-11-25): top the Artificial Analysis Video Arena with-audio boards —
-T2V/editing above Wan 3.0, I2V above Seedance 2.5 (see
+T2V/editing above Wan 3.0, I2V above MAGI-2 (Seedance 2.5 now #2; see
 `docs/model-roadmap.md`).
+Repo-health gates since: shell entry-script contract tests (`scripts/*.sh`
+syntax / header contract / wiring coverage) and docs-structure tests
+(`docs/*.md` existence / no conflict markers / per-table pipe-count
+consistency / balanced code fences / session-state header schema /
+SAVE-protocol headings).
 
 ## RunPod run 2026-11-26 (A40): M1 rerun + issue #4 internal smoke
 
