@@ -44,7 +44,7 @@
 
 ## Watchlist（上游釋出追蹤）
 
-最近核查：**2026-11-27**（第二十五輪）。
+最近核查：**2026-11-27**（第二十六輪）。
 
 - **Wan-Animate-2-14B**（Apache-2.0）— M6a 底座候選，已寫入
   `configs/theama_base.yaml`。repo id 已核對：`Wan-AI/Wan2.2-Animate-2-14B`
@@ -190,6 +190,14 @@
   README.md）。Wan-Animate-2 repo id 覆核無變化
   （`Wan-Video/Wan-Animate-2`，393★／Apache-2.0；
   API 直核 pushed_at 仍 2026-08-08）。骨幹續用 Wan 2.2。
+  2026-11-27 第二十六輪（每數輪抽查節奏第九抽）：Wan 3.x 仍
+  API-only 無權重（api.github.com 直核 Wan-Video org 六 repos
+  名單逐字同前——Wan2.1／diffusers／Wan2.2／Wan-skills／
+  Wan-Dancer／Wan-Animate-2，無 3.x；
+  `AlibabaCloud-Official/Wan3.0` contents 仍僅 LICENSE＋
+  README.md）。Wan-Animate-2 repo id 覆核無變化
+  （`Wan-Video/Wan-Animate-2`，393★／Apache-2.0；
+  API 直核 pushed_at 仍 2026-08-08）。骨幹續用 Wan 2.2。
 - **Qwen-Image 新版** — **Qwen-Image-2.1（7B，2026-09-20）統一 T2I+編輯+原生 RGBA，
   但為 Qwen Research License（非商用）→ 紅線確認，不碰**；2.1-Turbo（2026-10-09，8-step）
   同授權。Qwen-Image-3.0 為 hosted-only。Apache-2.0 線最新仍是
@@ -207,7 +215,7 @@
   專攻 UI／資訊圖／海報等**文字密集型設計**的 T2I：原生 RGBA、12 steps
   CFG 1.0、2048²，另有 Design-Layer 圖層拆解姊妹模型（同 MIT）。
   Artificial Analysis：UI/UX Design 類開權重第一（Elo 1082，全類 17/81），
-  Layout 與 Text Rendering 均為開權重第一；總榜中段（約 45/160）。
+  Layout 與 Text Rendering 均為開均為開權重第一；總榜中段（約 45/160）。
   對本專案的意義：M7a 除 Qwen-Image-2512（品質）＋ Z-Image Turbo（快速）
   之外的第三條合法授權路徑候選，其強項（文字渲染）正是 cjk_t2i_v1 seed
   的量測目標。保留事項：官方驗證配置為單卡 80 GiB（文字編碼器約 34 GB，
@@ -298,6 +306,12 @@
   Plugin 11-26）無 image 線；Qwen-Image-2.1 repo pushed_at
   仍 2026-10-14。2.1／2.1-Turbo 研究授權紅線不變、2512
   仍唯一 Apache-2.0 商用線。M7a 選型不變。
+  2026-11-27 第二十六輪：覆核無變化——QwenLM org 最新
+  pushed repos 仍全為 code／工具線（qwen-code 11-27、
+  qwen-code-action 11-26、FlashQLA 11-25、Qwen-Live-Harness
+  11-23）無 image 線新貨；Qwen-Image-2.1 repo pushed_at
+  仍 2026-10-14。2.1／2.1-Turbo 研究授權紅線不變、2512
+  仍唯一 Apache-2.0 商用線。M7a 選型不變。
 - **開源 video reward 新模型** — awesome-rm-for-video-generation（2026-10 更新）新增
   AesRM（專家標註美學 RM，base + CoT 變體）、UnifiedReward-Flex、GT-SVJ（self-supervised
   judge）等；授權與權重可得性未逐一核實，VideoReward 仍為首選，暫不加第二把尺。
@@ -313,7 +327,7 @@
   Reward Weighting 融合 VideoReward／JavisScore／ImageBind／AVHScore——可作
   M2/M5 推理期增益與評測交叉驗證）、**Hallo-Live**（2026，fudan-generative-vision
   有開源 repo，HP-DMD reward 重加權蒸餾把串流 A/V avatar 拉向人本偏好——M6b
-  avatar-stream 線的 reward 參考）。三者授權／權重可得性均未核實，維持觀察，
+  avatar-stream 線的 reward 參考）。三者授）。三者授權／權重可得性均未核實，維持觀察，
   不改動 P1a／M2 配方。
   2026-11-25 第三輪覆核：補 **VA-Judger** hard id——arXiv 2608.18607（2026-08）；
   VAPref-10K 約 9K prompts／10.3K 精細偏好對，五維 rubric（prompt alignment／
@@ -322,7 +336,7 @@
   LoRA 後訓練驗證其 reward 可提升生成品質，惟 policy 實驗用 LTX-2（紅線模型）——
   僅取 reward 方法論參考，不碰其權重與輸出。同清單再補 **Omni-Judge**（2026，
   以 omni-modal LLM 做 text-conditioned A/V 生成的 CoT judge，覆蓋感知品質與
-  跨模態對齊維度），同列觀察，授權／權重未核實。另記上游營運訊號：
+  跨模態對齊維度），同列觀察，授列觀察，授權／權重未核實。另記上游營運訊號：
   Wan2.2-Animate 官方 HF Space 已 401 下線（2026-11-16 確認；ModelScope Studio
   與社群 ZeroGPU Space 仍在）——M6a 走自架權重路線，不受影響。
   Wan-Animate-2 repo id／Wan 3.x API-only／Qwen-Image 紅線三項本輪覆核無變化。
@@ -565,6 +579,38 @@
   暫不變。**VA-Judger checkpoint 授權第十一次核查仍失敗**
   （HF API 自沙箱持續 HTTP 000），維持「使用者代查 model
   card license tag」待辦。
+  2026-11-27 第二十六輪：awesome-rm pushed_at 仍
+  2026-10-06T08:30:55Z（7★）、RewardVerse 仍 2026-11-04
+  （6★）無後續；GenVidCritic repo 自 08:35Z 四推後無新推。
+  **本線雙 delta——hf-mirror.com 通道首通**（沙箱對
+  huggingface.co 直連持續 HTTP 000，鏡像 API 直核成功）：
+  ① **GenVidCritic-4B HF model card 深讀完成**（第二十五輪
+  明列候選補上）——checkpoint 為 PEFT LoRA adapter＋
+  reward_head 雙 safetensors（非全量權重），base 釘
+  Qwen/Qwen3.5-4B revision 851bf6e8（Apache-2.0），
+  public 未 gated 可下載；**cardData 未標自有 license tag**
+  （僅附 BASE_MODEL_LICENSE Apache-2.0 全文，GitHub repo
+  掛 Apache-2.0）——保守處理：授權鏈實質完整但建議作者
+  補 tag。訓練 2,474 支影片三 epoch；推理需 CUDA BF16＋
+  FFmpeg、2 FPS ≤64 幀、純視覺無音訊。**與 VideoReward
+  同場對比**（官方 leaderboard CSV，14 模型 × 8 benchmark）：
+  VGIF SRCC 三維全勝（Cin 0.620 vs 0.167／IF 0.573 vs
+  0.405／Motion 0.463 vs 0.029）＋VS-Bench-v2／VideoPhy2
+  多項勝；VideoReward 於 MJ-Video Pref（74.67 vs 61.84）
+  與 VGen-RB Pref（75.47 vs 53.72）等 preference 指標反勝——
+  **兩者互補：GenVidCritic-4B 強逐維相關性、VideoReward
+  強 pair preference 精度；P1a 首選 VideoReward 不變，
+  GenVidCritic-4B 升列正式候選（DPO pair 生成／資料過濾
+  可互補），授權鏈 Apache-2.0＋Qwen3.5 底座非紅線系**。
+  ② **VA-Judger checkpoint 授權核查結案（第十四次核查首通）**——
+  HF `ShareLab-SII/VA-Judger` cardData license＝
+  **apache-2.0**（tag license:apache-2.0，public 未 gated，
+  lastModified 2026-08-20），底座 Qwen3-Omni-30B-A3B-Instruct
+  （Apache-2.0）——「使用者代查 model card license tag」待辦
+  解除，VA-Judger 升格為授權已核實的 joint AV reward 候選
+  （M2／P1b A/V 偏好線）；**注意：repo 同附
+  LTX-RL-VA-Judger LoRA 變體（LTX 系）——紅線不碰，
+  僅用 Qwen3-Omni 主線**。
 - **AV leaderboard（Artificial Analysis Video Arena with-audio）現況**
   （2026-11-27 即時核查更新；M5 品質目標的對標板）——**T2V w/audio**
   （11-13 快照）：Wan 3.0 第一（Elo 1175）、Utopai X（H3 post-train）
@@ -672,6 +718,15 @@
   **AA 即時頁本側連續兩輪拉取失敗**（web_open_url internal
   error＋curl HTTP 000），I2V 榜首新數據點下輪補。紅線與
   蒸餾盤點結論不變。
+  2026-11-27 第二十六輪順帶覆核：MAGI-2 flagship 開源動向
+  無變化——magi2.cc 2026-11-27 直核（HTTP 200）仍「Not
+  yet; Sand.ai plans to」（480B 權重與技術報告未發布、無
+  日期）。**AA 數據點補上**（即時頁本側仍拉取失敗，改以
+  搜尋快照＋vandatateam 11-15 驗證源間接覆核）：I2V 榜首
+  MAGI-2 1163±14／5,943 票逐字同前守第一，Seedance 2.5
+  1158±14／7,384 第二，Utopai X 1148±13 第三，票數未增
+  無 delta；T2V Wan 3.0 1175±12／9,201 守第一同前。紅線
+  與蒸餾盤點結論不變。
   2026-11-27 第四筆補記（**HyperFlow 評估拍板**，依使用者指示評估
   `Video-Rebirth/hyperflow` 可否商用後批准入冊）：**HyperFlow（Video-
   Rebirth）為 MiniMax-H3 的 8-step LoRA**（rank 256／alpha 256，2.8GB），
