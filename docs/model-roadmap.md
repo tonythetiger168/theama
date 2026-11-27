@@ -279,7 +279,7 @@
   無權重無 model card）；2.1／2.1-Turbo 研究授權紅線不變、
   2512 仍唯一 Apache-2.0 商用線。M7a 選型不變。
   2026-11-27 第二十二輪：四項覆核無變化——releasebot
-  2026-11-18 頁 Qwen feed 仍無 image 線新線新貨（頁首
+  2026-11-18 頁 Qwen feed 仍無 image 線新貨（頁首
   Qwen3.8-Max 屬文本旗艦線；「Qwen-Image-3.0」條目仍
   2026-06-21 舊發布 hosted-only、無權重無 model card）；
   QwenLM org 最新 pushed repos 全為 code／工具線
@@ -479,7 +479,7 @@
   **RewardDance**（reward scaling 研究：judge 換更大生成式 VLM
   的規模律與抗 hacking 魯棒性）。四者授權／權重可得性均未核實，
   VideoReward 首選不變，維持觀察、不改 P1a 配方。
-  2026-11-26 第十六第十六輪：兩筆升級觀察。① **VA-Judger**
+  2026-11-26 第十六輪：兩筆升級觀察。① **VA-Judger**
   從「授權未核實」升級為「成品已上架」——GitHub
   `ShareLab-SII/VA-Judger`（Fudan ShareLab，2026-08-20 發布
   basic code＋checkpoints＋VA-Judger-Bench；HF
