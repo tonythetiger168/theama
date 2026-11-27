@@ -69,7 +69,7 @@
   若最終開權重且授權相容，列為骨幹再評估觸發點；續盯 Model Studio 新模型
   列表、Wan-AI HF、Wan-Video GitHub。
   2026-11-25 第五輪覆核：11 月窗口進入最後一週，中英文檢索仍無發布
-  公告或權重，維持「未發布、續盯」；Wan 3.x API-only 多方來源
+  公告或公告或權重，維持「未發布、續盯」；Wan 3.x API-only 多方來源
   （2026-11 上旬至中旬的獨立核查）一致，無變化。
   2026-11-25 第六輪覆核：11 月窗口剩最後五天，中英文檢索仍僅見
   2026-09-22 雲棲預告原文的轉載，無發布公告或權重；Wan 3.x API-only
@@ -263,8 +263,8 @@
   QwenLM org 最新 pushed repos 全為 code／工具線
   （qwen-code 11-27、FlashQLA 11-25 等）無 image 線；
   Qwen4-Max preview（11-11）屬文本線且 preview 已於
-  11-25 退役。2.1／2.1-Turbo 研究授權紅線不變、2512 仍唯一
-  Apache-2.0 商用線。M7a 選型不變。
+  11-25 退役。2.1／2.1-Turbo 研究授權紅線不變、2512
+  仍唯一 Apache-2.0 商用線。M7a 選型不變。
   2026-11-27 第二十三輪：四項覆核無變化——releasebot
   2026-11-18 頁 Qwen feed 仍無 image 線新貨（「Qwen-Image-3.0」
   條目仍 2026-06 舊發布 hosted-only、無權重無 model card）；
@@ -466,7 +466,7 @@
   新增一筆觀察 **World-R1**（Microsoft Research＋浙江大學，
   arXiv 2604.24764，marktechpost 2026-05-01——Flow-GRPO＋
   3D-aware rewards：以預訓練 3D 基礎模型衍生獎勵＋VLM critic
-  post-train Wan 2.1，不動架構、推論成本不變，釋出 World-R1-Small
+  post-train Wan 2.1，不動架構、推論成本不論成本不變，釋出 World-R1-Small
   （Wan2.1-T2V-1.3B）／World-R1-Large（Wan2.1-T2V-14B）雙變體；
   與 Wan-R1 互補——一個治 reasoning、一個治 3D geometric
   consistency，對 Film 線長鏡頭一致性是方法參考；授權／程式碼
@@ -482,9 +482,9 @@
   2026-11-26 第二十輪：awesome-rm-for-video-generation
   pushed_at 仍 2026-10-06T08:30:55Z（api.github.com 直核）
   無更新；開源 video reward 新模型搜尋無訊號（11 月無新
-  video RM 發布）。**VA-Judger checkpoint 授權第六次核查
-  仍失敗**（HF API 自沙箱持續 HTTP 000），維持「使用者
-  代查 model card license tag」待辦。VideoReward 首選
+  video RM 發布）。**VA-Judger checkpoint 授權第六次核查仍
+  失敗**（HF API 自沙箱持續 HTTP 000），維持「使用者代查
+  model card license tag」待辦。VideoReward 首選
   不變，P1a 配方不變。
   2026-11-27 第二十一輪：awesome-rm-for-video-generation
   pushed_at 仍 2026-10-06T08:30:55Z（api.github.com 直核，
@@ -572,7 +572,7 @@
   Image／Video 雖開權重，但 Tencent Community License 將蒸餾與合成
   資料訓練納入 Model Derivatives 限制，不算乾淨，維持不碰。結論：
   蒸餾 top10 之路不可行，強化既有路線——Wan 2.2 底座＋自我蒸餾
-  （Theama Film 自產 4K/30s 帶音訊樣本回流）＋CJK 簡中優先＋開放
+  （Theama Film 自產 4K/30s 帶音訊帶音訊樣本回流）＋CJK 簡中優先＋開放
   授權差異化。
   2026-11-26 第二筆補記（交付格式拍板）：**HDR＋AV1 提前至 M4 交付**
   並列為獨立賣點——真 HDR（HDR10/HLG）與 AV1＋HLS 封裝仍無人交付
@@ -614,7 +614,7 @@
   開放權重現況差距更新：T2V 11 Elo（1164→1175，前 14）、I2V 28
   （1135→1163，前 25）、editing 41（1156→1197，前 40）。Gemini Omni
   Flash 1.2 三榜分居 editing #2／T2V #6／I2V #18（1086），hosted
-  不可蒸餾，列觀察。註：I2V 榜首 MAGI-2 與 Seedance 2.5 僅差 5 Elo
+  不可蒸不可蒸餾，列觀察。註：I2V 榜首 MAGI-2 與 Seedance 2.5 僅差 5 Elo
   且 ±14 信賴區間重疊（MAGI-2 5,943 票屬初步），次輪覆核榜首穩定性。
   2026-11-27 次輪覆核（第二十四輪順帶項）：I2V 榜首持穩——
   MAGI-2 1163±14／5,943 票逐字同前（當日上午即時頁覆核＋
@@ -625,6 +625,22 @@
   soon」、magi2.cc 11-26 核查仍「未發布、無日期」）——現仍
   hosted API-only 不可蒸餾，紅線與蒸餾盤點結論不變；若日後權重
   真釋出且授權 permissive，蒸餾盤點須重開，隨 watchlist 覆核。
+  2026-11-27 第四筆補記（**HyperFlow 評估拍板**，依使用者指示評估
+  `Video-Rebirth/hyperflow` 可否商用後批准入冊）：**HyperFlow（Video-
+  Rebirth）為 MiniMax-H3 的 8-step LoRA**（rank 256／alpha 256，2.8GB），
+  data-free flow self-distillation 把 49→8 NFE（≈3× 加速），two-time
+  conditioning (t, r) 來自 AnyFlow 論文（Gu et al., 2026）；程式碼
+  Apache-2.0、權重屬 H3 Community License 的 Model Derivative（地區排除
+  美/歐/英/韓、禁以其 Works/Outputs 改進其他模型）。**拍板：權重與其
+  生成輸出一律禁用（入 license-risks.md 紅線清單）；程式碼可讀可移植
+  （保留其 LICENSE／THIRD_PARTY_NOTICES）；方法論可合法重現——把同一套
+  hyperflow-style 8-step self-distillation LoRA 訓在 Wan 2.2（Apache-2.0）
+  上，teacher＝Wan 2.2、data-free 不依賴任何紅線模型輸出，全鏈乾淨，
+  立為 P1a 之後的 few-step 加速候選**。工程保留：HyperFlow 僅於 H200
+  （141GB）驗證，80GB／消費卡未測——自訓版以 TI2V-5B 起步可先於
+  RTX 4090 驗證。與既有路線的關係：不改 P1a（LoRA-DPO 品味對齊）與
+  M2 配方；few-step 蒸餾疊加在 DPO LoRA 之後，兩 adapter 型態與
+  LongCat-Video-Avatar 1.6「凍結底座＋獨立 LoRA 分支組合」同構。
 
 ## 發布策略
 

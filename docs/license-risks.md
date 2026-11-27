@@ -17,6 +17,24 @@ H3 Community License（2026-08-02 生效）的關鍵條款：
 結論：H3 只作為**架構概念參考**（單流 omni DiT、omni-reference、三模組管線），
 權重、程式碼、輸出三者全不碰。
 
+## 為什麼不用 HyperFlow（Video-Rebirth）權重
+
+HyperFlow（`videorebirth/hyperflow`，AA I2V/editing with-audio 榜前十常客）是
+MiniMax-H3 的 8-step LoRA（rank 256 / alpha 256，2.8GB），以 data-free flow
+self-distillation 把 49→8 NFE（≈3× 加速）。評估結論（2026-11-27）：
+
+1. **權重屬 H3 Model Derivative**——授權隨 H3 Community License 走：地區排除
+   （美/歐/英/韓）、禁止以其 Works/Outputs 改進其他模型、AUP。HyperFlow 的
+   **權重與其生成輸出同屬 H3 衍生，一律不得進入進入專案**（與 H3 本體同條紅線）。
+2. **程式碼是 Apache-2.0**——可讀、可借鑑、可移植；引用或改寫其程式碼時
+   保留其 LICENSE/NOTICE（THIRD_PARTY_NOTICES 登記）。
+3. **方法論可合法重現**：two-time conditioning (t, r) 來自 AnyFlow 論文
+   （Gu et al., 2026），data-free self-distillation 不依賴 H3 輸出——把同一套
+   8-step self-distillation LoRA 訓在 **Wan 2.2（Apache-2.0）** 上，全鏈乾淨。
+   列為 P1a 之後的 few-step 加速候選（見 model-roadmap.md Watchlist）。
+4. **工程保留**：HyperFlow 僅於 H200（141GB）驗證，80GB 未測——即使不考慮
+   授權，消費卡可複現性也未建立。
+
 ## 為什麼不用 LTX-2.5 當骨幹
 
 LTX-2.x Community License：年營收 ≥ $10M 的組織需付費協議；fine-tune 轉移
