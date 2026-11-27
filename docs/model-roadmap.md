@@ -503,7 +503,7 @@
   HTTP 000），維持「使用者代查 model card license tag」
   待辦。VideoReward 首選不變，P1a 配方不變。
 - **AV leaderboard（Artificial Analysis Video Arena with-audio）現況**
-  （2026-11-25 第十一輪補；M5 品質目標的對標板）——**T2V w/audio**
+  （2026-11-27 即時核查更新；M5 品質目標的對標板）——**T2V w/audio**
   （11-13 快照）：Wan 3.0 第一（Elo 1175）、Utopai X（H3 post-train）
   第二（1170）、MiniMax H3（768p）第三（1161，**開放權重最高**，
   Kling 3.0 固定錨 1000）；**I2V w/audio**（11-02 快照）：Seedance 2.5
@@ -567,6 +567,32 @@
   （HDR10/HLG——Seedance 4K 僅 BT.709 SDR）② **AV1/HEVC＋HLS
   fMP4/CMAF 分發包** ③ **開放權重本地部署** ④ **8K（M4b）**。M5
   驗收 (4) 語意同步調整（見 training-plan.md）。
+  2026-11-27 補記（**AV 榜更新核查**，依使用者通報「AV model ranking is
+  updated」直查 artificialanalysis.ai 三榜即時頁）：**T2V w/audio**
+  （AA-Video-T2V v2.1）——Wan 3.0 維持第一（1175±12，9,201 票）、
+  Utopai X 第二（1173±12）、MiniMax H3 (768p) 第三（1164±12，仍為
+  開放權重最高）；**11 月新貨入榜：Gemini Omni Flash 1.2 第六
+  （1152±13）**（Google，editing 板更強，見下）、**MAGI-2 flagship
+  第七（1150±13）**（其 Preview 仍在 #22／1040）；Kling 3.0 錨
+  1000 不變。**I2V w/audio（AA-Video-I2V v2.1）——榜首易位：MAGI-2
+  以 1163±14（5,943 票）登頂，Seedance 2.5 退居第二（1158±14）**；
+  Utopai X 第三（1148±13）；新入榜 Boreal-H3 第四（1145±16，10 月）、
+  Kling 4.0 第六（1139±16，10 月）；MiniMax H3 (768p) 1135±13 仍為
+  開放權重最高但名次退至第七（Elo 較前快照 +7，純新 hosted 入榜擠壓）；
+  Wan 3.0 I2V 僅列 #15（1110）。**editing w/audio（AA-Video-Editing
+  v1.1）——Wan 3.0 維持第一（1197±10，9,919 票）；Gemini Omni Flash
+  1.2 新入即第二（1166±12）；Hyperflow H3 第三（1156±11，開放權重
+  最高）；Seedance 2.5 退第四（1152±10）；Wan 2.7 退第九（1074±8）。
+  **M5 終局超越對象隨之修正（接 2026-11-25 第十二輪拍板）**：I2V 板
+  由 Seedance 2.5（1153）改為 **MAGI-2（1163）**，Seedance 2.5 降為
+  第二參照（1158）；T2V（Wan 3.0 1175）與 editing（Wan 3.0 1197）
+  榜首不變。MAGI-2 為 480B flagship、hosted API-only（$4.80/min）、
+  權重未釋出——2026-11-26 蒸餾盤點結論不變（不可蒸餾），授權紅線不變。
+  開放權重現況差距更新：T2V 11 Elo（1164→1175，前 14）、I2V 28
+  （1135→1163，前 25）、editing 41（1156→1197，前 40）。Gemini Omni
+  Flash 1.2 三榜分居 editing #2／T2V #6／I2V #18（1086），hosted
+  不可蒸餾，列觀察。註：I2V 榜首 MAGI-2 與 Seedance 2.5 僅差 5 Elo
+  且 ±14 信賴區間重疊（MAGI-2 5,943 票屬初步），次輪覆核榜首穩定性。
 
 ## 發布策略
 
