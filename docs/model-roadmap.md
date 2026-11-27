@@ -333,7 +333,7 @@
   reward 與資料過濾）——與 M2 原生音訊路線後續的 A/V 偏好後訓練直接相關；
   授權／權重可得性同樣未核實，列為 P1a 之後的觀察候選，現階段不改動 P1a 配方。
   同輪覆核再補三筆 A/V reward 觀察（同清單 2026-10-06 版）：**AV-GRPO**（2026，
-  modality-anchored 解耦擴散 RL——rollout 錨定單模態、凍結另一塔，異構 reward
+  modality-anchored 解耦擴散 RL——rollout 錨定定單模態、凍結另一塔，異構 reward
   分模態歸因，形式直接對應 M2 雙流架構的 A/V 偏好後訓練）、**Joint A/V
   Inference-Time Scaling**（2026，多 verifier Best-of-N + 演化搜尋，Adaptive
   Reward Weighting 融合 VideoReward／JavisScore／ImageBind／AVHScore——可作
@@ -404,7 +404,7 @@
   reward-hacking ablation——單維優化各自出現特徵性崩壞、純感知項導致
   靜態塌陷（3.3 vs SFT 4.10），結論是 MLLM 高層判決必須配低層感知／
   光流約束。對 M6a 唇形＋表情 reward 組合與防 hacking 設計是直接參考；
-  授授權／權重未核實，觀察。Omni-RL Judge 本輪再查仍僅 ResearchGate
+  授權／權重未核實，觀察。Omni-RL Judge 本輪再查仍僅 ResearchGate
   條目（2026-11-15），arXiv id 未補上，維持觀察。Wan-Animate-2 repo
   id／Wan 3.x API-only／阿里下一代模型未發布／Qwen-Image 紅線，本輪
   覆核無變化。repo 健康：CI.yml 仍未上傳、issues 0；沙箱執行環境與
