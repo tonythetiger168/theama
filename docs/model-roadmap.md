@@ -362,7 +362,7 @@
   仍綁 LTX-2（紅線），本專案僅取 reward 方法論參考，維持觀察、不改
   P1a／M2 配方。Omni-RL Judge 仍僅 ResearchGate 條目。Wan-Animate-2
   repo id／Wan 3.x API-only／阿里下一代模型未發布／Qwen-Image 紅線，
-  本輪覆核無變化。repo 健康：CI.yml 仍未上傳（無 `.github/` 目録）、
+  本輪覆核無變化。repo 健康：CI.yml 仍未上傳（無 `.github/` 目錄）、
   issues 0；沙箱執行環境與專案記憶 mount 本輪仍不可用，維持 docs-only。
   2026-11-25 第九輪覆核：新增 **GenRM-Flow**（arXiv 2611.11421，
   2026-11-08，Siming Fu 等）——偏好微調後的影片生成器本身就是
@@ -378,7 +378,7 @@
   P1a／M2 配方。同輪補方法參考 **PAVRM**（arXiv 2511.21541v3，
   CVPR 2026 Findings）：video generation model 直接當 latent reward
   model（對部分去噪樣本於 latent 空間打分、免 decode，stratified
-  timestep 評估），與 P1a pair latent cache 形狀相容；授權未核實。
+  timestep 評估），與 P1a pair latent cache 形態相容；授權未核實。
   Wan-Animate-2 repo id／Wan 3.x API-only／阿里下一代模型 11 月窗口
   倒數仍無發布／Qwen-Image 紅線，本輪覆核無變化。
   2026-11-25 第十輪：**VA-Judger checkpoint 授權二次核查失敗**——
