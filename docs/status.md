@@ -94,8 +94,7 @@ deleted, network volume kept).
 
 Key values: DAC relative L2 **0.0942**, latent `[1,87,2048]`, peak 0.68 GiB.
 Wan TI2V-5B bf16: 32 bridge grad tensors / 28 updated, Wan frozen, loss 4.19,
-grad norm 0.52, peak **9.37 GiB** allocated / 9.56 GiB reserved.
-- Loss 81.5 (audio **79.0**, video 2.375), grad norm **94.0**.
+grad norm 0.52, peak **9.37 GiB** — identical memory to the 4090 run.
 
 Same scope limits as below: contract smoke only, no prompt-to-video, perceptual
 audio or A/V-sync gate.
