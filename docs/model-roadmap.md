@@ -404,7 +404,7 @@
   reward-hacking ablation——單維優化各自出現特徵性崩壞、純感知項導致
   靜態塌陷（3.3 vs SFT 4.10），結論是 MLLM 高層判決必須配低層感知／
   光流約束。對 M6a 唇形＋表情 reward 組合與防 hacking 設計是直接參考；
-  授權／權重未核實，觀察。Omni-RL Judge 本輪再查仍僅 ResearchGate
+  授授權／權重未核實，觀察。Omni-RL Judge 本輪再查仍僅 ResearchGate
   條目（2026-11-15），arXiv id 未補上，維持觀察。Wan-Animate-2 repo
   id／Wan 3.x API-only／阿里下一代模型未發布／Qwen-Image 紅線，本輪
   覆核無變化。repo 健康：CI.yml 仍未上傳、issues 0；沙箱執行環境與
@@ -721,7 +721,7 @@
   開放權重現況差距更新：T2V 11 Elo（1164→1175，前 14）、I2V 28
   （1135→1163，前 25）、editing 41（1156→1197，前 40）。Gemini Omni
   Flash 1.2 三榜分居 editing #2／T2V #6／I2V #18（1086），hosted
-  不可蒸不可蒸餾，列觀察。註：I2V 榜首 MAGI-2 與 Seedance 2.5 僅差 5 Elo
+  不可蒸餾，列觀察。註：I2V 榜首 MAGI-2 與 Seedance 2.5 僅差 5 Elo
   且 ±14 信賴區間重疊（MAGI-2 5,943 票屬初步），次輪覆核榜首穩定性。
   2026-11-27 次輪覆核（第二十四輪順帶項）：I2V 榜首持穩——
   MAGI-2 1163±14／5,943 票逐字同前（當日上午即時頁覆核＋
