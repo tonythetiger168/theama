@@ -17,10 +17,20 @@ summary 與驗收數據，不貼 log 全文。
 4. **掛上既有 network volume `theama-m2`**（/workspace 指向它）——
    權重、cache、smoke_out 都在上面，不重新下載。
 5. Deploy → 等 Running → SSH 或 web terminal 進去。
-6. 收尾鐵律：任務結束（成功或失敗皆同）→ 打包結果到 volume →
+6. **長任務（無人值守 >30 分鐘）一律帶 `THEAMA_SELF_TERMINATE=1`**
+   （2026-11-27 拍板）：腳本 EXIT trap 會先把結果打包到 volume 的
+   `$WORKSPACE/pub/m1_out.tgz`、再 `runpodctl remove pod $RUNPOD_POD_ID`
+   刪除自己——不再依賴本機控制器在線。教訓來源：2026-11-26 M1 50 支
+   run（生成 ~10.6h ≈ $6.27 在 $8 上限內），因 trinity 離線強制停止未執行，
+   pod 閒置 ~16h，總帳 $15.73。配套：開 pod 的 start command 不要在
+   container restart 時自動重跑任務（會覆寫 log／重跑 resume）。
+   注意：現行實作「歸檔失敗仍刪 pod」的 fail-unsafe 邊界已在 PR #6
+   review 標記（tar 成功才刪 pod），正式依賴前確認該修復落地。
+7. 收尾鐵律：任務結束（成功或失敗皆同）→ 打包結果到 volume →
    回報 → **Delete pod（不是 Stop）** → console 確認 pod 消失 →
-   **volume 保留不刪**。
-7. 費用紀律：開 pod 後立刻設手動提醒；閒置超過 30 分鐘未跑任務
+   **volume 保留不刪**（帶 `THEAMA_SELF_TERMINATE=1` 時 6 已自動完成
+   打包＋刪 pod，本步改為驗證 volume 上 tar 存在）。
+8. 費用紀律：開 pod 後立刻設手動提醒；閒置超過 30 分鐘未跑任務
    就先 delete，要用再開。
 
 不得把 RunPod API key、SSH 密碼或任何 credential 寫進 repo、issue、
