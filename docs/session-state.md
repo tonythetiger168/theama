@@ -242,8 +242,8 @@ Claude 執行（runbook §0 開 pod SOP 落地；issue #4 internal smoke 契約 
   重置洗掉 pytest＋theama 安裝，pip 復位後基線 605 確認動工；純 ASCII
   預檢閘攔下四個破折號改「--」後才推送。RESTORE 乾淨：開工 HEAD
   ea91d1c8＝記憶；issue #4 兩 comments 無新（Claude 紅旗重跑未回報——
-  bridge-warmup 仍阻塞）；PR open 空；tags 空（v0.2.0 未打）；
-  遠端無 .github（CI.yml 待使用者）；temp 無新 GPU 輸出；mtime 雙閘＋推送前
+  bridge-warmup 仍阻塞）；PR open 空；tags 空（v0.2.0 未打）；遠端無
+  .github（CI.yml 待使用者）；temp 無新 GPU 輸出；mtime 雙閘＋推送前
   第二閘皆乾淨。授權紅線未碰。watchlist 未到點未查（下次 pass-57±）。
 
 ## RESTORE 協議（每輪第 0 步，依序執行）
