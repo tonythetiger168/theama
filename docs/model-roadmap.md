@@ -333,7 +333,7 @@
   reward 與資料過濾）——與 M2 原生音訊路線後續的 A/V 偏好後訓練直接相關；
   授權／權重可得性同樣未核實，列為 P1a 之後的觀察候選，現階段不改動 P1a 配方。
   同輪覆核再補三筆 A/V reward 觀察（同清單 2026-10-06 版）：**AV-GRPO**（2026，
-  modality-anchored 解耦擴散 RL——rollout 錨定定單模態、凍結另一塔，異構 reward
+  modality-anchored 解耦擴散 RL——rollout 錨定單模態、凍結另一塔，異構 reward
   分模態歸因，形式直接對應 M2 雙流架構的 A/V 偏好後訓練）、**Joint A/V
   Inference-Time Scaling**（2026，多 verifier Best-of-N + 演化搜尋，Adaptive
   Reward Weighting 融合 VideoReward／JavisScore／ImageBind／AVHScore——可作
@@ -348,7 +348,7 @@
   LoRA 後訓練驗證其 reward 可提升生成品質，惟 policy 實驗用 LTX-2（紅線模型）——
   僅取 reward 方法論參考，不碰其權重與輸出。同清單再補 **Omni-Judge**（2026，
   以 omni-modal LLM 做 text-conditioned A/V 生成的 CoT judge，覆蓋感知品質與
-  跨模態對齊維度），同列觀察，授權／權重未核實。另記上游營運訊號：
+  跨模態對齊維度），同列），同列觀察，授權／權重未核實。另記上游營運訊號：
   Wan2.2-Animate 官方 HF Space 已 401 下線（2026-11-16 確認；ModelScope Studio
   與社群 ZeroGPU Space 仍在）——M6a 走自架權重路線，不受影響。
   Wan-Animate-2 repo id／Wan 3.x API-only／Qwen-Image 紅線三項本輪覆核無變化。
@@ -413,7 +413,7 @@
   `ShareLab-SII/VA-Judger` 自 2026-08-20 起已釋出 project page、論文、
   基礎程式碼、**checkpoints 與 VA-Judger-Bench**（SFT 訓練程式碼與
   VAPref-10K 資料集仍列 to-do 未釋出）；reward model 本體為
-  Qwen3-Omni-30B-A3B-Instruct 全參微調（visual encoder／aligner 凍結，
+  Qwen3-Omni-30B-A3B-Instruct 全參微微調（visual encoder／aligner 凍結，
   8×GPU BF16 + DeepSpeed ZeRO-3），推理經 vLLM。checkpoint 授權於
   repo 檢索結果中未標示——採用前須逐卡核驗 model card；其 policy 驗證
   仍綁 LTX-2（紅線），本專案僅取 reward 方法論參考，維持觀察、不改
@@ -486,7 +486,7 @@
   `ShareLab-SII/VA-Judger` 權重、`ShareLab-SII/VA-Judger-Bench`
   資料集）。論文 hard id 已錄（arXiv 2608.18607）；post-train
   人類偏好率 62.30% vs OmniNFT 27.63% vs 原 LTX-2 10.08%
-  （11/13 客觀指標最佳）——紅線僅禁 LTX-2 權重／輸出，judge
+  （11/13 客客觀指標最佳）——紅線僅禁 LTX-2 權重／輸出，judge
   本身授權本輪因 HF API 不可達（HTTP 000）待核，若相容列為
   M2 後訓練 A/V 偏好 reward 首選候選；底模 Qwen3-Omni-30B-A3B
   推測沿用 Qwen 系授權，以 model card 為準。② **IsoVRBench**
