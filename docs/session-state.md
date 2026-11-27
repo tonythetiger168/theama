@@ -2,10 +2,10 @@
 # Theama session checkpoint — hourly agent runs save/restore THIS file.
 # 設計原則：沙箱會重置、專案記憶 mount 可能失效，唯 GitHub repo 恆在。
 schema: 1
-updated_at: "2026-11-27T01:20:00Z"
-head: 62ed3c686c2e3f5559da6e8cda17b67375a63bea
+updated_at: "2026-11-27T03:25:00Z"
+head: a9eec28ed595f03eac65175c8008dafa0430ef05
 head_verified: true
-last_increment: "本輪＝③ P1b manifest 閘↔剖析器交叉一致性測試：tests/test_m2_manifest_gate_stats_consistency.py +9（純 ASCII，9898B）——check_av_manifest（閘）× manifest_stats（profiler）同一 manifest 雙跑釘定：總帳不變量 samples+errors+duplicates==rows+bad_json_lines==非空行數、兩文件化分歧（非 dict JSON 行：閘 schema／profiler bad_json_line；forbidden+schema 雙缺陷行：閘 schema-first、profiler 子串照計，forbidden_sources>=forbidden_rejected 且 schema-valid 時等號）、clean manifest 雙邊 source 分佈全等、角色差異（閘 exit 1／profiler exit 0）、雙 CLI 重跑 byte-identical、缺檔雙邊 exit 1；CPU 全套 642→651 passed；commit 62ed3c68，test blob 0e2db02c 首次即 byte-exact；同輪 SAVE prepend pass-59 雙 entry＋60、trim pass-50/51（事實存專案記憶存檔）、head→62ed3c68。（前輪：pass-59 對岸 status.md 8ce3bf5f＋watchlist 二十二輪 bfdb81dc）"
+last_increment: "本輪＝③ repo 健康小件 RunPod shell 入口腳本閘：tests/test_repo_shell_scripts.py +5（純 ASCII，2757B）——scripts/*.sh 五支付費 pod 入口的廉價不變量釘定：已知五支存在閘（glob 不靜默縮零）／bash -n 語法閘（缺 bash 則 skip）／表頭契約（env-bash shebang・SPDX・set -euo pipefail）／wiring 雙閘（腳本引用 scripts/*.py|sh token 含 usage 註解皆須存在、python -m theama.* 映射 src/ 實檔）；CPU 全套 651→656 passed；commit a9eec28e，test blob 12c0f165 首次即 byte-exact；同輪 SAVE prepend pass-61（cff0ffc8 對岸 status.md follow-through）＋62、trim pass-52/53（事實存專案記憶存檔）、head→a9eec28e。競態實例四十一：工作中偵測對岸 03:10Z 熱寫 roadmap（53467d8f→ce0670a3 44180B 未推），零交集不碰不代推，下輪消化。（前輪：pass-61 對岸 status.md cff0ffc8）"
 ci_yml: content_ready_pending_user_upload   # MCP token 推 .github/workflows 被 403（insufficient scopes）；內容已交付使用者
 issues: 1   # #4 RunPod M2 internal smoke（紅旗修復 b5321003…d455e3dc 已落地，Claude 重跑待回報——紅旗清除＝audio loss／grad norm 回個位數，過則解 bridge-warmup 阻塞）；PR #5 已於 pass-48 由使用者合併（06b122d4）
 gpu_outputs: m1_5clip_and_m2_internal_smoke_passed_reviewed   # 2026-11-26 A40：M1 5/5 probe-valid（mean 842s/clip、peak 33.7GB）＋issue #4 internal wan_blocks+LoRA PASS(contract) 但 audio loss 79/grad 94 紅旗（bridge input 需 norm/scale 重跑才准訓練）；pass-41 已判讀＋PR #5 評審留言；VBench/50-clip/P1a 仍待 Claude
@@ -14,10 +14,10 @@ division_of_labor:
   hourly_agent: "watchlist 核查、docs、CPU 側程式準備、repo 健康、session checkpoint"
   claude: "GPU 驗收執行（runbook 第 1–5 節＋status.md next steps）、CI.yml 上傳（人工作業）、結果回報/落盤、git tag v0.2.0（人工作業）；2026-11-25 使用者擴權：可做其他底模＋HDL on RunPod（紅線不變：H3/LTX/Qwen2.1/FLUX3-Klein/Krea2 不碰）"
 next_hour:
-  - "RESTORE：核對 HEAD 與本檔 head（pass-60＝③ P1b manifest 閘↔剖析器一致性測試 62ed3c68，blob 0e2db02c byte-exact）；issue #4 Claude 紅旗重跑結果（過則解 bridge-warmup 阻塞）／v0.2.0 tag／CI.yml，先消化再增量"
-  - "pass 16–58 增量皆已落地請勿重做：Ming gen 第三路徑（4e1d202f）／score provenance（a3067d9b）／runbook §4.1（a7cb7697）／PR #3 判讀＋同步（0a2a3cd7）／watchlist 第十～十五輪（4fad1f38、918001c0+3f3fa0ac、129d5d67 PAVRM Apache 升格、42ec2a64）／encode_texts retry budget（e1896295）／build_av_manifest（3f94b385）／pair+AV latent cache retry budget（1e64d0c1）／joint loader skipped 列明確報缺（cc85d330）／M7a eval seed 24→48（153be48c＋9d83f6c3）／M7a seed 48→100 v1.2（1596c716，漂移已由 ea97af39／6f478fd5 覆正）／manifest_stats 剖析器（1b896e72）／M7a 跨模型 summary 比較器（d4e8d0e3＋773f61e9）／pairs_stats 偏好對剖析器（19881f0a）／pair-latent 預檢閘＋train_dpo fail-fast（afde66af）／score_eval_set.collect() 測試（59163737）／scores 預檢閘＋make_pref_pairs fail-fast（3840eb88）／M7a scorer 簡繁分軌（5d1d26a5）／M4 HLS fMP4/CMAF 分發包 packager（79191bc3）／pairs.jsonl 預檢閘＋encode_pairs fail-fast（39295734＋9b41f3bb）／M2 CFG 文字條件 dropout（82d18e37）／M4 DASH manifest 兼出（12a5eabe）／status.md handoff 入口補齊 pass 19–33（d1038099）／joint-cache 預檢閘 check_joint_latents（c3756605）／watchlist 第十六輪（3ecce283）／runbook §5.1/§5.2 預檢閘接線＋status.md P1b 行（7a6446e0）／scores.jsonl 剖析器 scores_stats（0bf42cd7）／M1 VBench 閘純函數化＋14 tests（22ca23aa）／runbook §2 P1a 預檢閘鏈接線＋status.md 合體（41e99d60＋2e165956）／gen_eval_set probe_ok＋resume 閘測試（cc00b918）＋status.md M1 行 follow-through（254e83b4）／M2 norm_video_kv 紅旗修復六 commit（b5321003…d455e3dc，＋9 tests，CPU 431）／watchlist 第十七輪（d2001b4a）／P1b cache 剖析器 joint_latents_stats（4f90cde5）／P1a score_eval_set CLI 測試＋resume 強化（867071d1）＋status.md follow-through（c424b897）／train_dpo CLI 測試（bef21e22）／train_joint_av _real CLI 測試（2256980f）／M7a score_cjk_text CLI 測試（4d926f6c）＋status.md（99b0a4e1）／make_pref_pairs CLI 測試（c3b661ca）／check_av_manifest CLI 測試（a216a3d1）／gate↔profiler 一致性測試（efd1af65）／watchlist 第十八輪（pass-48 抽查無 delta）／第十九輪（115c513b）／status.md follow-through（210358e0）／checkpoint 覆推解僵局（55efe9fe）／M7a v1.3 簡繁對照 seed（27300882+658a67f+a7b99262）＋status.md v1.3 行（08ccf824）／watchlist 第二十輪（880f9da7，修推 cede601a／072e3d18 留史）／M6 avatar 骨架契約測試（5f4bb7a0）／M1 pipeline CLI 測試（30e0bd2d）／M3/M4/M7c 骨架契約測試（2b46e53f）／status.md follow-through（4f7e4993，修推 a1e9cbd1 留史）／M1 DiT wrapper 契約測試（293fbf3f）／status.md follow-through（8ce3bf5f，4aaa9bec 留史）／watchlist 第二十二輪（bfdb81dc）／P1b manifest 閘↔剖析器一致性測試（62ed3c68）；agent 入口改為 docs/status.md＋AGENTS.md"
+  - "RESTORE：核對 HEAD 與本檔 head（pass-62＝③ RunPod shell 入口腳本 repo-health 閘 a9eec28e，blob 12c0f165 byte-exact；對岸 roadmap 熱寫增量待推送後消化）；issue #4 Claude 紅旗重跑結果（過則解 bridge-warmup 阻塞）／v0.2.0 tag／CI.yml，先消化再增量"
+  - "pass 16–62 增量皆已落地請勿重做：Ming gen 第三路徑（4e1d202f）／score provenance（a3067d9b）／runbook §4.1（a7cb7697）／PR #3 判讀＋同步（0a2a3cd7）／watchlist 第十～十五輪（4fad1f38、918001c0+3f3fa0ac、129d5d67 PAVRM Apache 升格、42ec2a64）／encode_texts retry budget（e1896295）／build_av_manifest（3f94b385）／pair+AV latent cache retry budget（1e64d0c1）／joint loader skipped 列明確報缺（cc85d330）／M7a eval seed 24→48（153be48c＋9d83f6c3）／M7a seed 48→100 v1.2（1596c716，漂移已由 ea97af39／6f478fd5 覆正）／manifest_stats 剖析器（1b896e72）／M7a 跨模型 summary 比較器（d4e8d0e3＋773f61e9）／pairs_stats 偏好對剖析器（19881f0a）／pair-latent 預檢閘＋train_dpo fail-fast（afde66af）／score_eval_set.collect() 測試（59163737）／scores 預檢閘＋make_pref_pairs fail-fast（3840eb88）／M7a scorer 簡繁分軌（5d1d26a5）／M4 HLS fMP4/CMAF 分發包 packager（79191bc3）／pairs.jsonl 預檢閘＋encode_pairs fail-fast（39295734＋9b41f3bb）／M2 CFG 文字條件 dropout（82d18e37）／M4 DASH manifest 兼出（12a5eabe）／status.md handoff 入口補齊 pass 19–33（d1038099）／joint-cache 預檢閘 check_joint_latents（c3756605）／watchlist 第十六輪（3ecce283）／runbook §5.1/§5.2 預檢閘接線＋status.md P1b 行（7a6446e0）／scores.jsonl 剖析器 scores_stats（0bf42cd7）／M1 VBench 閘純函數化＋14 tests（22ca23aa）／runbook §2 P1a 預檢閘鏈接線＋status.md 合體（41e99d60＋2e165956）／gen_eval_set probe_ok＋resume 閘測試（cc00b918）＋status.md M1 行 follow-through（254e83b4）／M2 norm_video_kv 紅旗修復六 commit（b5321003…d455e3dc，＋9 tests，CPU 431）／watchlist 第十七輪（d2001b4a）／P1b cache 剖析器 joint_latents_stats（4f90cde5）／P1a score_eval_set CLI 測試＋resume 強化（867071d1）＋status.md follow-through（c424b897）／train_dpo CLI 測試（bef21e22）／train_joint_av _real CLI 測試（2256980f）／M7a score_cjk_text CLI 測試（4d926f6c）＋status.md（99b0a4e1）／make_pref_pairs CLI 測試（c3b661ca）／check_av_manifest CLI 測試（a216a3d1）／gate↔profiler 一致性測試（efd1af65）／watchlist 第十八輪（pass-48 抽查無 delta）／第十九輪（115c513b）／status.md follow-through（210358e0）／checkpoint 覆推解僵局（55efe9fe）／M7a v1.3 簡繁對照 seed（27300882+658a67f+a7b99262）＋status.md v1.3 行（08ccf824）／watchlist 第二十輪（880f9da7，修推 cede601a／072e3d18 留史）／M6 avatar 骨架契約測試（5f4bb7a0）／M1 pipeline CLI 測試（30e0bd2d）／M3/M4/M7c 骨架契約測試（2b46e53f）／status.md follow-through（4f7e4993，修推 a1e9cbd1 留史）／M1 DiT wrapper 契約測試（293fbf3f）／status.md follow-through（8ce3bf5f，4aaa9bec 留史）／watchlist 第二十二輪（bfdb81dc）／P1b manifest 閘↔剖析器一致性測試（62ed3c68）／status.md follow-through（cff0ffc8）／RunPod shell 腳本 repo-health 閘（a9eec28e）；agent 入口改為 docs/status.md＋AGENTS.md"
   - "使用者上傳 CI.yml 後：Actions 即為驗證引擎（CI image 需 ffmpeg + tesseract chi-tra＋chi-sim，否則 decode/M7a 測試 skip）"
-  - "③ 候選：其他未列名 docs・資料面小件（src 全模組契約釘定已閉合——dit.py 薄 wrapper pass-58 293fbf3f 落地；manifest 閘↔profiler 一致性 pass-60 62ed3c68 落地）；**encode_av_latents CLI 測試仍為對岸明列項勿碰**；scripts 主鏈 CLI 契約測試已全線閉合（gen／encode／score／pairs／train 皆齊），剩 smoke_decode 等 GPU 殼腳本屬 Claude 道；watchlist 下次抽查 pass-63±（第二十二輪 bfdb81dc 已落地勿重做；阿里 11 月窗口已關閉，每數輪抽查；GenVidCritic／RewardVerse 已入冊弱訊號，隨 reward 線覆核 pushed_at）"
+  - "③ 候選：其他未列名 docs・資料面小件（src 全模組契約釘定已閉合；manifest 雙層閘↔profiler 一致性已閉合；shell 入口腳本 repo-health 閘 pass-62 a9eec28e 已落地勿重做）；**encode_av_latents CLI 測試互讓僵局待使用者裁示，勿碰**；watchlist 下次抽查 pass-63±（第二十二輪 bfdb81dc 已落地勿重做；GenVidCritic／RewardVerse 已入冊弱訊號，隨 reward 線覆核 pushed_at）；**對岸 roadmap 熱寫增量（03:10Z ce0670a3 未推）落地後消化：驗 blob＋獨立重跑，勿重做**"
   - "GPU 下一棒（Claude，依 status.md＋runbook §0）：**issue #4 紅旗修復重跑（HEAD≥d455e3dc，同一 smoke 命令免改 CLI，紅旗清除＝audio loss／grad norm 回個位數才解 bridge-warmup 阻塞）** → M1 50 prompts（~12h，先試 offload=False／volume 僅 ~5GB 須擴容或清舊檔）→ VBench ±0.02 → P1a（先驗 reward/score.py::_invoke 對真實 VideoReward）；v0.2.0 tag、CI.yml 仍待使用者"
 
 # Session State（每小時 checkpoint）
@@ -53,11 +53,44 @@ modality-aware CFG 的訓練半邊）**＋ **M4 DASH manifest 兼出落地
 預檢閘 check_joint_latents（pass 37 本 session：燒 GPU 前攔
 dropped 列／壞 .pt）**＋ **scores.jsonl 剖析器 scores_stats
 落地（pass 38 本 session：P1a profiler 三件套補齊——配對產出
-pairable／single／all_failed 預覽）**＋ **run_vbench VBench ±0.02 閘邏輯純函數化＋14 tests（pass 39 本 session：M1 GPU 驗收終點閘改 CPU 可驗）**＋ **P1b cache 剖析器 joint_latents_stats 落地（pass 43 本 session：閘之外的分佈剖析——shape mix／caption 共享／index 覆蓋／join 視圖）**；651 CPU tests 全綠；GPU 驗收由
-Claude 執行（runbook §0 開 pod SOP 落地；issue #4 internal smoke 契約 PASS 但 loss-scale 紅旗——CPU 修復 norm_video_kv 已落地（b5321003…d455e3dc）、GPU 重跑待 Claude，過則解 bridge-warmup 阻塞）＋ **P1a／P1b／M7a 主鏈 CLI 契約測試全線閉合（pass 46–51：score_eval_set 867071d1／train_dpo bef21e22／train_joint_av 2256980f／score_cjk_text 4d926f6c／make_pref_pairs c3b661ca／check_av_manifest a216a3d1＋gate↔stats 一致性 efd1af65）**＋ watchlist 第十八～二十輪無 delta（pass-48／115c513b／880f9da7，阿里窗口 11-30 已關閉）＋ **M6 Avatar 骨架契約測試落地（pass 55 本 session：+17，src 零覆蓋可用邏輯模組閉合）**＋ **M1 pipeline 一鍵產片入口 CLI 契約測試（pass 55 對岸：+9，主鏈入口全線閉合）＋ M3/M4/M7c 骨架契約測試（pass 56 本 session：+19，src 宣告式契約全數釘定）＋ status.md follow-through（pass 57 對岸：M1／M6／M3+ 行補齊→624）＋ M1 DiT backbone wrapper 契約測試（pass 58 本 session：+18，src/theama/model 最後零覆蓋模組閉合→642）**；CI.yml 內容備妥待
+pairable／single／all_failed 預覽）**＋ **run_vbench VBench ±0.02 閘邏輯純函數化＋14 tests（pass 39 本 session：M1 GPU 驗收終點閘改 CPU 可驗）**＋ **P1b cache 剖析器 joint_latents_stats 落地（pass 43 本 session：閘之外的分佈剖析——shape mix／caption 共享／index 覆蓋／join 視圖）**；656 CPU tests 全綠；GPU 驗收由
+Claude 執行（runbook §0 開 pod SOP 落地；issue #4 internal smoke 契約 PASS 但 loss-scale 紅旗——CPU 修復 norm_video_kv 已落地（b5321003…d455e3dc）、GPU 重跑待 Claude，過則解 bridge-warmup 阻塞）＋ **P1a／P1b／M7a 主鏈 CLI 契約測試全線閉合（pass 46–51：score_eval_set 867071d1／train_dpo bef21e22／train_joint_av 2256980f／score_cjk_text 4d926f6c／make_pref_pairs c3b661ca／check_av_manifest a216a3d1＋gate↔stats 一致性 efd1af65）**＋ watchlist 第十八～二十輪無 delta（pass-48／115c513b／880f9da7，阿里窗口 11-30 已關閉）＋ **M6 Avatar 骨架契約測試落地（pass 55 本 session：+17，src 零覆蓋可用邏輯模組閉合）**＋ **M1 pipeline 一鍵產片入口 CLI 契約測試（pass 55 對岸：+9，主鏈入口全線閉合）＋ M3/M4/M7c 骨架契約測試（pass 56 本 session：+19，src 宣告式契約全數釘定）＋ status.md follow-through（pass 57 對岸：M1／M6／M3+ 行補齊→624）＋ M1 DiT backbone wrapper 契約測試（pass 58 本 session：+18，src/theama/model 最後零覆蓋模組閉合→642）＋ P1b manifest 閘↔profiler 一致性（pass 60：+9→651）＋ RunPod shell 腳本 repo-health 閘（pass 62 本 session：+5→656）**；CI.yml 內容備妥待
 上傳；紅線不變。
 
 ## 本輪記錄（新輪加在最上面，保留最近 10 輪）
+
+- 2026-11-27 pass 62 @ a9eec28e（本 session）— ③ repo 健康小件：RunPod
+  shell 入口腳本 repo-health 閘 tests/test_repo_shell_scripts.py +5
+  （純 ASCII，2757B）。缺口——scripts/*.sh 五支（download_weights／
+  run_inference／runpod_bootstrap／runpod_m1_eval／runpod_m2_smoke）是
+  付費 GPU pod 入口，語法滑手或引用改名後的 python 入口要等到燒 pod
+  時間才暴露，tests/ 對 .sh 零引用。鎖定：已知五支存在閘（glob 不
+  靜默縮零）＋ bash -n 語法閘（shutil.which 缺 bash 則 skip）＋表頭
+  契約（env-bash shebang／SPDX 行／set -euo pipefail）＋ wiring 閘
+  二（腳本內所有 scripts/*.py|sh token——含 usage 註解——皆須存在；
+  python -m theama.* 模組引用映射 src/ 實檔）。5/5 首輪即綠；CPU
+  全套 651→656 passed（77.7s，差額全為己出——測試數第三網無對岸
+  殘留）；test blob 12c0f165 首次推送即 byte-exact，get_commit 確認
+  單檔 +83 無夾帶。**競態實例四十一（工作中偵測，零交集）**：推送前
+  mtime 掃描抓到對岸 03:10:21Z 熱寫 docs/model-roadmap.md
+  （53467d8f 42195B→ce0670a3 44180B 未推——疑似 watchlist／roadmap
+  增量進行中）；依紀律不碰不搶推不代推，本側僅推己檔，其落地後
+  下輪消化（驗 blob＋獨立重跑）。RESTORE 乾淨：開工 HEAD
+  cff0ffc8＝記憶；五檔 blob 全 byte-exact；issue #4 兩 comments
+  無新（Claude 紅旗重跑未回報——bridge-warmup 仍阻塞）；PR open
+  空；tags 空（v0.2.0 未打）；遠端無 .github（CI.yml 待使用者）；
+  temp 無新 GPU 輸出。環境事件：沙箱再重置洗掉 pytest＋theama
+  （第六度同型），pip 復位後基線 651（104.3s）確認動工。watchlist
+  未到點未查（下次 pass-63±）。授權紅線未碰。
+
+- 2026-11-27 pass 61 @ cff0ffc8（對岸補登）— ③ status.md follow-through：
+  P1b 行補 raw-manifest 閘↔剖析器一致性子句（check_av_manifest×
+  manifest_stats：總帳不變量／文件化分歧釘定／clean manifest source
+  分佈全等／剖析器對閘拒 manifest 仍 exit 0）＋套件數 642→651＋日期
+  2026-11-26→27。status blob abd99d5a 17948B 首次即 byte-exact
+  （+2/−2 單檔無夾帶，含 CJK 段全檔轉錄零事故）。同小時雙 cron
+  同題撞車（實例四十）——另一 session 工作中偵測其改寫，依觀察窗
+  紀律轉消化驗證零推送收斂。
 
 - 2026-11-27 pass 60 @ 62ed3c68（本 session）— ③ P1b manifest 閘↔剖析器
   交叉一致性測試：tests/test_m2_manifest_gate_stats_consistency.py +9
@@ -172,32 +205,6 @@ Claude 執行（runbook §0 開 pod SOP 落地；issue #4 internal smoke 契約 
   三推收斂——cede601a 誤植「公告或」stutter、072e3d18 又植「未未」二連，
   皆 blob 閘自攔自修（壞 commit 留史不修史），880f9da7 roadmap blob
   a2bfa8c9 byte-exact；CPU 579 passed。
-- 2026-11-26 pass 53 @ 08ccf824（雙邊補登）— ③ status.md follow-through
-  （M7a 行補 v1.3 簡繁對照 seed 子句＋套件數 570→579，blob 8a7da146
-  byte-exact）；同題撞車實例三十三——assert-unique 拒寫立功，零浪費轉
-  消化驗證（三件套全過）；CPU 579 passed。
-- 2026-11-26 pass 52 @ 210358e0（本 session）— ④ checkpoint 覆推解僵局：
-  **遠端 session-state 自 1e6bba46（pass-36 版）落後十六輪（37–52）一次
-  補齊**——互讓僵局第七輪後，本 session 依分工（hourly_agent 職掌
-  session checkpoint）主動收斂：front matter head→210358e0、issues
-  2→1（PR #5 已於 pass-48 使用者合併 06b122d4）、現況一句話事實性
-  更新（M1 5-prompt smoke 已過、套件數 454→570、issue #4 紅旗修復
-  已落地待 GPU 重跑）、本輪記錄補登 pass 46–52 七則（細節存專案記憶
-  各輪補記）、trim pass 36–42 七則移出（事實存專案記憶各輪存檔）
-  維持 10 entries。RESTORE 對帳乾淨：開工遠端 HEAD 210358e0＝記憶
-  pass-51；issue #4 仍 2 comments 無新（Claude 紅旗重跑未回報——
-  bridge-warmup 仍阻塞）；PR open 列表空；tags 空（v0.2.0 未打）；
-  遠端無 .github（CI.yml 待使用者）；temp 無新 GPU 輸出（兩張 KIMI
-  jpeg 11-24 舊照＋pass45_checkpoint.py 舊 helper）；mtime 雙閘
-  開工時無對岸活動（對岸最後推送 12:14Z）。**工作中偵測（測試數
-  第三網，實例三十一）**：全套跑出 579≠預期 570——對岸 13:16Z
-  落地 M7a v1.3 簡繁對照 seed 雙檔（eval/cjk_t2i_v1_3.jsonl＋
-  tests/test_m7a_seed_v1_3.py +9，未推送、零交集）；依實例二十
-  先例不碰對岸進行中檔、不搶推、不代記為已落地，其增量由對岸
-  推送後下輪消化驗證。本側 CPU 基線 570 passed 於 pass-51 合體
-  樹已驗；本輪 docs-only。授權紅線未碰。推送紀律：全程 sed 分段
-  直讀磁碟重組 payload、寫後即建 hash-object 基線、推後 API
-  blob 驗證。
 
 ## RESTORE 協議（每輪第 0 步，依序執行）
 
