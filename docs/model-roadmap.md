@@ -772,6 +772,21 @@
   internal error），I2V 榜首新數據點再延下輪（維持 11-27
   讀數 MAGI-2 1163±14／5,943 待驗）。紅線與蒸餾盤點
   結論不變。
+  2026-11-27 第五筆補記（**MAGI-2 Preview hard id 補錄**，watchlist
+  第二十七輪消化驗證側收集、20:04Z 覆核後落冊）：HF
+  `sand-ai/MAGI-2-preview`——cardData license＝**apache-2.0**
+  （tag license:apache-2.0、未 gated、createdAt 2026-08-03／
+  lastModified 2026-08-05、89 檔 56-shard safetensors、tags 含
+  text-to-audio-video／image-to-audio-video＝joint AV 生成）；
+  GitHub `SandAI-org/MAGI-2-preview` 847★／Apache-2.0／pushed
+  2026-08-06。magi2.cc FAQ 已擴寫（明載 Preview 114B／10 秒／
+  Apache-2.0／HF 權重、推論需 8×Hopper；flagship 答案仍
+  「Not yet」不變）。AA 單獨排名快照（搜尋快照源——T2V 頁
+  11-10／I2V 頁 10-30）：T2V #22（1040±12／8,762）／I2V #30
+  （967±15／4,818）——**Preview 遠弱於 flagship 首次量化
+  （T2V −110／I2V −196 Elo）**。114B＋8×Hopper 非本專案底座料，
+  骨幹 Wan 2.2 不變，僅列 M2 joint-AV 架構參考（文件層核查，
+  未下載未跑權重）。
 
 ## 發布策略
 
