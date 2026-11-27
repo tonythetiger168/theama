@@ -215,7 +215,7 @@
   專攻 UI／資訊圖／海報等**文字密集型設計**的 T2I：原生 RGBA、12 steps
   CFG 1.0、2048²，另有 Design-Layer 圖層拆解姊妹模型（同 MIT）。
   Artificial Analysis：UI/UX Design 類開權重第一（Elo 1082，全類 17/81），
-  Layout 與 Text Rendering 均為開均為開權重第一；總榜中段（約 45/160）。
+  Layout 與 Text Rendering 均為開權重第一；總榜中段（約 45/160）。
   對本專案的意義：M7a 除 Qwen-Image-2512（品質）＋ Z-Image Turbo（快速）
   之外的第三條合法授權路徑候選，其強項（文字渲染）正是 cjk_t2i_v1 seed
   的量測目標。保留事項：官方驗證配置為單卡 80 GiB（文字編碼器約 34 GB，
@@ -327,7 +327,7 @@
   Reward Weighting 融合 VideoReward／JavisScore／ImageBind／AVHScore——可作
   M2/M5 推理期增益與評測交叉驗證）、**Hallo-Live**（2026，fudan-generative-vision
   有開源 repo，HP-DMD reward 重加權蒸餾把串流 A/V avatar 拉向人本偏好——M6b
-  avatar-stream 線的 reward 參考）。三者授）。三者授權／權重可得性均未核實，維持觀察，
+  avatar-stream 線的 reward 參考）。三者授權／權重可得性均未核實，維持觀察，
   不改動 P1a／M2 配方。
   2026-11-25 第三輪覆核：補 **VA-Judger** hard id——arXiv 2608.18607（2026-08）；
   VAPref-10K 約 9K prompts／10.3K 精細偏好對，五維 rubric（prompt alignment／
@@ -336,7 +336,7 @@
   LoRA 後訓練驗證其 reward 可提升生成品質，惟 policy 實驗用 LTX-2（紅線模型）——
   僅取 reward 方法論參考，不碰其權重與輸出。同清單再補 **Omni-Judge**（2026，
   以 omni-modal LLM 做 text-conditioned A/V 生成的 CoT judge，覆蓋感知品質與
-  跨模態對齊維度），同列觀察，授列觀察，授權／權重未核實。另記上游營運訊號：
+  跨模態對齊維度），同列觀察，授權／權重未核實。另記上游營運訊號：
   Wan2.2-Animate 官方 HF Space 已 401 下線（2026-11-16 確認；ModelScope Studio
   與社群 ZeroGPU Space 仍在）——M6a 走自架權重路線，不受影響。
   Wan-Animate-2 repo id／Wan 3.x API-only／Qwen-Image 紅線三項本輪覆核無變化。
