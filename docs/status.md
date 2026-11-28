@@ -232,6 +232,11 @@ reports, `dac/input.wav`, `logs/cpu_tests.log`, `logs/dac_smoke.log`,
    Acceptance target: AV-sync < 40 ms (not measurable with random
    conditioning; stays open for the trained run).
 5. Pick a stable-torch RunPod image and record it in `CLAUDE.md`.
+6. **MAGI-2 evaluation (2026-11-28, docs only)**: not adopted as backbone or
+   fine-tune base (114B Preview needs 8xHopper, no training code; 480B flagship
+   API-only). Kept as an Apache-2.0 code reference for M2 A/V alignment (it
+   shares the Wan2.2 TI2V-5B VAE). CPU-only follow-ups in
+   `docs/magi-2-evaluation.md`.
 
 License red lines in `CLAUDE.md` and `docs/license-risks.md` apply to every
 step.
