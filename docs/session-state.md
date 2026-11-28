@@ -55,13 +55,13 @@ dropped 列／壞 .pt）**＋ **scores.jsonl 剖析器 scores_stats
 落地（pass 38 本 session：P1a profiler 三件套補齊——配對產出
 pairable／single／all_failed 預覽）**＋ **run_vbench VBench ±0.02 閘邏輯純函數化＋14 tests（pass 39 本 session：M1 GPU 驗收終點閘改 CPU 可驗）**＋ **P1b cache 剖析器 joint_latents_stats 落地（pass 43 本 session：閘之外的分佈剖析——shape mix／caption 共享／index 覆蓋／join 視圖）**；678 CPU tests 全綠；GPU 驗收由
 Claude 執行（runbook §0 開 pod SOP 落地；issue #4 internal smoke 契約 PASS 但 loss-scale 紅旗——CPU 修復 norm_video_kv 已落地（b5321003…d455e3dc）、GPU 重跑待 Claude，過則解 bridge-warmup 阻塞）＋ **P1a／P1b／M7a 主鏈 CLI 契約測試全線閉合（pass 46–51：score_eval_set 867071d1／train_dpo bef21e22／train_joint_av 2256980f／score_cjk_text 4d926f6c／make_pref_pairs c3b661ca／check_av_manifest a216a3d1＋gate↔stats 一致性 efd1af65）**＋ watchlist 第十八～二十輪無 delta（pass-48／115c513b／880f9da7，阿里窗口 11-30 已關閉）＋ **M6 Avatar 骨架契約測試落地（pass 55 本 session：+17，src 零覆蓋可用邏輯模組閉合）**＋ **M1 pipeline 一鍵產片入口 CLI 契約測試（pass 55 對岸：+9，主鏈入口全線閉合）＋ M3/M4/M7c 骨架契約測試（pass 56 本 session：+19，src 宣告式契約全數釘定）＋ status.md follow-through（pass 57 對岸：M1／M6／M3+ 行補齊→624）＋ M1 DiT backbone wrapper 契約測試（pass 58 本 session：+18，src/theama/model 最後零覆蓋模組閉合→642）＋ P1b manifest 閘↔profiler 一致性（pass 60：+9→651）＋ RunPod shell 腳本 repo-health 閘（pass 62 本 session：+5→656）＋ docs 結構 repo-health 閘（pass 63 本 session：+6→662）＋ watchlist 第二十四輪落地（pass-66 對岸 ee42be8c：四線無 delta、I2V 榜首 MAGI-2 持穩；本 session 同題撞車轉消化驗證逐項一致）＋ watchlist 第二十五～三十一輪全鏈落地（90fcf618／3a931ff2 後至對岸 takeover 鏈 157dfbba+d4c481cd／7a632c75：四線全無 delta、AA 即時頁恢復直拉 I2V MAGI-2 1163±14／5,943 三度同讀數守第一）＋ encode_av_latents CLI 契約測試 +16 結案（pass-87 對岸 d063628b：互讓僵局授權單邊破局）**；CI.yml 內容備妥待
-上
+上待
 上傳；紅線不變。
 
 ## 本輪記錄（新輪加在最上面，保留最近 10 輪）
 
 - 2026-11-28 pass 88 @ d063628b（本 session）— SAVE 補登（docs-only
-  輪，無 code 增量）：開工 RESTORE 全乾淨（遠端 HEAD d063628b＝
+  輪，無 code 增量）：開工 RESTORE 全乾乾淨（遠端 HEAD d063628b＝
   記憶、docs 十檔 SHA 全對、PR #7 仍 draft head c435b8e9、issue #4
   兩 comments 無新、tags 空、遠端無 .github、temp 無新 GPU 輸出、
   pytest 9.2.0＋editable 存活免重裝、CPU 基線 678 綠 70.3s）。
@@ -86,9 +86,9 @@ Claude 執行（runbook §0 開 pod SOP 落地；issue #4 internal smoke 契約 
   .github、temp 無新 GPU 輸出），watchlist pass-66± 到點遂開工四線
   覆核——GitHub API 直核＋web 線查訖，結論全無 delta。**工作中誤判
   與還原**：讀共享樹本地 roadmap 見第二十四輪條目已在，誤判為
-  「pass-64 推送鏈早已內含、雙邊記憶漏記」——實為對岸同小時同題
+  「pass-64 推送鏈早已早已內含、雙邊記憶漏記」——實為對岸同小時同題
   開工、其熱寫本地檔早於推送被本側讀到；遠端歷史對帳（ad53eef9
-  版仍第二十三第二十三輪）還原真相。對岸 07:16:37Z 推 ee42be8c 正式落地
+  版仍第二十三輪）還原真相。對岸 07:16:37Z 推 ee42be8c 正式落地
   第二十四輪（roadmap +33/−1，blob 96cf6a61 首推即 byte-exact），
   內容與本側獨立覆核逐項一致（Wan-Animate-2 393★／Apache-2.0／
   pushed_at 2026-08-08；Wan-Video org 六 repos 名單；Wan3.0
