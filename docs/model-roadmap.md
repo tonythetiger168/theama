@@ -66,7 +66,7 @@
   （長時一致性、精準掌控人物／場景／鏡頭、導演級敘事理解）；名稱未公布
   （Wan 3.5／Wan 4 皆外界猜測），是否開權重未知。截至本輪檢索仍未見發布
   （2026-11-09 第三方核查 Model Studio 新模型列表與 Wan-AI HF 均無新模型）。
-  若最終開權重且授權相容，列為骨幹再評估再評估觸發點；續盯 Model Studio 新模型
+  若最終開權重且授權相容，列為骨幹再評估觸發點；續盯 Model Studio 新模型
   列表、Wan-AI HF、Wan-Video GitHub。
   2026-11-25 第五輪覆核：11 月窗口進入最後一週，中英文檢索仍無發布
   公告或權重，維持「未發布、續盯」；Wan 3.x API-only 多方來源
@@ -594,7 +594,7 @@
   把 few-step student 偏向高動態樣本——M6b 串流線方法參考）、
   **RewardDance**（reward scaling 研究：judge 換更大生成式 VLM
   的規模律與抗 hacking 魯棒性）。四者授權／權重可得性均未核實，
-  VideoReward 首選不首選不變，維持觀察、不改 P1a 配方。
+  VideoReward 首選不變，維持觀察、不改 P1a 配方。
   2026-11-26 第十六輪：兩筆升級觀察。① **VA-Judger**
   從「授權未核實」升級為「成品已上架」——GitHub
   `ShareLab-SII/VA-Judger`（Fudan ShareLab，2026-08-20 發布
