@@ -557,7 +557,7 @@
   （最新條目 KVPO／RAVEN／RLIR 皆前幾輪已在冊）；無新 video
   reward 模型訊號。**VA-Judger checkpoint 授權第五次核查仍
   失敗**（HF API 自沙箱持續 HTTP 000），維持「使用者代查
-  model card license tag」待辭。VideoReward 首選不變，
+  model card license tag」待辦。VideoReward 首選不變，
   P1a 配方不變。
   2026-11-26 第二十輪：awesome-rm-for-video-generation
   pushed_at 仍 2026-10-06T08:30:55Z（api.github.com 直核）
