@@ -44,7 +44,7 @@
 
 ## Watchlist（上游釋出追蹤）
 
-最近核查：**2026-11-28**（第三十輪）。
+最近核查：**2026-11-28**（第三十一輪）。
 
 - **Wan-Animate-2-14B**（Apache-2.0）— M6a 底座候選，已寫入
   `configs/theama_base.yaml`。repo id 已核對：`Wan-AI/Wan2.2-Animate-2-14B`
@@ -224,6 +224,16 @@
   README.md）。Wan-Animate-2 repo id 覆核無變化
   （`Wan-Video/Wan-Animate-2`，393★／Apache-2.0；最新
   commit 仍 2026-08-08T06:27:43Z）。骨幹續用 Wan 2.2。
+  2026-11-28 第三十一輪（每數輪抽查節奏第十四抽）：Wan 3.x 仍
+  API-only 無權重（MCP 認證通道覆核 Wan-Video org 名單無
+  3.x——search API 五 repos（Wan2.1／Wan2.2／Wan-skills／
+  Wan-Dancer／Wan-Animate-2）＋diffusers fork 另核同前；
+  `AlibabaCloud-Official/Wan3.0` contents 仍僅 LICENSE＋
+  README.md；web 旁證 Wan 3.0 仍 API-only 無權重、Wan 3.1
+  未發布）。Wan-Animate-2 repo id 覆核無變化
+  （`Wan-Video/Wan-Animate-2`，393★／Apache-2.0；最新
+  commit 仍 2026-08-08T06:27:43Z（3ad2fef7，MCP list_commits
+  直核））。骨幹續用 Wan 2.2。
 - **Qwen-Image 新版** — **Qwen-Image-2.1（7B，2026-09-20）統一 T2I+編輯+原生 RGBA，
   但為 Qwen Research License（非商用）→ 紅線確認，不碰**；2.1-Turbo（2026-10-09，8-step）
   同授權。Qwen-Image-3.0 為 hosted-only。Apache-2.0 線最新仍是
@@ -361,6 +371,13 @@
   FlashQLA 11-27、Qwen-MM-Plugins 11-27、Qwen-Live-Harness
   11-26）無 image 線新貨；Qwen-Image-2.1 repo 最新 commit
   仍 2026-10-14。2.1／2.1-Turbo 研究授權紅線不變、2512
+  仍唯一 Apache-2.0 商用線。M7a 選型不變。
+  2026-11-28 第三十一輪：覆核無變化——QwenLM org 最新
+  pushed repos 仍全為 code／工具線（qwen-code 11-28、
+  FlashQLA 11-27、Qwen-MM-Plugins 11-27、Qwen-Live-Harness
+  11-26、Qwen-Live-Delivery-Plugin 11-26）無 image 線新貨；
+  Qwen-Image-2.1 repo 最新 commit 仍 2026-10-14T10:08:18Z
+  （ab96caa9）。2.1／2.1-Turbo 研究授權紅線不變、2512
   仍唯一 Apache-2.0 商用線。M7a 選型不變。
 - **開源 video reward 新模型** — awesome-rm-for-video-generation（2026-10 更新）新增
   AesRM（專家標註美學 RM，base + CoT 變體）、UnifiedReward-Flex、GT-SVJ（self-supervised
@@ -698,6 +715,18 @@
   「建議作者補 tag」保守結論不變，採用前維持觀察；
   VA-Judger apache-2.0 結案態覆核穩定。VideoReward
   首選不變。
+  2026-11-28 第三十一輪：awesome-rm 最新 commit 仍
+  2026-10-06T08:30:52Z（70cd149d，7★）、RewardVerse 仍
+  2026-11-04（6★）無後續；GenVidCritic repo 自 11-27
+  08:35Z 四推後無新推（commits since 11-27 09:00Z 查核為零，
+  MCP 認證通道）。**GenVidCritic-4B HF 覆核（hf-mirror.com，
+  `Notyourkev/GenVidCritic-4B`）**：lastModified 仍
+  2026-11-27T08:48:21Z，tags 仍無 license 項（peft／
+  safetensors／video-quality／reward-model／lora／
+  base_model:Qwen/Qwen3.5-4B 等）、未 gated、19 檔——
+  「建議作者補 tag」保守結論不變，採用前維持觀察；
+  VA-Judger apache-2.0 結案態覆核穩定。VideoReward
+  首選不變。
 - **AV leaderboard（Artificial Analysis Video Arena with-audio）現況**
   （2026-11-27 即時核查更新；M5 品質目標的對標板）——**T2V w/audio**
   （11-13 快照）：Wan 3.0 第一（Elo 1175）、Utopai X（H3 post-train）
@@ -876,6 +905,19 @@
   無新快照點值（11-15 快照源僅及 Seedance 2.5 1161，早於
   MAGI-2 11-24 發布，非易位證據）——榜首無易位訊號，
   MAGI-2 精確點值俟直拉恢復補驗。紅線與蒸餾盤點結論不變。
+  2026-11-28 第三十一輪順帶覆核：MAGI-2 flagship 開源動向
+  無變化——magi2.cc 直核（HTTP 200）FAQ 仍「Not yet. Sand.ai
+  says it will open-source Magi 2 AI and publish a technical
+  report」（480B 權重與技術報告未發布、無日期；MAGI-2
+  Preview 114B Apache-2.0 仍為唯一開權重線，GitHub
+  SandAI-org/MAGI-2-preview 最新 commit 仍 2026-08-06、HF
+  lastModified 仍 2026-08-05）。**AA 即時頁三連敗後本輪
+  恢復直拉（T2V／I2V 雙頁成功）**：T2V Wan 3.0 1175±12／9,201
+  守第一、MAGI-2 1150±13／5,441 第七逐字同前無 delta；
+  I2V MAGI-2 1163±14／5,943 守第一（第三度同讀數——
+  ±14 區間重疊未解、票數未增，穩定性再確認）、Seedance 2.5
+  1158±14／7,384 第二、Utopai X 1148±13／7,777 第三。
+  紅線與蒸餾盤點結論不變。
   2026-11-27 第五筆補記（**MAGI-2 Preview hard id 補錄**，watchlist
   第二十七輪消化驗證側收集、20:04Z 覆核後落冊）：HF
   `sand-ai/MAGI-2-preview`——cardData license＝**apache-2.0**
