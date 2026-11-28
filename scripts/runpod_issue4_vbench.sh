@@ -18,6 +18,13 @@
 # $WORKSPACE/pub/queue_out.tgz and deletes itself on exit, and a watchdog
 # does the same after max_hours even if a step hangs. A DONE marker stops a
 # container restart from re-running the queue.
+#
+# Pod start command: run the queue in the background and then hand over to
+# the image's own /start.sh, so sshd stays up and the log can be followed:
+#   bash -c 'cd /workspace/theama && (THEAMA_SELF_TERMINATE=1 bash scripts/runpod_issue4_vbench.sh /workspace 3 \
+#     > /workspace/queue_run.log 2>&1 &) ; /start.sh'
+# A plain `...; sleep infinity` start command replaces /start.sh and leaves
+# the pod with no SSH (2026-11-28 run).
 set -euo pipefail
 
 WORKSPACE="${1:-/workspace}"
@@ -37,7 +44,8 @@ mkdir -p "$LOG_DIR" "$WORKSPACE/pub"
 archive_and_delete() {
   [[ "${THEAMA_SELF_TERMINATE:-0}" == "1" ]] || return 0
   echo "==> THEAMA_SELF_TERMINATE: archiving queue_out ($1)"
-  tar -czf "$WORKSPACE/pub/queue_out.tgz" -C "$WORKSPACE" queue_out || true
+  tar -czf "$WORKSPACE/pub/queue_out.tgz" -C "$WORKSPACE" queue_out \
+    || echo "WARNING: archive failed; results remain in $WORKSPACE/queue_out/ on the volume" >&2
   sync
   if [[ -n "${RUNPOD_POD_ID:-}" ]] && command -v runpodctl >/dev/null; then
     echo "==> deleting pod $RUNPOD_POD_ID"
