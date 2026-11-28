@@ -8,7 +8,9 @@ run, not after one. No GPU, torch, or real vbench install required.
 """
 
 import importlib.util
+import json
 import sys
+import tempfile
 import types
 from pathlib import Path
 
@@ -103,6 +105,10 @@ def _videos_dir(tmp_path: Path, n: int = 2) -> Path:
 
 
 def _run_cli(monkeypatch, capsys, argv):
+    if "--out-dir" not in argv:  # keep CLI tests from writing into the repo
+        scratch = Path(tempfile.mkdtemp(prefix="vbench_test_"))
+        argv = argv + ["--out-dir", str(scratch / "out"),
+                       "--cache-dir", str(scratch / "cache")]
     monkeypatch.setattr(sys, "argv", ["run_vbench.py"] + argv)
     code = rv.main()
     out = capsys.readouterr()
@@ -169,3 +175,28 @@ def test_cli_empty_videos_dir_exit_2(monkeypatch, capsys, tmp_path):
     code, _, err = _run_cli(monkeypatch, capsys, ["--videos", str(empty)])
     assert code == 2
     assert "no MP4s" in err
+
+
+def test_dimension_scores_reads_vbench_015_layout():
+    raw = {"subject_consistency": [0.95, [{"video_path": "a"}]],
+           "dynamic_degree": [0.4, []], "broken": ["x", []]}
+    assert rv.dimension_scores(raw) == {
+        "subject_consistency": 0.95, "dynamic_degree": 0.4}
+    assert rv.dimension_scores(None) == {}
+
+
+def test_cli_reads_results_file_when_evaluate_returns_none(monkeypatch, capsys, tmp_path):
+    # VBench 0.1.5 evaluate() returns None and only writes the JSON file.
+    out_dir = tmp_path / "vb_out"
+    out_dir.mkdir()
+    (out_dir / "ti2v-5b-m1_eval_results.json").write_text(json.dumps(
+        {"subject_consistency": [0.9, []], "imaging_quality": [0.7, []]}))
+    _fake_vbench(monkeypatch, None)
+    code, out, _ = _run_cli(monkeypatch, capsys, [
+        "--videos", str(_videos_dir(tmp_path)), "--model", "ti2v-5b",
+        "--out-dir", str(out_dir), "--cache-dir", str(tmp_path / "c")])
+    assert code == 0
+    summary = json.loads((out_dir / "ti2v-5b-m1_summary.json").read_text())
+    assert summary["six_dim_mean"] == 0.8
+    assert summary["videos"] == 2
+    assert "VBENCH_SUMMARY" in out

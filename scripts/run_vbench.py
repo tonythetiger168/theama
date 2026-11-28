@@ -57,6 +57,25 @@ def gate_passed(overall: float, target: float, tolerance: float) -> bool:
     return abs(overall - target) <= tolerance
 
 
+def dimension_scores(eval_results: object) -> dict[str, float]:
+    """Per-dimension aggregate scores from a VBench `*_eval_results.json`.
+
+    VBench 0.1.5 `evaluate()` returns None and writes
+    `{dim: [aggregate_score, [per-video records]]}`; non-numeric entries are
+    skipped rather than raising.
+    """
+    scores: dict[str, float] = {}
+    if not isinstance(eval_results, dict):
+        return scores
+    for dim, value in eval_results.items():
+        head = value[0] if isinstance(value, (list, tuple)) and value else value
+        try:
+            scores[dim] = float(head)
+        except (TypeError, ValueError):
+            continue
+    return scores
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--videos", required=True, help="dir of generated MP4s")
@@ -64,6 +83,9 @@ def main() -> int:
     ap.add_argument("--dims", nargs="*", default=None, help="override dimension list")
     ap.add_argument("--full", action="store_true",
                     help="run all 16 VBench dims instead of the 6-dim subset")
+    ap.add_argument("--out-dir", default=str(ROOT / "eval" / "vbench_out"),
+                    help="VBench output dir (raw results + summary JSON)")
+    ap.add_argument("--cache-dir", default=str(ROOT / "eval" / "vbench_cache"))
     args = ap.parse_args()
 
     ref = json.loads((ROOT / "eval" / "reference.json").read_text(encoding="utf-8"))[
@@ -84,16 +106,32 @@ def main() -> int:
         return 2
     print(f"evaluating {len(videos)} videos, dims={dims or 'ALL 16'}")
 
-    bench = VBench(torch.device("cuda"), str(ROOT / "eval" / "vbench_cache"),
-                   str(ROOT / "eval" / "vbench_out"))
+    out_dir = Path(args.out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    Path(args.cache_dir).mkdir(parents=True, exist_ok=True)
+    bench = VBench(torch.device("cuda"), str(args.cache_dir), str(out_dir))
     result = bench.evaluate(
         videos_path=str(args.videos),
         name=f"{args.model}-m1",
         dimension_list=dims or None,
         mode="custom_input",
     )
-    out_path = ROOT / "eval" / "vbench_out" / f"{args.model}-m1_results.json"
+    out_path = out_dir / f"{args.model}-m1_eval_results.json"
     print(f"raw results: {out_path}")
+    if result is None and out_path.is_file():
+        result = json.loads(out_path.read_text(encoding="utf-8"))
+    scores = dimension_scores(result)
+    summary = {
+        "model": args.model,
+        "videos": len(videos),
+        "dimensions": scores,
+        "six_dim_mean": (round(sum(scores.values()) / len(scores), 6)
+                         if scores else None),
+        "note": "unweighted mean of the evaluated dims; not VBench's weighted Total Score",
+    }
+    (out_dir / f"{args.model}-m1_summary.json").write_text(
+        json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+    print("VBENCH_SUMMARY " + json.dumps(summary))
 
     overall = extract_overall(result)
     target = ref["vbench_overall_bf16"]

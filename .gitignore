@@ -32,3 +32,5 @@ outputs/
 
 # Local RunPod / eval results (never committed, see CLAUDE.md)
 results/
+eval/vbench_out/
+eval/vbench_cache/
